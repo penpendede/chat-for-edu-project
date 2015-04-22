@@ -94,9 +94,11 @@ erfordern.
 
 Create Controllers and delete them easily.
 
-# Mögliche Fehlerquellen
+# Mögliche Fehlerquellen / Probleme
 
 * Nicht synchronisierte Zeit - Nachrichten können dann nicht in der korrekten
   chronologischen Reihenfolge dargestellt werden
+
+* Gruppenchats die nicht mehr aktiv sind, koennen nicht wieder gefunden werden. Bzw. Wie?
 
 |---+----1----+----2----+----3----+----4----+----5----+----6----+----7----+----|
