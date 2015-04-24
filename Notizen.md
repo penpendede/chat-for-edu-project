@@ -101,4 +101,6 @@ Create Controllers and delete them easily.
 
 * Gruppenchats die nicht mehr aktiv sind, koennen nicht wieder gefunden werden. Bzw. Wie?
 
+
+# Sonstige Probleme: Bei Commits auf Zeichensatz achten!
 |---+----1----+----2----+----3----+----4----+----5----+----6----+----7----+----|
