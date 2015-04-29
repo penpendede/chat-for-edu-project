@@ -52,6 +52,16 @@
     <Compile Include="Form1.Designer.cs">
       <DependentUpon>Form1.cs</DependentUpon>
     </Compile>
+    <Compile Include="Model\SQLiteConversationRepository.cs" />
+    <Compile Include="Model\Conversation.cs" />
+    <Compile Include="Model\IRepositories.cs" />
+    <Compile Include="Model\Message.cs" />
+    <Compile Include="Model\SQLiteMessageRepository.cs" />
+    <Compile Include="Model\SQLiteUserLocalRepository.cs" />
+    <Compile Include="Model\SQLiteUserRemoteRepository.cs" />
+    <Compile Include="Model\User.cs" />
+    <Compile Include="Model\UserLocal.cs" />
+    <Compile Include="Model\UserRemote.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="Form1.resx">
@@ -75,6 +85,9 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Model\Finisar.SQLite.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
