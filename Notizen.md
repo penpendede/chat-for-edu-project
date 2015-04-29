@@ -99,7 +99,15 @@ Create Controllers and delete them easily.
 * Nicht synchronisierte Zeit - Nachrichten können dann nicht in der korrekten
   chronologischen Reihenfolge dargestellt werden
 
-* Gruppenchats die nicht mehr aktiv sind, koennen nicht wieder gefunden werden. Bzw. Wie?
+* Gruppenchats die nicht mehr aktiv sind, koennen nicht wieder gefunden werden. 
+Bzw. Wie?
+
+* MVC Entscheidung: 1. View vom Controller erzeugen lassen vs 2. View dem 
+Controller mitteilen
+	1. Stärkere Kapselung
+	2. Ein bisschen komplexer, ermöglicht es einen Controller mit einer anderen 
+	View auszustatten (wenn Polymorphie gegeben ist). Das ist aber in unserer 
+	Software nicht nötig.
 
 
 # Sonstige Probleme: Bei Commits auf Zeichensatz achten!

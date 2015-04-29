@@ -46,16 +46,40 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Form1.cs">
+    <Compile Include="View\BuddyAddForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Form1.Designer.cs">
-      <DependentUpon>Form1.cs</DependentUpon>
+    <Compile Include="View\BuddyAddForm.Designer.cs">
+      <DependentUpon>BuddyAddForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="View\ConversationTabControl.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="View\ConversationTabPage.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="View\MessengerMainWindowForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="View\MessengerMainWindowForm.Designer.cs">
+      <DependentUpon>MessengerMainWindowForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="View\LoginForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="View\LoginForm.Designer.cs">
+      <DependentUpon>LoginForm.cs</DependentUpon>
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <EmbeddedResource Include="Form1.resx">
-      <DependentUpon>Form1.cs</DependentUpon>
+    <EmbeddedResource Include="View\BuddyAddForm.resx">
+      <DependentUpon>BuddyAddForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="View\LoginForm.resx">
+      <DependentUpon>LoginForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="View\MessengerMainWindowForm.resx">
+      <DependentUpon>MessengerMainWindowForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
