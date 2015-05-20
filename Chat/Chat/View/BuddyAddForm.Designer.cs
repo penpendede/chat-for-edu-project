@@ -1,5 +1,6 @@
 ﻿namespace Chat
 {
+    [System.ComponentModel.DesignerCategory("")]
     partial class BuddyAddForm
     {
         /// <summary>

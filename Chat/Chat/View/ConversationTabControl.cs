@@ -12,7 +12,7 @@ namespace Chat.View
     delegate void OnTabClose(ConversationTabPage tabPage);
 
     //[Designer("System.Windows.Forms.Design.ParentControlDesigner, System.Design", typeof(IDesigner))]
-    class ConversationTabControl : TabControl
+    public class ConversationTabControl : TabControl
     {
         public ConversationTabControl()
         {
@@ -20,13 +20,13 @@ namespace Chat.View
         }
 
         // FIXME: Choose either one or the other option, depending on MVC design decision
-        public ConversationTabPage AddTab()
-        {
-            ConversationTabPage tabPage = new ConversationTabPage();
+        //public ConversationTabPage AddTab()
+        //{
+        //    ConversationTabPage tabPage = new ConversationTabPage();
 
-            this.Controls.Add(tabPage);
-            return tabPage;
-        }
+        //    this.Controls.Add(tabPage);
+        //    return tabPage;
+        //}
 
         public void AddTab(ConversationTabPage tabPage)
         {
@@ -67,6 +67,8 @@ namespace Chat.View
        
         private void InitializeComponent()
         {
+            components = new System.ComponentModel.Container();
+
             this.SuspendLayout();
 
             this.Alignment = System.Windows.Forms.TabAlignment.Bottom;
