@@ -46,9 +46,14 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="View\BuddyAddForm.cs">
-      <SubType>Form</SubType>
+    <Compile Include="Controller\ConversationController.cs" />
+    <Compile Include="Controller\MessengerController.cs" />
+    <Compile Include="Model\DummyData.cs" />
+    <Compile Include="View\BuddyListGroupBox.cs" />
+    <Compile Include="View\BuddyListGroupBox.Designer.cs">
+      <DependentUpon>BuddyListGroupBox.cs</DependentUpon>
     </Compile>
+    <Compile Include="View\BuddyAddForm.cs" />
     <Compile Include="View\BuddyAddForm.Designer.cs">
       <DependentUpon>BuddyAddForm.cs</DependentUpon>
     </Compile>
@@ -85,6 +90,9 @@
     <EmbeddedResource Include="View\BuddyAddForm.resx">
       <DependentUpon>BuddyAddForm.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="View\BuddyListGroupBox.resx">
+      <DependentUpon>BuddyListGroupBox.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="View\LoginForm.resx">
       <DependentUpon>LoginForm.cs</DependentUpon>
     </EmbeddedResource>
@@ -100,6 +108,7 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <None Include="ClassDiagram.cd" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
@@ -113,6 +122,7 @@
   <ItemGroup>
     <Content Include="Model\Finisar.SQLite.txt" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
