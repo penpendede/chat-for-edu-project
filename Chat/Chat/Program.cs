@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
 using Chat.View;
+using Chat.Controller;
 
 namespace Chat
 {
@@ -16,7 +17,9 @@ namespace Chat
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new MessengerMainWindowForm());
+            //Application.Run(new MessengerMainWindowForm());
+
+            MessengerController mainController = new MessengerController();
         }
     }
 }
