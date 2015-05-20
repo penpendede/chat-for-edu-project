@@ -12,7 +12,7 @@ namespace Chat.Model
         public String Text;
         public DateTime Time;
 
-        Message()
+        public Message()
         {
             /// \todo default init for Message
         }

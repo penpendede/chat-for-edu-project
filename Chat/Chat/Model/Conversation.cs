@@ -23,7 +23,7 @@ namespace Chat.Model
         public List<User> Users;
         public List<Message> Messages;
 
-        Conversation()
+        public Conversation()
         {
             /// \todo default init for Conversation
         }

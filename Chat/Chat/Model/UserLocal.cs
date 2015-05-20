@@ -15,7 +15,7 @@ namespace Chat.Model
     {
         private String PasswordSaltedHash;
 
-        public List<User> Buddies;
+        public List<UserRemote> Buddies;
 
         public void AddBuddy(User buddy)
         {
