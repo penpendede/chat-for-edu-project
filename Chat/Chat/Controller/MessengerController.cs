@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Chat.Model;
 using Chat.View;
 using System.Windows.Forms;
@@ -12,23 +13,32 @@ namespace Chat.Controller
         private LoginForm loginForm;
         private MessengerMainWindowForm mainWindow;
 
-        //private List<ConversationController> conversationControllers; // NOTE: needed
+        private List<ConversationController> conversationControllers;
+        private BuddyListController buddyListController;
         //private ConversationTabControl TabControl;
 
         public MessengerController()
         {
+            conversationControllers = new List<ConversationController>();
+
             mainWindow = new MessengerMainWindowForm();
             mainWindow.Hide();
             mainWindow.FormClosing += this.mainWindowOnClosing;
 
             loginForm = new LoginForm();
-            loginForm.OnLoginSubmit += this.LoginFormOnSubmit;
+            loginForm.OnLoginSubmit += this.loginFormOnSubmit;
             loginForm.ShowDialog();
 
             Application.Run(mainWindow);
         }
 
-        private void LoginFormOnSubmit(string userName, string password)
+        // NOTE: Is this the right place for this functionality?
+        public Conversation GetActiveConversation()
+        {
+            return this.conversationControllers.Where(c => c.TabPage == this.mainWindow.ConversationTabControl.SelectedTab).First().Conversation;
+        }
+
+        private void loginFormOnSubmit(string userName, string password)
         {
 
             // verify user
@@ -38,12 +48,9 @@ namespace Chat.Controller
 
             // TODO: bind delegate OnUserConversationAdd to UserLocal
 
-            mainWindow = new MessengerMainWindowForm();
+            buddyListController = new BuddyListController(userLocal, this);
 
-            foreach (User buddy in userLocal.Buddies)
-            {
-                mainWindow.BuddyListGroupBox.AddBuddy(buddy.Id, buddy.Name);
-            }
+            mainWindow.AddBuddyListGroupBox(buddyListController.BuddyListGroupBox);
 
             foreach (Conversation conversation in userLocal.Conversations)
             {
@@ -57,7 +64,7 @@ namespace Chat.Controller
         private void userOnConversationAdd(Conversation conversation)
         {
             ConversationController convController = new ConversationController(userLocal, conversation);
-            //conversationControllers.Add(new ConversationController(conversation)) // NOTE:
+            conversationControllers.Add(convController);
             mainWindow.ConversationTabControl.AddTab(convController.TabPage);
         }
 

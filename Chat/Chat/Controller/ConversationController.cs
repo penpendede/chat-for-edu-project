@@ -11,13 +11,13 @@ namespace Chat.Controller
     public class ConversationController
     {
         private UserLocal userLocal;
-        private Conversation conversation;
+        public Conversation Conversation;
         public ConversationTabPage TabPage;
 
         public ConversationController(UserLocal userLocal, Conversation conversation)
         {
             this.userLocal = userLocal;
-            this.conversation = conversation;
+            this.Conversation = conversation;
 
             // TODO: bind addMessage to model
             // TODO: bind conversationOnUserAdd to model
@@ -56,7 +56,7 @@ namespace Chat.Controller
         private void tabPageOnTextSubmit(string messageText)
         {
             // NOTE: Where does the id come to the model? Maybe the momment it is written into the database? Or should we ask the databaseController (repository) to create a new object?
-            conversation.AddMessage(new Model.Message() { Text = messageText, Sender = this.userLocal, Time = DateTime.Now });
+            Conversation.AddMessage(new Model.Message() { Text = messageText, Sender = this.userLocal, Time = DateTime.Now });
         }
     }
 }

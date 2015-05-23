@@ -46,16 +46,15 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Controller\BuddyListController.cs" />
     <Compile Include="Controller\ConversationController.cs" />
     <Compile Include="Controller\MessengerController.cs" />
     <Compile Include="Model\DummyData.cs" />
-    <Compile Include="View\BuddyListGroupBox.cs" />
-    <Compile Include="View\BuddyListGroupBox.Designer.cs">
-      <DependentUpon>BuddyListGroupBox.cs</DependentUpon>
+    <Compile Include="View\BuddyListGroupBox.cs">
+      <SubType>Component</SubType>
     </Compile>
-    <Compile Include="View\BuddyAddForm.cs" />
-    <Compile Include="View\BuddyAddForm.Designer.cs">
-      <DependentUpon>BuddyAddForm.cs</DependentUpon>
+    <Compile Include="View\BuddyAddForm.cs">
+      <SubType>Form</SubType>
     </Compile>
     <Compile Include="View\ConversationTabControl.cs">
       <SubType>Component</SubType>
@@ -63,17 +62,12 @@
     <Compile Include="View\ConversationTabPage.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="View\MessengerMainWindowForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
+    <Compile Include="View\MessengerMainWindowForm.cs" />
     <Compile Include="View\MessengerMainWindowForm.Designer.cs">
       <DependentUpon>MessengerMainWindowForm.cs</DependentUpon>
     </Compile>
     <Compile Include="View\LoginForm.cs">
       <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="View\LoginForm.Designer.cs">
-      <DependentUpon>LoginForm.cs</DependentUpon>
     </Compile>
     <Compile Include="Model\SQLiteConversationRepository.cs" />
     <Compile Include="Model\Conversation.cs" />
@@ -87,15 +81,6 @@
     <Compile Include="Model\UserRemote.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <EmbeddedResource Include="View\BuddyAddForm.resx">
-      <DependentUpon>BuddyAddForm.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="View\BuddyListGroupBox.resx">
-      <DependentUpon>BuddyListGroupBox.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="View\LoginForm.resx">
-      <DependentUpon>LoginForm.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="View\MessengerMainWindowForm.resx">
       <DependentUpon>MessengerMainWindowForm.cs</DependentUpon>
     </EmbeddedResource>

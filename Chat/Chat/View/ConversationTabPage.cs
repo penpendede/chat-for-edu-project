@@ -83,21 +83,21 @@ namespace Chat.View
             components = new System.ComponentModel.Container();
 
             //
-            // panel
+            // tableLayoutPanel
             //
 
-            this.panel = new TableLayoutPanel();
+            this.tableLayoutPanel = new TableLayoutPanel();
             
-            this.panel.Dock = DockStyle.Fill;
-            this.panel.RowCount = 2;
-            this.panel.ColumnCount = 2;
+            this.tableLayoutPanel.Dock = DockStyle.Fill;
+            this.tableLayoutPanel.RowCount = 2;
+            this.tableLayoutPanel.ColumnCount = 2;
 
-            this.panel.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
-            this.panel.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 50));
-            this.panel.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
-            this.panel.RowStyles.Add(new RowStyle(SizeType.Absolute, 45));
+            this.tableLayoutPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
+            this.tableLayoutPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 50));
+            this.tableLayoutPanel.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
+            this.tableLayoutPanel.RowStyles.Add(new RowStyle(SizeType.Absolute, 45));
             
-            this.Controls.Add(this.panel);
+            this.Controls.Add(this.tableLayoutPanel);
             
             // 
             // messagesBox
@@ -106,8 +106,8 @@ namespace Chat.View
             this.messagesBox.Multiline = true;
             this.messagesBox.Name = "tabControlTextBox2";
             this.messagesBox.Dock = DockStyle.Fill;
-            this.panel.Controls.Add(this.messagesBox, 0, 0);
-            this.panel.SetColumnSpan(this.messagesBox, 2);
+            this.tableLayoutPanel.Controls.Add(this.messagesBox, 0, 0);
+            this.tableLayoutPanel.SetColumnSpan(this.messagesBox, 2);
 
             // 
             // inputBox
@@ -118,7 +118,7 @@ namespace Chat.View
             this.inputBox.Dock = DockStyle.Fill;
             this.inputBox.Tag = "";
             //this.tabControlTextBox1.TextChanged += new System.EventHandler(this.textBox1_TextChanged);
-            this.panel.Controls.Add(this.inputBox, 0, 1);
+            this.tableLayoutPanel.Controls.Add(this.inputBox, 0, 1);
 
             // 
             // sendButton
@@ -130,7 +130,7 @@ namespace Chat.View
             this.sendButton.Text = "Send";
             this.sendButton.UseVisualStyleBackColor = true;
             this.sendButton.Click += this.OnSendButtonClick;
-            this.panel.Controls.Add(this.sendButton, 1, 1);
+            this.tableLayoutPanel.Controls.Add(this.sendButton, 1, 1);
             
 
             //this.Location = new System.Drawing.Point(4, 4);
@@ -142,7 +142,7 @@ namespace Chat.View
             
         }
 
-        private TableLayoutPanel panel;
+        private TableLayoutPanel tableLayoutPanel;
         private System.Windows.Forms.TextBox inputBox;
         private System.Windows.Forms.TextBox messagesBox;
         private System.Windows.Forms.Button sendButton;

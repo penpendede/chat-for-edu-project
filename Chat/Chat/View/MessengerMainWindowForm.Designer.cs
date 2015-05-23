@@ -39,19 +39,19 @@ namespace Chat.View
             //
             // Panel
             //
-            this.panel = new TableLayoutPanel();
+            this.tableLayoutPanel = new TableLayoutPanel();
 
-            this.panel = new TableLayoutPanel();
-            this.panel.Dock = DockStyle.Fill;
-            this.panel.RowCount = 2;
-            this.panel.ColumnCount = 2;
+            this.tableLayoutPanel = new TableLayoutPanel();
+            this.tableLayoutPanel.Dock = DockStyle.Fill;
+            this.tableLayoutPanel.RowCount = 2;
+            this.tableLayoutPanel.ColumnCount = 2;
 
-            this.panel.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
-            this.panel.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 200));
-            this.panel.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
-            this.panel.RowStyles.Add(new RowStyle(SizeType.Absolute, 20));
+            this.tableLayoutPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
+            this.tableLayoutPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 200));
+            this.tableLayoutPanel.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
+            this.tableLayoutPanel.RowStyles.Add(new RowStyle(SizeType.Absolute, 20));
 
-            this.Controls.Add(this.panel);
+            this.Controls.Add(this.tableLayoutPanel);
 
             //
             // ConversationTabControl
@@ -60,18 +60,9 @@ namespace Chat.View
             this.ConversationTabControl.SelectedIndex = 0;
             this.ConversationTabControl.Dock = DockStyle.Fill;
             this.ConversationTabControl.TabIndex = 0;
-            this.panel.Controls.Add(this.ConversationTabControl, 0, 0);
+            this.tableLayoutPanel.Controls.Add(this.ConversationTabControl, 0, 0);
 
-            //
-            // BuddyListGroupBox
-            //
-            this.BuddyListGroupBox = new BuddyListGroupBox();
-            this.BuddyListGroupBox.Name = "BuddyList";
-            this.BuddyListGroupBox.Dock = DockStyle.Fill;
-            this.BuddyListGroupBox.TabIndex = 1;
-            this.BuddyListGroupBox.TabStop = false;
-            this.BuddyListGroupBox.Text = "Buddies";
-            this.panel.Controls.Add(this.BuddyListGroupBox, 1, 0);
+            
 
 
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
@@ -95,8 +86,8 @@ namespace Chat.View
             this.toolStripStatusLabel1.Dock = DockStyle.Fill;
             this.toolStripStatusLabel1.Text = "12:24";
 
-            this.panel.Controls.Add(this.statusStrip1, 0, 1);
-            this.panel.SetColumnSpan(this.statusStrip1, 2);
+            this.tableLayoutPanel.Controls.Add(this.statusStrip1, 0, 1);
+            this.tableLayoutPanel.SetColumnSpan(this.statusStrip1, 2);
             // 
             // MessengerMainWindowForm
             // 
@@ -118,7 +109,7 @@ namespace Chat.View
 
         #endregion
 
-        private TableLayoutPanel panel;
+        private TableLayoutPanel tableLayoutPanel;
 
         public ConversationTabControl ConversationTabControl;
 
@@ -126,7 +117,17 @@ namespace Chat.View
         
         private System.Windows.Forms.StatusStrip statusStrip1;
         private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel1;
-        
+     
+        public void AddBuddyListGroupBox(BuddyListGroupBox buddyList) 
+        {
+            //
+            // BuddyListGroupBox
+            //
+            buddyList.Dock = DockStyle.Fill;
+            buddyList.TabIndex = 1;
+            buddyList.TabStop = false;
+            this.tableLayoutPanel.Controls.Add(buddyList, 1, 0);
+        }
     }
 }
 

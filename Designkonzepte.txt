@@ -1,0 +1,28 @@
+MVC
+
+Die Software ist nach dem MVC strukturiert, das heißt alle Programmteile sind einem der drei Bereiche Datenmodel (Model), Anzeige (View) und Programmsteuerung (Controller) zugeordnet. Model und View sind unabhängig voneinander und kommunizieren lediglich über die Controller miteinander.
+
+In dieser Software scheint das MVC-Pattern sinnvoll, 1. da das Model unabhängig von der View z.B. auch in einem Server eingesetzt werden könnte. 2. Damit die Anzeigespezifischen Windows Forms Klassen und Methoden lediglich in einem Bereich der Software zu finden sind. (Kapselung) 3. Zum schnellen Auffinden eines Programmteils innerhalb der Software (Strukturierung)
+
+Zentrale Ideen:
+Das Model repräsentiert die für das Chatprogramm wesentlichen Daten (Konversationnen, Nachrichten, Benutzer). Wenn die Daten geändert werden, werden die Controller über die Änderungen informiert und fordern die Anzeige dazu auf sich entsprechend zu verändern. Wird in der Anzeige wiederrum eine Aktion durch einen Benutzer getätigt, dann wird der Controller darüber informiert und er modifiziert gegebenenfalls das Model, was dann den zuvor erwähnten Prozess anstößt.
+
+Logische Gruppierungen innerhalb der Anzeige werden zu eigenen Klassen zusammen gefasst (BuddyListe, Chatfenster, TabControl, Loginfenster, etc.)
+
+Controller erzeugen gegebenenfalls entsprechende View- und Modelobjekte oder geben vorhandene Objekte an assozierte Controller weiter.
+
+
+
+Repository-Pattern
+
+Für jede Datanbankklasse deren Objekte in der Datenbank geschrieben werden können sollen, wird eine Repositoryklasse verwendet, diese übernimmt das Zuordnen von Objekteigenschaften zu Datenbanktabellenspalten und umgekehrt. Von den Repositoryklassen unterstützte Funktionaliäten: Objekte aus der Datenbank lesen, Objekte in die Datenbank schreiben, in der Datenbank vorhandene Objekte verändern und aus der Datenbank löschen. Gegebenenfalls benötigte komplexere Abfragen werden als Methoden der Repositoryklassen realisiert.
+
+Die Repositoryklassen erhalten Verweise auf den DatanbankController. Das MVC-Pattern wird hier aufgeweicht, um den Repositories an dieser Stelle dann Zugriff auf die anderen Repositories und das Anfordern der mit dem Objekt assozierte Objekte über die anderen Repositories zu ermöglichen. Wenn die Repositories die Assoziationen nicht selbst erstellen, müssten alle Objekte nocheinmal aufwendig außerhalb der Repositories verknüpft werden.
+
+
+
+Generische Datenbankklasse
+
+Um nicht jede Repositoryklasse für jedes Datenbanksystem neu schreiben zu müssen, verwenden die Repositoryklassen eine Datenbankklasse die verallgemeinerte Methoden für den Zugriff auf Daten mit SQL zu Verfügung stellt. 
+
+Für unterschiedliche Datenbanksysteme werden eigene Klassen implementiert, die die entsprechenden abstrakten Methoden implementieren.
