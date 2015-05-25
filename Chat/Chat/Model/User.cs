@@ -23,8 +23,6 @@ namespace Chat.Model
 
         public UserOnConversationAdd ConversationAdd;
 
-        public OnConversationAdd ConversationAdd;
-
         public User()
         {
             _conversations = new List<Conversation>();

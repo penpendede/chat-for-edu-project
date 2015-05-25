@@ -12,6 +12,8 @@ namespace Chat.Model
         public string Text;
         public DateTime Time;
 
+        public Conversation Conversation;
+
         public Message()
         {
             Time = DateTime.Now;

@@ -15,9 +15,6 @@ namespace Chat.Model
         private List<UserRemote> _buddies;
 
         public ReadOnlyCollection<UserRemote> Buddies
-        public OnBuddyAdd BuddyAdd;
-        public OnBuddyRemove BuddyRemove;
-
         {
             private set;
             get;
