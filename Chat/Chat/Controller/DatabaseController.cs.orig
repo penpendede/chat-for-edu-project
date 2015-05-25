@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 ﻿using Chat.Model;
 using System;
 using System.Collections.Generic;
@@ -41,10 +42,7 @@ namespace Chat.Controller
 
     public class DatabaseController
     {
-        public Database Database;
-        
-        public ConversationRepository ConversationRepo;
-        
+
         public void CreateDatabase() {
             string createTableMessage = "CREATE TABLE message ("
                 + "id integer unsigned primary_key, "
@@ -104,11 +102,30 @@ namespace Chat.Controller
             #warning New user is not written to database
            
             UserLocal newUser = new UserLocal() { Name = userName };
-
+            
             return newUser;
         }
+    }
+
+}
+=======
+﻿using Chat.Model;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+
+namespace Chat.Controller
+{
+    public class DatabaseController
+    {
+        public Database Database;
+ 
+        public ConversationRepository ConversationRepo;
+
         public IBaseRepository<UserLocal> UserLocalRepo;
         public IBaseRepository<UserRemote> UserRemoteRepo;
         public IBaseRepository<Message> MessageRepo;
     }
 }
+>>>>>>> 921c0cf6a7363365f9784557aca57616b2a7bde0

@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -23,8 +24,6 @@ namespace Chat.Model
 
         public UserOnConversationAdd ConversationAdd;
 
-        public OnConversationAdd ConversationAdd;
-
         public User()
         {
             _conversations = new List<Conversation>();
@@ -42,3 +41,34 @@ namespace Chat.Model
         }
     }
 }
+=======
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+
+namespace Chat.Model
+{
+    /// \todo implement OnConversationAdd
+    public delegate void OnConversationAdd(User user, Conversation conversation);
+
+    public class User
+    {
+        public int Id;
+        public String Name;
+        public List<Conversation> Conversations;
+
+        public OnConversationAdd ConversationAdd;
+
+        public User()
+        {
+            /// \todo default init for User
+        }
+
+        public void AddConversation(Conversation conversation)
+        {
+            /// \todo implement User.AddConversation
+        }
+    }
+}
+>>>>>>> 921c0cf6a7363365f9784557aca57616b2a7bde0

@@ -5,11 +5,12 @@ using System.Text;
 
 namespace Chat.Model
 {
-    interface IBaseRepository<T>
+    public interface IBaseRepository<T>
     {
-        void Create();
-        List<T> Get();
+        //List<T> Get();
         T GetById(int id);
+        void Create();
+        bool Contains(T obj);
         void Insert(T obj);
         void Remove(T obj);
         void RemoveById(int id);
@@ -34,6 +35,6 @@ namespace Chat.Model
 
     interface IUserRemoteRepository : IBaseRepository<UserRemote>
     {
-        List<UserRemote> GetParticipants(Conversation conversation);
+        UserRemote GetByName(string userName);
     }
 }

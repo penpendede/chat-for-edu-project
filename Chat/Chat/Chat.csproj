@@ -51,6 +51,7 @@
     <Compile Include="Controller\DatabaseController.cs" />
     <Compile Include="Controller\MessengerController.cs" />
     <Compile Include="Controller\NetworkConnectionController.cs" />
+    <Compile Include="Model\Database.cs" />
     <Compile Include="Model\DummyData.cs" />
     <Compile Include="View\BuddyListGroupBox.cs">
       <SubType>Component</SubType>
@@ -64,12 +65,8 @@
     <Compile Include="View\ConversationTabPage.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="View\MessengerMainWindowForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="View\LoginForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
+    <Compile Include="View\MessengerMainWindowForm.cs" />
+    <Compile Include="View\LoginForm.cs" />
     <Compile Include="Model\SQLiteConversationRepository.cs" />
     <Compile Include="Model\Conversation.cs" />
     <Compile Include="Model\IRepositories.cs" />
