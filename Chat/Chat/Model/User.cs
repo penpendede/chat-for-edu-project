@@ -14,6 +14,8 @@ namespace Chat.Model
         public String Name;
         public List<Conversation> Conversations;
 
+        public OnConversationAdd ConversationAdd;
+
         public User()
         {
             /// \todo default init for User

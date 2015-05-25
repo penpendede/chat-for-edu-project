@@ -17,6 +17,9 @@ namespace Chat.Model
 
         public List<UserRemote> Buddies;
 
+        public OnBuddyAdd BuddyAdd;
+        public OnBuddyRemove BuddyRemove;
+
         public void AddBuddy(User buddy)
         {
             /// \todo implement UserLocal.AddBuddy

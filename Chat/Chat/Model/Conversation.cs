@@ -20,8 +20,15 @@ namespace Chat.Model
     public class Conversation
     {
         public int Id;
-        public List<User> Users;
+        public bool Active;
+        public UserLocal Owner;
+        public List<UserRemote> Buddies;
         public List<Message> Messages;
+
+        public OnUserAdd UserAdd;
+        public OnUserRemove UserRemove;
+        public OnMessageAdd MessageAdd;
+        public OnChangeActive ChangeActive;
 
         public Conversation()
         {
