@@ -9,14 +9,12 @@ namespace Chat.Model
     {
         public int Id;
         public User Sender;
-        public String Text;
+        public string Text;
         public DateTime Time;
 
         public Message()
         {
-            /// \todo default init for Message
+            Time = DateTime.Now;
         }
-
-        // Message requires no functions as all values are public
     }
 }

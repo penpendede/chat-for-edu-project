@@ -10,10 +10,22 @@ using System.Windows.Forms;
 namespace Chat
 {
     public delegate void OnLoginSubmit(string userName, string password);
+    public delegate void OnNewUser(string userName, string password);
 
     public class LoginForm : Form
     {
-        public LoginForm()
+        private TableLayoutPanel tableLayoutPanel;
+        private ComboBox userNameComboBox;
+        private Label userNameLabel;
+        private Label passwordLabel;
+        private Button loginButton;
+        private TextBox passwordTextBox;
+        private Button newUserButton;
+
+        public OnLoginSubmit LoginSubmit;
+        public OnNewUser NewUser;
+
+        public LoginForm(List<string> knownUserNames)
         {
             this.tableLayoutPanel = new TableLayoutPanel();
             this.userNameComboBox = new ComboBox();
@@ -53,6 +65,7 @@ namespace Chat
             this.userNameComboBox.Name = "UserName";
             this.userNameComboBox.TabIndex = 0;
             this.userNameComboBox.Dock = DockStyle.Fill;
+            this.userNameComboBox.Items.AddRange(knownUserNames.ToArray());
             // 
             // label2
             // 
@@ -75,7 +88,7 @@ namespace Chat
             this.newUserButton.TabIndex = 4;
             this.newUserButton.Text = "Neuer Benutzer";
             this.newUserButton.UseVisualStyleBackColor = true;
-            //this.newUserButton.Click += onSubmitButtonClick;
+            this.newUserButton.Click += onNewUserButtonClick;
             //this.newUserButton.Dock = DockStyle.Right;
             this.newUserButton.Anchor = AnchorStyles.Right;
             // 
@@ -117,21 +130,19 @@ namespace Chat
             this.PerformLayout();
         }
 
-        private TableLayoutPanel tableLayoutPanel;
-        private ComboBox userNameComboBox;
-        private Label userNameLabel;
-        private Label passwordLabel;
-        private Button loginButton;
-        private TextBox passwordTextBox;
-        private Button newUserButton;
-
-        public OnLoginSubmit OnLoginSubmit;
+        private void onNewUserButtonClick(object obj, EventArgs args)
+        {
+            if (NewUser != null)
+            {
+                this.NewUser(this.userNameComboBox.Text, this.passwordTextBox.Text);
+            }
+        }
 
         private void onSubmitButtonClick(object obj, EventArgs args)
         {
-            if (OnLoginSubmit != null)
+            if (LoginSubmit != null)
             {
-                this.OnLoginSubmit(this.userNameComboBox.Text, this.passwordTextBox.Text);
+                this.LoginSubmit(this.userNameComboBox.Text, this.passwordTextBox.Text);
             }
         }
 

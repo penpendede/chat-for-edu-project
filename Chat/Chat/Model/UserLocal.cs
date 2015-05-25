@@ -1,43 +1,58 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 
 namespace Chat.Model
 {
-    /// \todo implement OnBuddyAdd
-    public delegate void OnBuddyAdd(UserLocal userLocal, UserRemote userRemote);
+    public delegate void UserLocalOnBuddyAdd(UserLocal userLocal, UserRemote userRemote);
 
-    /// \todo implement OnBuddyRemove
-    public delegate void OnBuddyRemove(UserLocal userLocal, UserRemote userRemote);
+    public delegate void UserLocalOnBuddyRemove(UserLocal userLocal, UserRemote userRemote);
 
     public class UserLocal : User
     {
-        private String PasswordSaltedHash;
+        private List<UserRemote> _buddies;
 
-        public List<UserRemote> Buddies;
-
-        public void AddBuddy(User buddy)
+        public ReadOnlyCollection<UserRemote> Buddies
         {
-            /// \todo implement UserLocal.AddBuddy
+            private set;
+            get;
         }
 
-        public void RemoveBuddy(User buddy)
-        {
-            /// \todo implement UserLocal.RemoveBuddy
+        public UserLocalOnBuddyAdd BuddyAdd;
+        public UserLocalOnBuddyRemove BuddyRemove;
+
+        public UserLocal() 
+            :base() 
+        { 
+            _buddies = new List<UserRemote>();
+            Buddies = _buddies.AsReadOnly();
         }
 
-        public Boolean VerifyPassword(String Password)
+        public void AddBuddy(UserRemote buddy)
         {
-            /// \todo implement UserLocal.VerifyPassword
-            return false;
+            _buddies.Add(buddy);
+            if (BuddyAdd != null)
+            {
+                BuddyAdd(this, buddy);
+            }
         }
 
-        public Boolean SetPassword(String oldPassword, String newPassword)
+        public void RemoveBuddy(UserRemote buddy)
         {
-            /// \todo implement UserLocal.SetPassword
-            return false;
+            _buddies.Remove(buddy);
+            foreach (Conversation conv in Conversations)
+            {
+                if (conv.Buddies.Contains(buddy))
+                {
+                    conv.RemoveBuddy(buddy);
+                }
+            }
+            if (BuddyRemove != null)
+            {
+                BuddyRemove(this, buddy);
+            }
         }
-         
     }
 }

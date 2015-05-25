@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -9,10 +10,12 @@ namespace Chat.View
 {
     public delegate void OnTextSubmit(string text);
 
-    public class ConversationTabPage : System.Windows.Forms.TabPage
+    public class ConversationTabPage : TabPage
     {
-        public ConversationTabPage()
+        public ConversationTabPage(Func<string, bool> measureLabelText)
         {
+            _userNames = new List<string>();
+            _measureLabelText = measureLabelText;
             InitializeComponent();
         }
 
@@ -20,7 +23,7 @@ namespace Chat.View
 
         private string formatMessage(string userName, string text, DateTime time)
         {
-            string timeStamp = time.ToString("[hh:ss] ");
+            string timeStamp = time.ToString("[hh:mm] ");
             string nameTag = String.Format("{0}: ", userName);
             return timeStamp + nameTag + text;
         }
@@ -33,18 +36,53 @@ namespace Chat.View
             this.messagesBox.Text += formatMessage(userName, text, time);
         }
 
+        private List<string> _userNames;
+        private Func<string, bool> _measureLabelText;
+
+        //private void _updateText()
+        //{
+        //    this.Text = _userNames[0];
+        //    if (_userNames.Count() > 1)
+        //    {
+        //        this.Text += " (+" + (_userNames.Count() - 1) + ")";
+        //    }
+        //}
+
+        private void _updateText()
+        {
+            string text = _userNames[0];
+            string add = "";
+            string elipse = "";
+            if (_userNames.Count() > 1)
+            {
+                add = " (+" + (_userNames.Count() - 1) + ")";
+            }
+            else
+            {
+                add = "";
+            }
+
+            while (!_measureLabelText(text + elipse + add) && text.Length > 0)
+            {
+                elipse = "...";
+                text = text.Substring(0, text.Length - 1);
+            }
+
+            this.Text = text + elipse + add;
+        }
+
         public void AddUser(string userName)
         {
-            if (this.Text != "")
-            {
-                this.Text += ", ";
-            }
-            this.Text += userName;
+            _userNames.Add(userName);
+            _updateText();
         }
 
         public void RemoveUser(string userName)
         {
-            Regex.Replace(this.Text, userName + "(, )?", "");
+            //string regExp = string.Format("(^{0}, )|((, )?{0})", userName);
+            //this.Text = Regex.Replace(this.Text, regExp, "");
+            _userNames.Remove(userName);
+            _updateText();
         }
 
         private void OnSendButtonClick(object obj, EventArgs args)
@@ -102,7 +140,7 @@ namespace Chat.View
             // 
             // messagesBox
             // 
-            this.messagesBox = new System.Windows.Forms.TextBox();
+            this.messagesBox = new TextBox();
             this.messagesBox.Multiline = true;
             this.messagesBox.Name = "tabControlTextBox2";
             this.messagesBox.Dock = DockStyle.Fill;
@@ -112,7 +150,7 @@ namespace Chat.View
             // 
             // inputBox
             //
-            this.inputBox = new System.Windows.Forms.TextBox();
+            this.inputBox = new TextBox();
             this.inputBox.Multiline = true;
             this.inputBox.Name = "tabControlTextBox1";
             this.inputBox.Dock = DockStyle.Fill;
@@ -123,7 +161,7 @@ namespace Chat.View
             // 
             // sendButton
             // 
-            this.sendButton = new System.Windows.Forms.Button();
+            this.sendButton = new Button();
             this.sendButton.Location = new System.Drawing.Point(537, 377);
             this.sendButton.Name = "tabControlButton2";
             this.sendButton.Size = new System.Drawing.Size(46, 41);
@@ -135,7 +173,7 @@ namespace Chat.View
 
             //this.Location = new System.Drawing.Point(4, 4);
             //this.Name = "tabPage1";
-            //this.Padding = new System.Windows.Forms.Padding(3);
+            //this.Padding = new Padding(3);
             //this.Size = new System.Drawing.Size(589, 425);
             this.UseVisualStyleBackColor = true;
 
@@ -143,8 +181,8 @@ namespace Chat.View
         }
 
         private TableLayoutPanel tableLayoutPanel;
-        private System.Windows.Forms.TextBox inputBox;
-        private System.Windows.Forms.TextBox messagesBox;
-        private System.Windows.Forms.Button sendButton;
+        private TextBox inputBox;
+        private TextBox messagesBox;
+        private Button sendButton;
     }
 }

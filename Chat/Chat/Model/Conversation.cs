@@ -1,51 +1,96 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 
 namespace Chat.Model
 {
-    /// \todo implement OnUserAdd
-    public delegate void OnUserAdd(Conversation conversation, User user);
+    public delegate void ConversationOnBuddyAdd(Conversation conversation, UserRemote buddy);
 
-    /// \todo implement OnUserRemove
-    public delegate void OnUserRemove(Conversation conversation, User user);
+    public delegate void ConversationOnBuddyRemove(Conversation conversation, UserRemote buddy);
 
-    /// \todo implement OnMessageAdd
-    public delegate void OnMessageAdd(Conversation conversation, User user);
+    public delegate void ConversationOnMessageAdd(Conversation conversation, Message message);
 
-    /// \todo implement OnChangeActive
-    public delegate void OnChangeActive(Conversation conversation, Boolean active);
+    public delegate void ConversationOnChangeActive(Conversation conversation, Boolean active);
 
     public class Conversation
     {
         public int Id;
-        public List<User> Users;
-        public List<Message> Messages;
+        public UserLocal Owner;
+        private List<User> _buddies;
+        private List<Message> _messages;
+
+        public ReadOnlyCollection<User> Buddies
+        {
+            private set;
+            get;
+        }
+        public ReadOnlyCollection<Message> Messages
+        {
+            private set;
+            get;
+        }
+
+        public bool Active
+        {
+            private set;
+            get;
+        }
+
+        public ConversationOnBuddyAdd BuddyAdd;
+        public ConversationOnBuddyRemove BuddyRemove;
+        public ConversationOnMessageAdd MessageAdd;
+        public ConversationOnChangeActive ChangeActive;
+
+        
 
         public Conversation()
         {
-            /// \todo default init for Conversation
+            _buddies = new List<User>();
+            _messages = new List<Message>();
+            Buddies = _buddies.AsReadOnly();
+            Messages = _messages.AsReadOnly();
+            Active = true;
         }
 
-        public void AddUser(User user)
+        public void AddBuddy(UserRemote buddy)
         {
-            /// \todo implement Conversation.AddUser
+            if (!_buddies.Contains(buddy))
+            {
+                _buddies.Add(buddy);
+                if (BuddyAdd != null)
+                {
+                    BuddyAdd(this, buddy);
+                }
+            }
         }
 
-        public void RemoveUser(User user)
+        public void RemoveBuddy(UserRemote buddy)
         {
-            /// \todo implement Conversation.RemoveUser
+            _buddies.Remove(buddy);
+            if (BuddyRemove != null)
+            {
+                BuddyRemove(this, buddy);
+            }
         }
 
         public void AddMessage(Message message)
         {
-            /// \todo implement Conversation.AddMessage
+            _messages.Add(message);
+            if (MessageAdd != null)
+            {
+                MessageAdd(this, message);
+            }
         }
 
         public void SetActive(Boolean active)
         {
-            /// \todo implement Conversation.SetActive
+            Active = active;
+            if (ChangeActive != null)
+            {
+                ChangeActive(this, active);
+            }
         }
     }
 }

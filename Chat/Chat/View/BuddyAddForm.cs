@@ -15,84 +15,84 @@ namespace Chat
     {
         public OnBuddyAddSubmit BuddyAddSubmit;
 
-        private TableLayoutPanel tableLayoutPanel;
-        private TextBox buddyName;
-        private TextBox IP;
-        private Label label1;
-        private Label label2;
-        private Button submit;
+        private TableLayoutPanel _tableLayoutPanel;
+        private TextBox _buddyNameTextBox;
+        private TextBox _ipTextBox;
+        private Label _buddyNameLabel;
+        private Label _ipLabel;
+        private Button _submitButton;
 
         public BuddyAddForm()
         {
-            this.tableLayoutPanel = new TableLayoutPanel();
-            this.buddyName = new TextBox();
-            this.IP = new TextBox();
-            this.label1 = new Label();
-            this.label2 = new Label();
-            this.submit = new Button();
+            this._tableLayoutPanel = new TableLayoutPanel();
+            this._buddyNameTextBox = new TextBox();
+            this._ipTextBox = new TextBox();
+            this._buddyNameLabel = new Label();
+            this._ipLabel = new Label();
+            this._submitButton = new Button();
             this.SuspendLayout();
 
             //
             // Panel
             //
 
-            this.tableLayoutPanel = new TableLayoutPanel();
-            this.tableLayoutPanel.Dock = DockStyle.Fill;
-            this.tableLayoutPanel.RowCount = 4;
-            this.tableLayoutPanel.ColumnCount = 1;
+            this._tableLayoutPanel = new TableLayoutPanel();
+            this._tableLayoutPanel.Dock = DockStyle.Fill;
+            this._tableLayoutPanel.RowCount = 4;
+            this._tableLayoutPanel.ColumnCount = 1;
 
-            this.tableLayoutPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
-            this.tableLayoutPanel.RowStyles.Add(new RowStyle(SizeType.Absolute, 24));
-            this.tableLayoutPanel.RowStyles.Add(new RowStyle(SizeType.Absolute, 24));
-            this.tableLayoutPanel.RowStyles.Add(new RowStyle(SizeType.Absolute, 24));
-            this.tableLayoutPanel.RowStyles.Add(new RowStyle(SizeType.Absolute, 24));
+            this._tableLayoutPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
+            this._tableLayoutPanel.RowStyles.Add(new RowStyle(SizeType.Absolute, 24));
+            this._tableLayoutPanel.RowStyles.Add(new RowStyle(SizeType.Absolute, 24));
+            this._tableLayoutPanel.RowStyles.Add(new RowStyle(SizeType.Absolute, 24));
+            this._tableLayoutPanel.RowStyles.Add(new RowStyle(SizeType.Absolute, 24));
 
-            this.Controls.Add(this.tableLayoutPanel);
+            this.Controls.Add(this._tableLayoutPanel);
 
             // 
             // BuddyName
             // 
-            this.buddyName.Name = "BuddyName";
-            this.buddyName.TabIndex = 0;
-            this.buddyName.Dock = DockStyle.Fill;
-            this.tableLayoutPanel.Controls.Add(this.buddyName, 0, 1);
+            this._buddyNameTextBox.Name = "BuddyName";
+            this._buddyNameTextBox.TabIndex = 0;
+            this._buddyNameTextBox.Dock = DockStyle.Fill;
+            this._tableLayoutPanel.Controls.Add(this._buddyNameTextBox, 0, 1);
             // 
             // IP
             // 
-            this.IP.Name = "IP";
-            this.IP.TabIndex = 1;
-            this.IP.Dock = DockStyle.Fill;
-            this.tableLayoutPanel.Controls.Add(this.IP, 0, 3);
+            this._ipTextBox.Name = "IP";
+            this._ipTextBox.TabIndex = 1;
+            this._ipTextBox.Dock = DockStyle.Fill;
+            this._tableLayoutPanel.Controls.Add(this._ipTextBox, 0, 3);
             // 
             // label1
             // 
-            this.label1.AutoSize = true;
-            this.label1.Name = "label1";
-            this.label1.TabIndex = 2;
-            this.label1.Text = "Name des Buddies";
-            this.label1.Dock = DockStyle.Fill;
-            this.tableLayoutPanel.Controls.Add(this.label1, 0, 0);
-            this.tableLayoutPanel.SetColumnSpan(this.label1, 2);
+            this._buddyNameLabel.AutoSize = true;
+            this._buddyNameLabel.Name = "label1";
+            this._buddyNameLabel.TabIndex = 2;
+            this._buddyNameLabel.Text = "Name des Buddies";
+            this._buddyNameLabel.Dock = DockStyle.Fill;
+            this._tableLayoutPanel.Controls.Add(this._buddyNameLabel, 0, 0);
+            this._tableLayoutPanel.SetColumnSpan(this._buddyNameLabel, 2);
             // 
             // label2
             // 
-            this.label2.AutoSize = true;
-            this.label2.Name = "label2";
-            this.label2.TabIndex = 3;
-            this.label2.Text = "IP des Buddies";
-            this.label2.Dock = DockStyle.Fill;
-            this.tableLayoutPanel.Controls.Add(this.label2, 0, 2);
-            this.tableLayoutPanel.SetColumnSpan(this.label2, 2);
+            this._ipLabel.AutoSize = true;
+            this._ipLabel.Name = "label2";
+            this._ipLabel.TabIndex = 3;
+            this._ipLabel.Text = "IP des Buddies";
+            this._ipLabel.Dock = DockStyle.Fill;
+            this._tableLayoutPanel.Controls.Add(this._ipLabel, 0, 2);
+            this._tableLayoutPanel.SetColumnSpan(this._ipLabel, 2);
             // 
             // Submit
             // 
-            this.submit.Name = "Submit";
-            this.submit.TabIndex = 4;
-            this.submit.Text = "Submit";
-            this.submit.UseVisualStyleBackColor = true;
-            this.submit.Dock = DockStyle.Fill;
-            this.submit.Click += (o, e) => { if (this.BuddyAddSubmit != null) { this.BuddyAddSubmit(this.buddyName.Text, this.IP.Text); } };
-            this.tableLayoutPanel.Controls.Add(this.submit, 0, 4);
+            this._submitButton.Name = "Submit";
+            this._submitButton.TabIndex = 4;
+            this._submitButton.Text = "Submit";
+            this._submitButton.UseVisualStyleBackColor = true;
+            this._submitButton.Dock = DockStyle.Fill;
+            this._submitButton.Click += (o, e) => { if (this.BuddyAddSubmit != null) { this.BuddyAddSubmit(this._buddyNameTextBox.Text, this._ipTextBox.Text); } };
+            this._tableLayoutPanel.Controls.Add(this._submitButton, 0, 4);
             // 
             // BuddyAddForm
             // 

@@ -28,31 +28,32 @@ namespace Chat.Model
             UserLocal user = new UserLocal()
             {
                 Id = 4,
-                Name = "You",
-                Buddies = new List<UserRemote>() { buddy1, buddy2, buddy3 }
+                Name = "You"
             };
+            user.AddBuddy(buddy1);
+            user.AddBuddy(buddy2);
+            user.AddBuddy(buddy3);
 
             Conversation conv1 = new Conversation()
             {
                 Id = 1,
-                Users = new List<User>() { user, buddy1, buddy3 }, // NOTE: does user needs to be included here?
-                Messages = new List<Message>() { 
-                    new Message() { Text = "Hi", Sender = buddy1, Time = new DateTime(2015, 2, 16, 12, 55, 12) },
-                    new Message() { Text = "muajsdjklagfrgh", Sender = buddy3, Time = new DateTime(2015, 2, 16, 13, 0, 0)
-                    }
-                }
+                Owner = user
             };
+            conv1.AddBuddy(buddy1);
+            conv1.AddBuddy(buddy3);
+            conv1.AddMessage(new Message() { Text = "Hi", Sender = buddy1, Time = new DateTime(2015, 2, 16, 12, 55, 12) });
+            conv1.AddMessage(new Message() { Text = "muajsdjklagfrgh", Sender = buddy3, Time = new DateTime(2015, 2, 16, 13, 0, 0) });
 
             Conversation conv2 = new Conversation()
             {
                 Id = 2,
-                Users = new List<User>() { user, buddy2 },
-                Messages = new List<Message>() {
-                    new Message() { Text = "Hi", Sender = buddy2, Time = DateTime.Now }
-                }
+                Owner = user
             };
+            conv2.AddBuddy(buddy2);
+            conv2.AddMessage(new Message() { Text = "Hi", Sender = buddy2, Time = DateTime.Now });
 
-            user.Conversations = new List<Conversation>() { conv1, conv2 };
+            user.AddConversation( conv1);
+            user.AddConversation( conv2 );
 
             return user;
         }

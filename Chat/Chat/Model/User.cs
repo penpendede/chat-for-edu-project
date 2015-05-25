@@ -1,27 +1,42 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 
 namespace Chat.Model
 {
-    /// \todo implement OnConversationAdd
-    public delegate void OnConversationAdd(User user, Conversation conversation);
+    public delegate void UserOnConversationAdd(User user, Conversation conversation);
 
     public class User
     {
         public int Id;
-        public String Name;
-        public List<Conversation> Conversations;
+        public string Name;
+
+        private List<Conversation> _conversations;
+
+        public ReadOnlyCollection<Conversation> Conversations
+        {
+            private set;
+            get;
+        }
+
+        public UserOnConversationAdd ConversationAdd;
 
         public User()
         {
-            /// \todo default init for User
+            _conversations = new List<Conversation>();
+            Conversations = _conversations.AsReadOnly();
         }
 
         public void AddConversation(Conversation conversation)
         {
-            /// \todo implement User.AddConversation
+            _conversations.Add(conversation);
+
+            if (ConversationAdd != null)
+            {
+                ConversationAdd(this, conversation);
+            }
         }
     }
 }

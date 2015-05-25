@@ -48,7 +48,9 @@
   <ItemGroup>
     <Compile Include="Controller\BuddyListController.cs" />
     <Compile Include="Controller\ConversationController.cs" />
+    <Compile Include="Controller\DatabaseController.cs" />
     <Compile Include="Controller\MessengerController.cs" />
+    <Compile Include="Controller\NetworkConnectionController.cs" />
     <Compile Include="Model\DummyData.cs" />
     <Compile Include="View\BuddyListGroupBox.cs">
       <SubType>Component</SubType>
@@ -62,9 +64,8 @@
     <Compile Include="View\ConversationTabPage.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="View\MessengerMainWindowForm.cs" />
-    <Compile Include="View\MessengerMainWindowForm.Designer.cs">
-      <DependentUpon>MessengerMainWindowForm.cs</DependentUpon>
+    <Compile Include="View\MessengerMainWindowForm.cs">
+      <SubType>Form</SubType>
     </Compile>
     <Compile Include="View\LoginForm.cs">
       <SubType>Form</SubType>
@@ -73,7 +74,7 @@
     <Compile Include="Model\Conversation.cs" />
     <Compile Include="Model\IRepositories.cs" />
     <Compile Include="Model\Message.cs" />
-    <Compile Include="Model\SQLiteMessageRepository.cs" />
+    <Compile Include="Model\MessageRepository.cs" />
     <Compile Include="Model\SQLiteUserLocalRepository.cs" />
     <Compile Include="Model\SQLiteUserRemoteRepository.cs" />
     <Compile Include="Model\User.cs" />
@@ -81,9 +82,6 @@
     <Compile Include="Model\UserRemote.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <EmbeddedResource Include="View\MessengerMainWindowForm.resx">
-      <DependentUpon>MessengerMainWindowForm.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>

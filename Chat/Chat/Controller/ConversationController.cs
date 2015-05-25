@@ -10,53 +10,81 @@ namespace Chat.Controller
 {
     public class ConversationController
     {
-        private UserLocal userLocal;
-        public Conversation Conversation;
-        public ConversationTabPage TabPage;
+        private UserLocal _userLocal;
+        private List<NetworkConnectionController> _networkConnectionControllers;
+        private ConversationTabControl _tabControl;
 
-        public ConversationController(UserLocal userLocal, Conversation conversation)
+        public Conversation Conversation
         {
-            this.userLocal = userLocal;
-            this.Conversation = conversation;
+            private set;
+            get;
+        }
 
-            // TODO: bind addMessage to model
-            // TODO: bind conversationOnUserAdd to model
-            // TODO: bind conversationOnUserRemove to model
+        public ConversationTabPage TabPage
+        {
+            private set;
+            get;
+        }
 
-            TabPage = new ConversationTabPage();
+        public ConversationController(UserLocal userLocal, Conversation conversation, ConversationTabControl tabControl)
+        {
+            _userLocal = userLocal;
+            Conversation = conversation;
+            _networkConnectionControllers = new List<NetworkConnectionController>();
+            _tabControl = tabControl;
 
-            foreach (User user in conversation.Users)
+            Conversation.MessageAdd += this._onConversationAddMessage;
+            Conversation.BuddyAdd += this._onConversationOnBuddyAdd;
+            Conversation.BuddyRemove += this._onConversationOnBuddyRemove;
+
+            TabPage = new ConversationTabPage(_tabControl.MeasureLabelText);
+            TabPage.OnTextSubmit += _tabPageOnTextSubmit;
+
+            _tabControl.AddTab(TabPage);
+
+            foreach (UserRemote buddy in conversation.Buddies)
             {
-                conversationOnUserAdd(user);
+                _onConversationOnBuddyAdd(Conversation, buddy);
             }
 
             foreach (Model.Message message in conversation.Messages)
             {
-                addMessage(message); 
-                // NOTE: It seems to be right to shorten most delegate names like this if they are doing generic tasks like this
-                // conversation.OnMessageAdd += this.addMessage; // seems quite understandable for me, too
+                _onConversationAddMessage(Conversation, message); 
             }
         }
 
-        private void addMessage(Model.Message message)
+
+        private void _onConversationAddMessage(Conversation conv, Model.Message message)
         {
             TabPage.AddMessage(message.Sender.Name, message.Text, message.Time);
         }
 
-        private void conversationOnUserAdd(User user)
+        private void _onConversationOnBuddyAdd(Conversation conv, UserRemote buddy)
         {
-            TabPage.AddUser(user.Name);
+            _networkConnectionControllers.Add(new NetworkConnectionController(_userLocal, conv, buddy));
+            TabPage.AddUser(buddy.Name);
         }
 
-        private void conversationOnUserRemove(User user)
+        private void _onConversationOnBuddyRemove(Conversation conv, UserRemote buddy)
         {
-            TabPage.RemoveUser(user.Name);
+            NetworkConnectionController networkConnectionController = _networkConnectionControllers.Find(n => n.UserRemote == buddy);
+            networkConnectionController.Dispose();
+            _networkConnectionControllers.Remove(networkConnectionController);
+            TabPage.RemoveUser(buddy.Name);
         }
 
-        private void tabPageOnTextSubmit(string messageText)
+        private void _tabPageOnTextSubmit(string messageText)
         {
-            // NOTE: Where does the id come to the model? Maybe the momment it is written into the database? Or should we ask the databaseController (repository) to create a new object?
-            Conversation.AddMessage(new Model.Message() { Text = messageText, Sender = this.userLocal, Time = DateTime.Now });
+            Conversation.AddMessage(new Model.Message() { Text = messageText, Sender = this._userLocal });
+        }
+
+        public void Dispose()
+        {
+            _tabControl.RemoveTab(TabPage);
+            Conversation.MessageAdd -= this._onConversationAddMessage;
+            Conversation.BuddyAdd -= this._onConversationOnBuddyAdd;
+            Conversation.BuddyRemove -= this._onConversationOnBuddyRemove;
+            TabPage.OnTextSubmit -= _tabPageOnTextSubmit;
         }
     }
 }
