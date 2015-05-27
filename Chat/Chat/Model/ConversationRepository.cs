@@ -8,9 +8,15 @@ namespace Chat.Model
 {
     public class ConversationRepository : IRepository<Conversation>
     {
-        private DatabaseController dbController;
+        private DatabaseController _dbController;
 
-        private List<Conversation> loaded;
+        private List<Conversation> _loaded;
+
+        public ConversationRepository(DatabaseController dbController)
+        {
+            _dbController = dbController;
+            _loaded = new List<Conversation>();
+        }
 
         // check if conversation is contained in database
         public bool Contains(Conversation obj)
@@ -26,12 +32,12 @@ namespace Chat.Model
                 return false;
             }
             // ID in loaded obj -> contained
-            if (loaded.Where(o => o.Id == obj.Id).Count() > 0)
+            if (_loaded.Where(o => o.Id == obj.Id).Count() > 0)
             {
                 return true;
             }
             // ID found -> contained
-            if (dbController.Database.ExecuteSQLQuery("SELECT COUNT(id) FROM conversation WHERE id = " + obj.Id + ";")[0][0] != "0")
+            if (_dbController.Database.ExecuteSQLQuery("SELECT COUNT(id) FROM conversation WHERE id = " + obj.Id + ";")[0][0] != "0")
             {
                 return true;
             }
@@ -58,44 +64,40 @@ namespace Chat.Model
         public Conversation GetById(int id)
         {
             // if already fetched serve from memory
-            if (loaded.Where(c => c.Id == id).Count() > 0)
+            if (_loaded.Where(c => c.Id == id).Count() > 0)
             {
-                return loaded.Where(c => c.Id == id).First();
+                return _loaded.Where(c => c.Id == id).First();
             }
 
-            List<string[]> result = dbController.Database.ExecuteSQLQuery("SELECT active, ownerid FROM conversation WHERE id = " + id + ";");
+            List<string[]> result = _dbController.Database.ExecuteSQLQuery("SELECT active, ownerid FROM conversation WHERE id = " + id + ";");
 
             Conversation conversation = new Conversation()
             {
                 Id = id,
-                Owner = dbController.UserLocalRepo.GetById(Int32.Parse(result[0][1]))
+                Owner = _dbController.UserLocalRepo.GetById(Int32.Parse(result[0][1]))
             };
 
             conversation.SetActive(Boolean.Parse(result[0][0]));
 
+            // store reference
+            _loaded.Add(conversation);
 
-            List<string[]> resultBuddies = dbController.Database.ExecuteSQLQuery("SELECT userid FROM conversation_has_user WHERE conversationid = " + id + ";");
+            List<string[]> resultBuddies = _dbController.Database.ExecuteSQLQuery("SELECT userid FROM conversation_has_user WHERE conversationid = " + id + ";");
 
             foreach (string[] row in resultBuddies)
             {
-                conversation.AddBuddy(dbController.UserRemoteRepo.GetById(Int32.Parse(row[0])));
+                conversation.AddBuddy(_dbController.UserRemoteRepo.GetById(Int32.Parse(row[0])));
             }
 
-            List<string[]> resultMessages = dbController.Database.ExecuteSQLQuery("SELECT id FROM message WHERE conversationid = " + id + ";");
+            List<string[]> resultMessages = _dbController.Database.ExecuteSQLQuery("SELECT id FROM message WHERE conversationid = " + id + ";");
 
             foreach (string[] row in resultMessages)
             {
-                conversation.AddMessage(dbController.MessageRepo.GetById(Int32.Parse(row[0])));
+                conversation.AddMessage(_dbController.MessageRepo.GetById(Int32.Parse(row[0])));
             }
 
             // store future changes
-            conversation.BuddyAdd += (conv, bud) => Update(conv);
-            conversation.BuddyRemove += (conv, bud) => Update(conv);
-            conversation.ChangeActive += (conv, act) => Update(conv);
-            conversation.MessageAdd += (conv, mes) => dbController.MessageRepo.Insert(mes);
-
-            // store
-            loaded.Add(conversation);
+            _bindAutoSaveDelegates(conversation);
 
             return conversation;
         }
@@ -104,17 +106,22 @@ namespace Chat.Model
         public void Insert(Conversation obj)
         {
             // Add conversation to conversation table
-            dbController.Database.ExecuteSQLQuery("INSERT INTO conversation (id, active) VALUES (" + obj.Id + ", " + obj.Active + ");");
+            _dbController.Database.ExecuteSQLQuery("INSERT INTO conversation (active, ownerid) VALUES (" + (obj.Active? 1:0) + ", " + obj.Owner.Id + ");");
+
+            // get id
+            obj.Id = Int32.Parse(_dbController.Database.LastInsertedId("conversation"));
 
             // add all conversationId/userID pairs to conversation_has_user
             foreach (UserRemote buddy in obj.Buddies)
             {
-                dbController.Database.ExecuteSQLQuery("INSERT INTO conversation_has_user (conversationid, userid) VALUES (" + obj.Id + ", " + buddy.Id + ");");
+                _dbController.Database.ExecuteSQLQuery("INSERT INTO conversation_has_user (conversationid, userid) VALUES (" + obj.Id + ", " + buddy.Id + ");");
             }
-            dbController.Database.ExecuteSQLQuery("INSERT INTO conversation_has_user (conversationid, userid) VALUES (" + obj.Id + ", " + obj.Owner.Id + ");");
+            //_dbController.Database.ExecuteSQLQuery("INSERT INTO conversation_has_user (conversationid, userid) VALUES (" + obj.Id + ", " + obj.Owner.Id + ");");
 
-            // todo: set id
-            // todo: store
+            // store
+            _loaded.Add(obj);
+
+            _bindAutoSaveDelegates(obj);
         }
 
         // Remove conversation: Obtain conversation's ID, then remove by ID
@@ -123,6 +130,7 @@ namespace Chat.Model
             if (obj != null)
             {
                 RemoveById(obj.Id);
+                _loaded.Remove(obj);
             }
         }
 
@@ -130,9 +138,9 @@ namespace Chat.Model
         public void RemoveById(int id)
         {
             // remove from conversation_has_user
-            dbController.Database.ExecuteSQLQuery("DELETE FROM conversation_has_user WHERE conversationid = " + id + ";");
+            _dbController.Database.ExecuteSQLQuery("DELETE FROM conversation_has_user WHERE conversationid = " + id + ";");
             // remove conversation itself
-            dbController.Database.ExecuteSQLQuery("DELETE FROM conversation WHERE id = " + id + ";");
+            _dbController.Database.ExecuteSQLQuery("DELETE FROM conversation WHERE id = " + id + ";");
         }
 
         // update a single conversation
@@ -141,13 +149,13 @@ namespace Chat.Model
             if (obj != null)
             {
                 // update activity 
-                dbController.Database.ExecuteSQLQuery("UPDATE conversation SET active = " + obj.Active + " WHERE id = " + obj.Id + ";");
+                _dbController.Database.ExecuteSQLQuery("UPDATE conversation SET active = " + (obj.Active? 1: 0) + " WHERE id = " + obj.Id + ";");
 
                 // rebuild buddy list ()
-                dbController.Database.ExecuteSQLQuery("DELETE FROM conversation_has_user WHERE conversationid = " + obj.Id + ";");
+                _dbController.Database.ExecuteSQLQuery("DELETE FROM conversation_has_user WHERE conversationid = " + obj.Id + ";");
                 foreach (UserRemote buddy in obj.Buddies)
                 {
-                    dbController.Database.ExecuteSQLQuery("INSERT INTO conversation_has_user (conversationid, userid) VALUES (" + obj.Id + ", " + buddy.Id + ");");
+                    _dbController.Database.ExecuteSQLQuery("INSERT INTO conversation_has_user (conversationid, userid) VALUES (" + obj.Id + ", " + buddy.Id + ");");
                 }
             }
         }
@@ -163,6 +171,14 @@ namespace Chat.Model
             {
                 Insert(obj);
             }
+        }
+
+        private void _bindAutoSaveDelegates(Conversation obj)
+        {
+            obj.BuddyAdd += (conv, bud) => Update(conv);
+            obj.BuddyRemove += (conv, bud) => Update(conv);
+            obj.ChangeActive += (conv, act) => Update(conv);
+            obj.MessageAdd += (conv, mes) => _dbController.MessageRepo.Insert(mes);
         }
     }
 }

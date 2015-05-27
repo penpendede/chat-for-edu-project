@@ -89,7 +89,7 @@ namespace Chat.Controller
 
         private void onBuddyAddSubmit(string userName, string IP)
         {
-            userLocal.AddBuddy(new UserRemote() { Name = userName, IP = IP });
+            userLocal.AddBuddy(new UserRemote() { Name = userName, IP = IP, BuddyOf = userLocal });
             buddyAddForm.Close();
         }
 

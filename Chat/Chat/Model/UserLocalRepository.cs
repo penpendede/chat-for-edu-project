@@ -6,15 +6,77 @@ using System.Text;
 
 namespace Chat.Model
 {
+    public class UserNameNotFoundException : Exception
+    {
+        public string UserName;
+
+        public UserNameNotFoundException(string userName) 
+            :base(string.Format("Username {0} not found!", userName)) 
+        {
+            UserName = userName;
+        }
+    }
+
+    public class WrongPasswordException : Exception
+    {
+        public string UserName;
+
+        public WrongPasswordException(string userName)
+            : base(string.Format("Wrong password for username {0}!", userName)) 
+        {
+            UserName = userName;
+        }
+    }
+
+    public class NewUserNameAlreadyExists : Exception
+    {
+        public string UserName;
+
+        public NewUserNameAlreadyExists(string userName)
+            : base(string.Format("The username {0} already exists!", userName))
+        {
+            UserName = userName;
+        }
+    }
+
     public class UserLocalRepository : IRepository<UserLocal>
     {
-        private DatabaseController dbController;
+        private DatabaseController _dbController;
 
-        private List<UserLocal> loaded;
+        private List<UserLocal> _loaded;
 
-        public void Create()
+        public UserLocalRepository(DatabaseController dbController)
         {
+            _dbController = dbController;
+            _loaded = new List<UserLocal>();
         }
+
+
+
+        public void VerifyPassword(string userName, string password)
+        {
+            if (!GetAllUserNames().Contains(userName))
+            {
+                throw new UserNameNotFoundException(userName);
+            }
+
+            #warning password is not salted yet
+
+            if (Int32.Parse(_dbController.Database.ExecuteSQLQuery(string.Format("SELECT COUNT(*) FROM user WHERE name='{0}' AND passwordsaltedhash='{1}';", userName, password))[0][0]) < 1)
+            {
+                throw new WrongPasswordException(userName);
+            }
+        }
+
+        public void SetNewPassword(string userName, string oldPassword, string newPassword)
+        {
+            VerifyPassword(userName, oldPassword);
+
+            // only reached if verifyPassword does not throw an error
+
+            _dbController.Database.ExecuteSQLQuery(string.Format("UPDATE user SET passwordsaltedhash='{0}' WHERE name='{1}';", newPassword, _dbController.Database.Escape(userName)));
+        }
+
         public bool Contains(UserLocal obj)
         {
             // empty object -> not contained
@@ -28,36 +90,48 @@ namespace Chat.Model
                 return false;
             }
             // ID in loaded obj -> contained
-            if (loaded.Where(o => o.Id == obj.Id).Count() > 0)
+            if (_loaded.Where(o => o.Id == obj.Id).Count() > 0)
             {
                 return true;
             }
             // ID found -> contained
-            if (dbController.Database.ExecuteSQLQuery("SELECT COUNT(id) FROM user WHERE id = " + obj.Id + ";")[0][0] != "0")
+            if (_dbController.Database.ExecuteSQLQuery("SELECT COUNT(id) FROM user WHERE id = " + obj.Id + ";")[0][0] != "0")
             {
                 return true;
             }
             // default: not contained
             return false;
         }
-        public UserLocal GetByName(String userName)
+
+        public List<string> GetAllUserNames()
+        {
+            return _dbController.Database.ExecuteSQLQuery("SELECT name FROM user WHERE islocal = 1;").Select(s => s[0]).ToList();
+        }
+
+        public UserLocal GetByName(string userName)
         {
             if (userName != null)
             {
-                List<string[]> result = dbController.Database.ExecuteSQLQuery("SELECT id FROM user WHERE name = '" + userName + "';");
+                List<string[]> result = _dbController.Database.ExecuteSQLQuery("SELECT id FROM user WHERE name='" + userName + "';");
                 return GetById(Int32.Parse(result[0][0]));
             }
             return null;
         }
+
+        public bool IsLocalById(int id)
+        {
+            return Int32.Parse(_dbController.Database.ExecuteSQLQuery("SELECT islocal FROM user WHERE id=" + id + ";")[0][0]) > 0;
+        }
+
         public UserLocal GetById(int id)
         {
             // if already fetched serve from memory
-            if (loaded.Where(c => c.Id == id).Count() > 0)
+            if (_loaded.Where(c => c.Id == id).Count() > 0)
             {
-                return loaded.Where(c => c.Id == id).First();
+                return _loaded.Where(c => c.Id == id).First();
             }
 
-            List<string[]> resultLocalUser = dbController.Database.ExecuteSQLQuery("SELECT name, passwordsaltedhash FROM message WHERE id = " + id + " AND islocal = true;");
+            List<string[]> resultLocalUser = _dbController.Database.ExecuteSQLQuery("SELECT name FROM user WHERE id = " + id + ";");
 
             UserLocal userLocal = new UserLocal()
             {
@@ -66,79 +140,91 @@ namespace Chat.Model
                 //PasswordSaltedHash = resultLocalUser[0][2] cannot be set like this
             };
 
-            List<string[]> buddyIds = dbController.Database.ExecuteSQLQuery("SELECT buddyid FROM user_has_buddies WHERE userid = " + id + ";");
+            // store reference
+            _loaded.Add(userLocal);
+
+            List<string[]> buddyIds = _dbController.Database.ExecuteSQLQuery("SELECT buddyid FROM user_has_buddy WHERE userid = " + id + ";");
 
             foreach (string[] row in buddyIds)
             {
-                userLocal.AddBuddy(dbController.UserRemoteRepo.GetById(Int32.Parse(row[0])));
+                userLocal.AddBuddy(_dbController.UserRemoteRepo.GetById(Int32.Parse(row[0])));
             }
 
-            List<string[]> conversationIds = dbController.Database.ExecuteSQLQuery("SELECT conversationid from conversation_has_user WHERE userid = " + id + ";");
+            List<string[]> conversationIds = _dbController.Database.ExecuteSQLQuery("SELECT conversationid from conversation_has_user WHERE userid = " + id + ";");
 
             foreach (string[] row in conversationIds) {
-                userLocal.AddConversation(dbController.ConversationRepo.GetById(Int32.Parse(row[0])));
+                userLocal.AddConversation(_dbController.ConversationRepo.GetById(Int32.Parse(row[0])));
             }
 
             // store future changes
-
-            userLocal.BuddyAdd += (user, bud) => dbController.UserRemoteRepo.Insert(bud);
-            userLocal.BuddyRemove += (user, bud) => dbController.UserRemoteRepo.Remove(bud);
-            userLocal.ConversationAdd += (user, conv) => dbController.ConversationRepo.Insert(conv);
-
-            // store
-            loaded.Add(userLocal);
-
+            _bindAutoSaveDelegates(userLocal);
+            
             return userLocal;
         }
+
         public void Insert(UserLocal obj)
         {
-            dbController.Database.ExecuteSQLQuery("INSERT INTO user (name, islocal, passwordsaltedhash) VALUES " +
-                "(" + obj.Name + ", TRUE, '');");
+            if (GetAllUserNames().Contains(obj.Name))
+            {
+                throw new NewUserNameAlreadyExists(obj.Name);
+            }
 
-            // todo: set id
-            // todo: store
+            _dbController.Database.ExecuteSQLQuery("INSERT INTO user (name, islocal, passwordsaltedhash) VALUES " +
+                "('" + _dbController.Database.Escape(obj.Name) + "', 1, '');");
+
+            // set id
+            obj.Id = Int32.Parse(_dbController.Database.LastInsertedId("user"));
 
             // add all conversationId/userID pairs to conversation_has_user
             foreach (UserRemote buddy in obj.Buddies)
             {
-                dbController.Database.ExecuteSQLQuery("INSERT INTO user_has_buddy (userid, buddyid) VALUES (" + obj.Id + ", " + buddy.Id + ");");
+                _dbController.Database.ExecuteSQLQuery("INSERT INTO user_has_buddy (userid, buddyid) VALUES (" + obj.Id + ", " + buddy.Id + ");");
             }
 
             foreach (Conversation conversation in obj.Conversations)
             {
-                dbController.Database.ExecuteSQLQuery("INSERT INTO conversation_has_user (conversationid, userid) VALUES (" + conversation.Id + ", " + obj.Id + ");");
+                _dbController.Database.ExecuteSQLQuery("INSERT INTO conversation_has_user (conversationid, userid) VALUES (" + conversation.Id + ", " + obj.Id + ");");
             }
+
+            // store
+            _loaded.Add(obj);
+
+            _bindAutoSaveDelegates(obj);
         }
+
         public void Remove(UserLocal obj)
         {
             RemoveById(obj.Id);
+            _loaded.Remove(obj);
         }
+
         public void RemoveById(int id)
         {
-            dbController.Database.ExecuteSQLQuery("DELETE FROM user_has_buddy WHERE userid = " + id + ";");
+            _dbController.Database.ExecuteSQLQuery("DELETE FROM user_has_buddy WHERE userid = " + id + ";");
             //dbController.Database.ExecuteSQLQuery("DELETE FROM user_has_buddy WHERE buddyid = " + id + ";"); // no - buddies are always userRemote
-            dbController.Database.ExecuteSQLQuery("DELETE FROM conversation_has_user WHERE userid = " + id + ";");
-            dbController.Database.ExecuteSQLQuery("DELETE FROM user where id = " + id + ";");
+            _dbController.Database.ExecuteSQLQuery("DELETE FROM conversation_has_user WHERE userid = " + id + ";");
+            _dbController.Database.ExecuteSQLQuery("DELETE FROM user where id = " + id + ";");
         }
+
         public void Update(UserLocal obj)
         {
-            if (obj != null) // find ich nicht so gut, das ist eher Fehlerunterdrückung, als wirklich hilfreich, oder?
+            if (obj != null)
             {
                 // update activity 
-                dbController.Database.ExecuteSQLQuery("UPDATE user " + 
-                    "SET name = '" + obj.Name + "', SET passwordsaltedhash = '' WHERE id = " + obj.Id + ";");
+                _dbController.Database.ExecuteSQLQuery("UPDATE user " + 
+                    "SET name = '" + _dbController.Database.Escape(obj.Name) + "', SET passwordsaltedhash = '' WHERE id = " + obj.Id + ";");
 
                 // rebuild buddy list ()
-                dbController.Database.ExecuteSQLQuery("DELETE FROM user_has_buddy WHERE userid = " + obj.Id + ";");
+                _dbController.Database.ExecuteSQLQuery("DELETE FROM user_has_buddy WHERE userid = " + obj.Id + ";");
                 foreach (UserRemote buddy in obj.Buddies)
                 {
-                    dbController.Database.ExecuteSQLQuery("INSERT INTO user_has_budy (userid, buddyid) VALUES (" + obj.Id + ", " + buddy.Id + ");");
+                    _dbController.Database.ExecuteSQLQuery("INSERT INTO user_has_budy (userid, buddyid) VALUES (" + obj.Id + ", " + buddy.Id + ");");
                 }
 
-                dbController.Database.ExecuteSQLQuery("DELETE FROM conversation_has_user WHERE userid = " + obj.Id + ";");
+                _dbController.Database.ExecuteSQLQuery("DELETE FROM conversation_has_user WHERE userid = " + obj.Id + ";");
                 foreach (Conversation conversation in obj.Conversations)
                 {
-                    dbController.Database.ExecuteSQLQuery("INSERT INTO conversation_has_user (conversationid, userid) VALUES " +
+                    _dbController.Database.ExecuteSQLQuery("INSERT INTO conversation_has_user (conversationid, userid) VALUES " +
                         "(" + conversation.Id + ", " + obj.Id + ");");
                 }
             }
@@ -155,5 +241,11 @@ namespace Chat.Model
             }
         }
 
+        private void _bindAutoSaveDelegates(UserLocal obj)
+        {
+            obj.BuddyAdd += (user, bud) => _dbController.UserRemoteRepo.Insert(bud);
+            obj.BuddyRemove += (user, bud) => _dbController.UserRemoteRepo.Remove(bud);
+            obj.ConversationAdd += (user, conv) => _dbController.ConversationRepo.Insert(conv);
+        }
     }
 }

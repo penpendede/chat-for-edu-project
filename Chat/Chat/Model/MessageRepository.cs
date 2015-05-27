@@ -8,13 +8,16 @@ namespace Chat.Model
 {
     public class MessageRepository : IRepository<Message>
     {
-        private DatabaseController dbController;
+        private DatabaseController _dbController;
 
-        private List<Message> loaded;
+        private List<Message> _loaded;
 
-        public void Create()
+        public MessageRepository(DatabaseController dbController)
         {
+            _dbController = dbController;
+            _loaded = new List<Message>();
         }
+
         public bool Contains(Message obj)
         {
             // empty object -> not contained
@@ -28,12 +31,12 @@ namespace Chat.Model
                 return false;
             }
             // ID in loaded obj -> contained
-            if (loaded.Where(o => o.Id == obj.Id).Count() > 0) 
+            if (_loaded.Where(o => o.Id == obj.Id).Count() > 0) 
             {
                 return true;
             }
             // ID found -> contained
-            if (dbController.Database.ExecuteSQLQuery("SELECT COUNT(Id) FROM message WHERE id = " + obj.Id + ";")[0][0] != "0")
+            if (_dbController.Database.ExecuteSQLQuery("SELECT COUNT(Id) FROM message WHERE id = " + obj.Id + ";")[0][0] != "0")
             {
                 return true;
             }
@@ -59,12 +62,12 @@ namespace Chat.Model
         public Message GetById(int id)
         {
             // if already fetched serve from memory
-            if (loaded.Where(c => c.Id == id).Count() > 0)
+            if (_loaded.Where(c => c.Id == id).Count() > 0)
             {
-                return loaded.Where(c => c.Id == id).First();
+                return _loaded.Where(c => c.Id == id).First();
             }
 
-            List<string[]> resultMessage = dbController.Database.ExecuteSQLQuery("SELECT senderid, conversationid, text, time FROM message WHERE id = " + id + ";");
+            List<string[]> resultMessage = _dbController.Database.ExecuteSQLQuery("SELECT senderid, conversationid, text, time FROM message WHERE id = " + id + ";");
 
             int senderId = Int32.Parse(resultMessage[0][0]);
             int conversationId = Int32.Parse(resultMessage[0][1]);
@@ -72,25 +75,36 @@ namespace Chat.Model
             Message message = new Message()
             {
                 Id = id,
-                Sender = dbController.UserRemoteRepo.GetById(senderId),
-                Conversation = dbController.ConversationRepo.GetById(conversationId),
                 Text = resultMessage[0][1],
-                Time = DateTime.Parse(resultMessage[0][2])
+                Time = DateTime.Parse(resultMessage[0][3])
             };
 
-            // store
-            loaded.Add(message);
+            // store reference
+            _loaded.Add(message);
+
+            if (_dbController.UserLocalRepo.IsLocalById(senderId)) {
+                message.Sender = _dbController.UserLocalRepo.GetById(senderId);
+            } else {
+                message.Sender = _dbController.UserRemoteRepo.GetById(senderId);
+            }
+
+            message.Conversation = _dbController.ConversationRepo.GetById(conversationId);
+
+            
 
             return message;
         }
 
         public void Insert(Message obj)
         {
-            dbController.Database.ExecuteSQLQuery("INSERT INTO message (Id, senderid, conversationid, text, time) VALUES (" +
-                obj.Id + ", " + obj.Sender.Id + ", " + obj.Conversation.Id + ", " + obj.Text + ", " + obj.Time + ");");
+            _dbController.Database.ExecuteSQLQuery("INSERT INTO message (senderid, conversationid, text, time) VALUES (" +
+                obj.Sender.Id + ", " + obj.Conversation.Id + ", '" + _dbController.Database.Escape(obj.Text) + "', '" + _dbController.Database.FormatDateTime(obj.Time) + "');");
 
-            // todo: set id
-            // todo: store
+            // set id
+            obj.Id = Int32.Parse(_dbController.Database.LastInsertedId("message"));
+
+            // store
+            _loaded.Add(obj);
         }
 
         public void Remove(Message obj)
@@ -98,12 +112,13 @@ namespace Chat.Model
             if (obj != null)
             {
                 RemoveById(obj.Id);
+                _loaded.Remove(obj);
             }
         }
 
         public void RemoveById(int id)
         {
-            dbController.Database.ExecuteSQLQuery("DELETE FROM message WHERE id = " + id + ";");
+            _dbController.Database.ExecuteSQLQuery("DELETE FROM message WHERE id = " + id + ";");
         }
 
         public void Update(Message obj)
@@ -111,11 +126,11 @@ namespace Chat.Model
             if (obj != null)
             {
                 // update activity 
-                dbController.Database.ExecuteSQLQuery("UPDATE message"+
+                _dbController.Database.ExecuteSQLQuery("UPDATE message"+
                     " SET senderid = " + obj.Sender.Id +
                     "SET conversationid = " +  obj.Conversation.Id +
-                    " SET text = '" + obj.Text +
-                    "', SET time = '" +  obj.Time + 
+                    " SET text = '" + _dbController.Database.Escape(obj.Text) +
+                    "', SET time = '" +  _dbController.Database.FormatDateTime(obj.Time) + 
                     "' WHERE conversationid = " + obj.Id + ";");
             }
         }

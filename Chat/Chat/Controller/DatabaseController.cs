@@ -6,109 +6,60 @@ using System.Text;
 
 namespace Chat.Controller
 {
-    public class UserNameNotFoundException : Exception
-    {
-        public string UserName;
 
-        public UserNameNotFoundException(string userName) 
-            :base(string.Format("Username {0} not found!", userName)) 
-        {
-            UserName = userName;
-        }
-    }
-
-    public class WrongPasswordException : Exception
-    {
-        public string UserName;
-
-        public WrongPasswordException(string userName)
-            : base(string.Format("Wrong password for username {0}!", userName)) 
-        {
-            UserName = userName;
-        }
-    }
-
-    public class NewUserNameAlreadyExists : Exception
-    {
-        public string UserName;
-
-        public NewUserNameAlreadyExists(string userName)
-            : base(string.Format("The username {0} already exists!", userName))
-        {
-            UserName = userName;
-        }
-    }
 
     public class DatabaseController
     {
         public Database Database;
         
         public ConversationRepository ConversationRepo;
-        
+
+        public UserLocalRepository UserLocalRepo;
+        public UserRemoteRepository UserRemoteRepo;
+        public MessageRepository MessageRepo;
+
+        public DatabaseController()
+        {
+            Database = new SQLiteDatabase();
+
+            ConversationRepo = new ConversationRepository(this);
+            UserLocalRepo = new UserLocalRepository(this);
+            UserRemoteRepo = new UserRemoteRepository(this);
+            MessageRepo = new MessageRepository(this);
+
+            CreateDatabase();
+        }
+
         public void CreateDatabase() {
-            string createTableMessage = "CREATE TABLE message ("
-                + "id integer unsigned primary_key, "
-                + "senderid integer unsigned foreign_key(User), "
-                + "conversationid integer unsigned foreign_key(conversation), "
+            string createTableMessage = "CREATE TABLE IF NOT EXISTS message ("
+                + "id integer primary key auto_increment, "
+                + "senderid integer references user(id), "
+                + "conversationid integer references conversation(id), "
                 + "text varchar(2046), "
                 + "time datetime);";
-            string createTableConversation = "CREATE TABLE conversation ("
-                + "id integer unsigned primary_key, "
+            string createTableConversation = "CREATE TABLE IF NOT EXISTS conversation ("
+                + "id integer primary key auto_increment, "
+                + "ownerid integer references user(id), "
                 + "active boolean)";
-            string createTableUser = "CREATE TABLE user ("
-                + "id integer unsigned primary_key, "
+            string createTableUser = "CREATE TABLE IF NOT EXISTS user ("
+                + "id integer primary key auto_increment, "
                 + "name varchar(32), "
-                + "islocal boolean, "
+                + "islocal tinyint(1), "
                 + "passwordsaltedhash varchar(42), "
                 + "ip varchar(40));";
-            string createTableUserHasBuddy = "CREATE TABLE user_has_buddy ("
-                + "userid integer unsigned foreign_key(user), "
-                + "buddyid integer unsigned foreign_key(user));";
-            string createTableConversationHasUser = "CREATE TABLE conversation_has_user ("
-                + "conversationid integer unsigned foreign_key(conversation), "
-                + "userid integer unsigned foreign_key(user));";
+            string createTableUserHasBuddy = "CREATE TABLE IF NOT EXISTS user_has_buddy ("
+                + "userid integer references user(id), "
+                + "buddyid integer references user(id));";
+            string createTableConversationHasUser = "CREATE TABLE IF NOT EXISTS conversation_has_user ("
+                + "conversationid integer references conversation(id), "
+                + "userid integer references user(id));";
 
-            //this.db.ExecuteSQLQuery(createTableUser);
-            //this.db.ExecuteSQLQuery(createTableUserHasBuddy);
-            //this.db.ExecuteSQLQuery(createTableConversation);
-            //this.db.ExecuteSQLQuery(createTableConversationHasUser);
-            //this.db.ExecuteSQLQuery(createTableMessage);
+            Database.ExecuteSQLQuery(createTableUser);
+            Database.ExecuteSQLQuery(createTableUserHasBuddy);
+            Database.ExecuteSQLQuery(createTableConversation);
+            Database.ExecuteSQLQuery(createTableConversationHasUser);
+            Database.ExecuteSQLQuery(createTableMessage);
         }
-
-        public List<string> GetLocalUserNames()
-        {
-            #warning GetLocalUserNames is not implemented yet
-            return new List<string>() { "UserA", "UserB" };
-        }
-
-        public UserLocal LoadModelFor(string userName, string password)
-        {
-            #warning LoadModelFor is using dummydata
-            if (userName == "UserA")
-            {
-                throw new UserNameNotFoundException(userName);
-            }
-            if (userName == "UserB")
-            {
-                throw new WrongPasswordException(userName);
-            }
-            return DummyData.CreateUserLocalTest1();
-        }
-
-        public UserLocal CreateNewUser(string userName, string password)
-        {
-            if (GetLocalUserNames().Contains(userName))
-            {
-                throw new NewUserNameAlreadyExists(userName);
-            }
-            #warning New user is not written to database
-           
-            UserLocal newUser = new UserLocal() { Name = userName };
-
-            return newUser;
-        }
-        public IBaseRepository<UserLocal> UserLocalRepo;
-        public IBaseRepository<UserRemote> UserRemoteRepo;
-        public IBaseRepository<Message> MessageRepo;
+        
     }
 }

@@ -8,9 +8,15 @@ namespace Chat.Model
 {
     public class UserRemoteRepository : IRepository<UserRemote>
     {
-        private DatabaseController dbController;
+        private DatabaseController _dbController;
 
-        private List<UserRemote> loaded;
+        private List<UserRemote> _loaded;
+
+        public UserRemoteRepository(DatabaseController dbController)
+        {
+            _dbController = dbController;
+            _loaded = new List<UserRemote>();
+        }
 
         public bool Contains(UserRemote obj)
         {
@@ -25,12 +31,12 @@ namespace Chat.Model
                 return false;
             }
             // ID in loaded obj -> contained
-            if (loaded.Where(o => o.Id == obj.Id).Count() > 0)
+            if (_loaded.Where(o => o.Id == obj.Id).Count() > 0)
             {
                 return true;
             }
             // ID found -> contained
-            if (dbController.Database.ExecuteSQLQuery("SELECT COUNT(id) FROM user WHERE id = " + obj.Id + ";")[0][0] != "0")
+            if (_dbController.Database.ExecuteSQLQuery("SELECT COUNT(id) FROM user WHERE id = " + obj.Id + ";")[0][0] != "0")
             {
                 return true;
             }
@@ -51,58 +57,68 @@ namespace Chat.Model
         public UserRemote GetById(int id)
         {
             // if already fetched serve from memory
-            if (loaded.Where(c => c.Id == id).Count() > 0)
+            if (_loaded.Where(c => c.Id == id).Count() > 0)
             {
-                return loaded.Where(c => c.Id == id).First();
+                return _loaded.Where(c => c.Id == id).First();
             }
 
-            List<string[]> resultLocalUser = dbController.Database.ExecuteSQLQuery("SELECT name, ip FROM message WHERE id = " + id + " AND islocal = true;");
+            List<string[]> result = _dbController.Database.ExecuteSQLQuery("SELECT name, ip FROM user WHERE id = " + id + ";");
 
             UserRemote userRemote = new UserRemote()
             {
                 Id = id,
-                Name = resultLocalUser[0][0],
-                IP = resultLocalUser[0][1]
+                Name = result[0][0],
+                IP = result[0][1]
             };
 
+            // store reference
+            _loaded.Add(userRemote);
 
-            List<string[]> conversationIds = dbController.Database.ExecuteSQLQuery("SELECT conversationid from conversation_has_user WHERE userid = " + id + ";");
+
+            int buddyOfId = Int32.Parse(_dbController.Database.ExecuteSQLQuery("SELECT userid FROM user_has_buddy WHERE buddyid = " + id + ";")[0][0]);
+            
+            userRemote.BuddyOf = _dbController.UserLocalRepo.GetById(buddyOfId);
+
+
+            List<string[]> conversationIds = _dbController.Database.ExecuteSQLQuery("SELECT conversationid from conversation_has_user WHERE userid = " + id + ";");
 
             foreach (string[] row in conversationIds)
             {
-                userRemote.Conversations.Add(dbController.ConversationRepo.GetById(Int32.Parse(row[0])));
+                userRemote.AddConversation(_dbController.ConversationRepo.GetById(Int32.Parse(row[0])));
             }
-
-            // store
-            loaded.Add(userRemote);
-
+           
             return userRemote;
 
         }
         public void Insert(UserRemote obj)
         {
-            dbController.Database.ExecuteSQLQuery("INSERT INTO user (id, name, islocal, ip) VALUES " +
-    "(" + obj.Id + ", " + obj.Name + ", FALSE, '', '" + obj.IP + "');");
+            _dbController.Database.ExecuteSQLQuery("INSERT INTO user (name, islocal, ip) VALUES " + "('" + _dbController.Database.Escape(obj.Name) + "', 0, '" + _dbController.Database.Escape(obj.IP) + "');");
+
+            // set id
+            obj.Id = Int32.Parse(_dbController.Database.LastInsertedId("user"));
+
+            _dbController.Database.ExecuteSQLQuery("INSERT INTO user_has_buddy (userid, buddyid) VALUES " + "(" + obj.BuddyOf.Id + ", " + obj.Id + ");");
 
             foreach (Conversation conversation in obj.Conversations)
             {
-                dbController.Database.ExecuteSQLQuery("INSERT INTO conversation_has_user (conversationid, userid) VALUES (" + conversation.Id + ", " + obj.Id + ");");
+                _dbController.Database.ExecuteSQLQuery("INSERT INTO conversation_has_user (conversationid, userid) VALUES (" + conversation.Id + ", " + obj.Id + ");");
             }
 
-            // todo: set id
-            // todo: store
+            // store
+            _loaded.Add(obj);
         }
 
         public void Remove(UserRemote obj)
         {
+            _loaded.Remove(obj);
             RemoveById(obj.Id);
         }
 
         public void RemoveById(int id)
         {
-            dbController.Database.ExecuteSQLQuery("DELETE FROM user_has_buddy WHERE buddyid = " + id + ";");
-            dbController.Database.ExecuteSQLQuery("DELETE FROM conversation_has_user WHERE userid = " + id + ";");
-            dbController.Database.ExecuteSQLQuery("DELETE FROM user where id = " + id + ";");
+            _dbController.Database.ExecuteSQLQuery("DELETE FROM user_has_buddy WHERE buddyid = " + id + ";");
+            _dbController.Database.ExecuteSQLQuery("DELETE FROM conversation_has_user WHERE userid = " + id + ";");
+            _dbController.Database.ExecuteSQLQuery("DELETE FROM user where id = " + id + ";");
         }
 
         public void Update(UserRemote obj)
@@ -110,13 +126,13 @@ namespace Chat.Model
             if (obj != null)
             {
                 // update activity 
-                dbController.Database.ExecuteSQLQuery("UPDATE user " +
-                    "SET name = '" + obj.Name + "', SET ip = '" + obj.IP + "'" + " WHERE id = " + obj.Id + ";");
+                _dbController.Database.ExecuteSQLQuery("UPDATE user " +
+                    "SET name = '" + _dbController.Database.Escape(obj.Name) + "', SET ip = '" + _dbController.Database.Escape(obj.IP) + "'" + " WHERE id = " + obj.Id + ";");
 
-                dbController.Database.ExecuteSQLQuery("DELETE FROM conversation_has_user WHERE userid = " + obj.Id + ";");
+                _dbController.Database.ExecuteSQLQuery("DELETE FROM conversation_has_user WHERE userid = " + obj.Id + ";");
                 foreach (Conversation conversation in obj.Conversations)
                 {
-                    dbController.Database.ExecuteSQLQuery("INSERT INTO conversation_has_user (conversationid, userid) VALUES " +
+                    _dbController.Database.ExecuteSQLQuery("INSERT INTO conversation_has_user (conversationid, userid) VALUES " +
                         "(" + conversation.Id + ", " + obj.Id + ");");
                 }
             }

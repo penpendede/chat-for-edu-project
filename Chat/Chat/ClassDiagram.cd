@@ -35,7 +35,7 @@
       <Field Name="Users" />
     </ShowAsCollectionAssociation>
   </Class>
-  <Class Name="Chat.Model.DummyData" Collapsed="true">
+  <Class Name="Chat.Model.DummyData" Collapsed="1">
     <Position X="25.25" Y="0.5" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQA=</HashCode>
@@ -79,14 +79,14 @@
       <FileName>Model\UserRemote.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="Chat.Program" Collapsed="true">
+  <Class Name="Chat.Program" Collapsed="1">
     <Position X="27" Y="0.5" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABAAAAAA=</HashCode>
       <FileName>Program.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="Chat.BuddyAddForm" Collapsed="true">
+  <Class Name="Chat.BuddyAddForm" Collapsed="1">
     <Position X="23.5" Y="0.5" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AABAAAAAACAAABAAAACAAAACIAAAAAAAAAAAAQAAAAA=</HashCode>
@@ -100,13 +100,13 @@
       <FileName>View\LoginForm.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="Chat.Properties.Resources" Collapsed="true">
+  <Class Name="Chat.Properties.Resources" Collapsed="1">
     <Position X="28.75" Y="0.5" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAABEAAAAQAAAAAAAAAAAAAAAIA=</HashCode>
     </TypeIdentifier>
   </Class>
-  <Class Name="Chat.Properties.Settings" Collapsed="true">
+  <Class Name="Chat.Properties.Settings" Collapsed="1">
     <Position X="23.5" Y="1.5" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAIAAAAAABAAAAAAAAAAAAAAA=</HashCode>
@@ -179,76 +179,76 @@
       <FileName>Model\IRepositories.cs</FileName>
     </TypeIdentifier>
   </Interface>
-  <Delegate Name="Chat.Model.OnUserAdd" Collapsed="true">
+  <Delegate Name="Chat.Model.OnUserAdd" Collapsed="1">
     <Position X="25.25" Y="4.25" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAgAAAAAAAAAAAAAAAAAAAAAAEAAAAAAAAAA=</HashCode>
       <FileName>Model\Conversation.cs</FileName>
     </TypeIdentifier>
   </Delegate>
-  <Delegate Name="Chat.Model.OnUserRemove" Collapsed="true">
+  <Delegate Name="Chat.Model.OnUserRemove" Collapsed="1">
     <Position X="27" Y="4.25" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAgAAAAAAAAAAAAAAAAAAAAAAEAAAAAAAAAA=</HashCode>
       <FileName>Model\Conversation.cs</FileName>
     </TypeIdentifier>
   </Delegate>
-  <Delegate Name="Chat.Model.OnMessageAdd" Collapsed="true">
+  <Delegate Name="Chat.Model.OnMessageAdd" Collapsed="1">
     <Position X="25.25" Y="3.5" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAgAAAAAAAAAAAAAAAAAAAAAAEAAAAAAAAAA=</HashCode>
       <FileName>Model\Conversation.cs</FileName>
     </TypeIdentifier>
   </Delegate>
-  <Delegate Name="Chat.Model.OnChangeActive" Collapsed="true">
+  <Delegate Name="Chat.Model.OnChangeActive" Collapsed="1">
     <Position X="27" Y="2.75" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAggAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>Model\Conversation.cs</FileName>
     </TypeIdentifier>
   </Delegate>
-  <Delegate Name="Chat.Model.OnConversationAdd" Collapsed="true">
+  <Delegate Name="Chat.Model.OnConversationAdd" Collapsed="1">
     <Position X="28.75" Y="2.75" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAABAAAAAAAAAAAAAAAAAAAACAAAAAAAAAAAAAAA=</HashCode>
       <FileName>Model\User.cs</FileName>
     </TypeIdentifier>
   </Delegate>
-  <Delegate Name="Chat.Model.OnBuddyAdd" Collapsed="true">
+  <Delegate Name="Chat.Model.OnBuddyAdd" Collapsed="1">
     <Position X="23.5" Y="2.75" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAIAAAAAAAAAAAAAAAAAAAQAAAA=</HashCode>
       <FileName>Model\UserLocal.cs</FileName>
     </TypeIdentifier>
   </Delegate>
-  <Delegate Name="Chat.Model.OnBuddyRemove" Collapsed="true">
+  <Delegate Name="Chat.Model.OnBuddyRemove" Collapsed="1">
     <Position X="25.25" Y="2.75" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAIAAAAAAAAAAAAAAAAAAAQAAAA=</HashCode>
       <FileName>Model\UserLocal.cs</FileName>
     </TypeIdentifier>
   </Delegate>
-  <Delegate Name="Chat.OnLoginSubmit" Collapsed="true">
+  <Delegate Name="Chat.OnLoginSubmit" Collapsed="1">
     <Position X="23.5" Y="3.5" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAACAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
     </TypeIdentifier>
   </Delegate>
-  <Delegate Name="Chat.View.OnTabFocus" Collapsed="true">
+  <Delegate Name="Chat.View.OnTabFocus" Collapsed="1">
     <Position X="28.75" Y="3.5" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>View\ConversationTabControl.cs</FileName>
     </TypeIdentifier>
   </Delegate>
-  <Delegate Name="Chat.View.OnTabClose" Collapsed="true">
+  <Delegate Name="Chat.View.OnTabClose" Collapsed="1">
     <Position X="27" Y="3.5" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>View\ConversationTabControl.cs</FileName>
     </TypeIdentifier>
   </Delegate>
-  <Delegate Name="Chat.View.OnTextSubmit" Collapsed="true">
+  <Delegate Name="Chat.View.OnTextSubmit" Collapsed="1">
     <Position X="23.5" Y="4.25" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAACAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>

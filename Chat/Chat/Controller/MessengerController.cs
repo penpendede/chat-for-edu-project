@@ -33,7 +33,7 @@ namespace Chat.Controller
 
             loginFormClosedKeepMainWindow = false;
 
-            loginForm = new LoginForm(databaseController.GetLocalUserNames());
+            loginForm = new LoginForm(databaseController.UserLocalRepo.GetAllUserNames());
             loginForm.LoginSubmit += this.loginFormOnSubmit;
             loginForm.NewUser += this.loginFormOnNewUser;
             loginForm.FormClosing += this.onLoginFormClosing;
@@ -60,7 +60,11 @@ namespace Chat.Controller
         {
             try
             {
-                userLocal = databaseController.CreateNewUser(userName, password);
+                userLocal = new UserLocal() { Name = userName };
+
+                databaseController.UserLocalRepo.Insert(userLocal);
+
+                databaseController.UserLocalRepo.SetNewPassword(userName, "", password);
 
                 loginFormClosedKeepMainWindow = true;
 
@@ -83,7 +87,11 @@ namespace Chat.Controller
         {
             try
             {
-                userLocal = databaseController.LoadModelFor(userName, password);
+                databaseController.UserLocalRepo.VerifyPassword(userName, password);
+
+                // only reached if verifyPassword does not throw an error
+
+                userLocal = databaseController.UserLocalRepo.GetByName(userName);
 
                 loginFormClosedKeepMainWindow = true;
 

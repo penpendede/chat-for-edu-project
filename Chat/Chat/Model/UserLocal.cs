@@ -33,6 +33,7 @@ namespace Chat.Model
         public void AddBuddy(UserRemote buddy)
         {
             _buddies.Add(buddy);
+            buddy.BuddyOf = this;
             if (BuddyAdd != null)
             {
                 BuddyAdd(this, buddy);

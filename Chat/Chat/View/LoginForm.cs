@@ -54,7 +54,6 @@ namespace Chat
             // 
             this.userNameLabel.AutoSize = true;
             this.userNameLabel.Name = "label1";
-            this.userNameLabel.TabIndex = 2;
             this.userNameLabel.Text = "Benutzername";
             this.userNameLabel.Dock = DockStyle.Fill;
             //this.label1.Click += new System.EventHandler(this.label1_Click);
@@ -71,7 +70,6 @@ namespace Chat
             // 
             this.passwordLabel.AutoSize = true;
             this.passwordLabel.Name = "label2";
-            this.passwordLabel.TabIndex = 3;
             this.passwordLabel.Text = "Passwort";
             this.passwordLabel.Dock = DockStyle.Fill;
             // 
@@ -79,13 +77,13 @@ namespace Chat
             // 
             this.passwordTextBox.Name = "textBox1";
             this.passwordTextBox.PasswordChar = '*';
-            this.passwordTextBox.TabIndex = 5;
+            this.passwordTextBox.TabIndex = 1;
             this.passwordTextBox.Dock = DockStyle.Fill;
             // 
             // New User
             // 
             this.newUserButton.Name = "New User";
-            this.newUserButton.TabIndex = 4;
+            this.newUserButton.TabIndex = 3;
             this.newUserButton.Text = "Neuer Benutzer";
             this.newUserButton.UseVisualStyleBackColor = true;
             this.newUserButton.Click += onNewUserButtonClick;
@@ -95,7 +93,7 @@ namespace Chat
             // Submit
             // 
             this.loginButton.Name = "Submit";
-            this.loginButton.TabIndex = 4;
+            this.loginButton.TabIndex = 2;
             this.loginButton.Text = "Login";
             this.loginButton.UseVisualStyleBackColor = true;
             this.loginButton.Click += onSubmitButtonClick;

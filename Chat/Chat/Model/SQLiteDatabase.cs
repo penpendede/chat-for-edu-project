@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Finisar.SQLite;
+//using Finisar.SQLite;
+using System.Data.SQLite;
+using System.Text.RegularExpressions;
 
 namespace Chat.Model
 {
@@ -13,7 +15,15 @@ namespace Chat.Model
 
         public SQLiteDatabase()
         {
-            connection = new SQLiteConnection("Data Source=Chat.db3;Version=3;New=True;Compress=True;");
+            string connectionString = "Data Source=Chat.db3;Version=3;Compress=True;";
+
+            if (!System.IO.File.Exists("Chat.db3"))
+            {
+                connectionString += "New=True;";
+            }
+
+            connection = new SQLiteConnection(connectionString);
+            Open();
         }
 
         public override void Open()
@@ -26,8 +36,19 @@ namespace Chat.Model
             connection.Close();
         }
 
+        private string _modifySQL(string query)
+        {
+            Regex pattern = new Regex("auto_increment", RegexOptions.IgnoreCase);
+
+            query = pattern.Replace(query, "");
+
+            return query;
+        }
+
         public override List<string[]> ExecuteSQLQuery(string query)
         {
+            query = _modifySQL(query);
+
             SQLiteCommand sql_cmd = connection.CreateCommand();
 
             sql_cmd.CommandText = query;
@@ -57,6 +78,16 @@ namespace Chat.Model
             sql_cmd.Dispose();
 
             return resultSet;
+        }
+
+        public override string LastInsertedId(string tableName)
+        {
+            return ExecuteSQLQuery("SELECT last_insert_rowid() FROM " + tableName + ";")[0][0];
+        }
+
+        public override string FormatDateTime(DateTime dt)
+        {
+            return dt.ToString("yyyy-MM-dd HH:mm:ss");
         }
     }
 }

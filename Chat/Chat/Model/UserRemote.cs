@@ -9,6 +9,8 @@ namespace Chat.Model
     {
         public String IP;
 
+        public UserLocal BuddyOf;
+
         public UserRemote() : base() { }
     }
 }

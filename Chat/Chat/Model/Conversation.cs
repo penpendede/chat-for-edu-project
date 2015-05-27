@@ -78,6 +78,8 @@ namespace Chat.Model
         public void AddMessage(Message message)
         {
             _messages.Add(message);
+            message.Conversation = this;
+
             if (MessageAdd != null)
             {
                 MessageAdd(this, message);
