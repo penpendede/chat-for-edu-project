@@ -6,8 +6,6 @@ using System.Text;
 
 namespace Chat.Controller
 {
-
-
     public class DatabaseController
     {
         public Database Database;

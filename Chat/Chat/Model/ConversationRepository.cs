@@ -78,6 +78,7 @@ namespace Chat.Model
             };
 
             conversation.SetActive(Boolean.Parse(result[0][0]));
+            conversation.Owner.AddConversation(conversation);
 
             // store reference
             _loaded.Add(conversation);
@@ -116,6 +117,7 @@ namespace Chat.Model
             {
                 _dbController.Database.ExecuteSQLQuery("INSERT INTO conversation_has_user (conversationid, userid) VALUES (" + obj.Id + ", " + buddy.Id + ");");
             }
+
             //_dbController.Database.ExecuteSQLQuery("INSERT INTO conversation_has_user (conversationid, userid) VALUES (" + obj.Id + ", " + obj.Owner.Id + ");");
 
             // store

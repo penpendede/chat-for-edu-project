@@ -75,7 +75,7 @@ namespace Chat.Model
             Message message = new Message()
             {
                 Id = id,
-                Text = resultMessage[0][1],
+                Text = resultMessage[0][2],
                 Time = DateTime.Parse(resultMessage[0][3])
             };
 

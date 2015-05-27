@@ -45,14 +45,14 @@ namespace Chat.View
 
         public bool MeasureLabelText(string labelText)
         {
-            return TextRenderer.MeasureText(labelText + " x", this.Font).Width < this.ItemSize.Width - 27;
+            return TextRenderer.MeasureText(labelText + " x", this.Font).Width < this.ItemSize.Width - 12;
         }
 
         private void _onDrawItem(object sender, DrawItemEventArgs e) 
         {
 
             //This code will render a "x" mark at the end of the Tab caption. 
-            e.Graphics.DrawString("x", e.Font, Brushes.Black, e.Bounds.Right - 15, e.Bounds.Top + 4);
+            e.Graphics.DrawString("\u00D7", e.Font, Brushes.Black, e.Bounds.Right - 15, e.Bounds.Top + 4);
             e.Graphics.DrawString(this.TabPages[e.Index].Text, e.Font, Brushes.Black, e.Bounds.Left + 12, e.Bounds.Top + 4);
             e.DrawFocusRectangle();
 

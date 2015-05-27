@@ -29,11 +29,12 @@ namespace Chat.View
         }
 
         public void AddMessage(string userName, string text, DateTime time ) {
+            
             if (this.messagesBox.Text != "")
             {
-                this.messagesBox.Text += "\r\n";
+                this.messagesBox.AppendText("\r\n");
             }
-            this.messagesBox.Text += formatMessage(userName, text, time);
+            this.messagesBox.AppendText(formatMessage(userName, text, time));
         }
 
         private List<string> _userNames;
@@ -48,33 +49,52 @@ namespace Chat.View
         //    }
         //}
 
-        private void _updateText()
+        private void _updateTabText()
         {
-            string text = _userNames[0];
-            string add = "";
-            string elipse = "";
-            if (_userNames.Count() > 1)
+            string text = "";
+            if (_userNames.Count() > 0)
             {
-                add = " (+" + (_userNames.Count() - 1) + ")";
+                text = _userNames[0];
+                string add = "";
+                string ellipsis = "";
+                if (_userNames.Count() > 1)
+                {
+                    add = " (+" + (_userNames.Count() - 1) + ")";
+                }
+                else
+                {
+                    add = "";
+                }
+
+                while (!_measureLabelText(text + ellipsis + add) && text.Length > 0)
+                {
+                    ellipsis = "...";
+                    text = text.Substring(0, text.Length - 1);
+                }
+
+                this.Text = text + ellipsis + add;
             }
             else
             {
-                add = "";
-            }
 
-            while (!_measureLabelText(text + elipse + add) && text.Length > 0)
+                this.Text = "";
+            }
+        }
+
+        private void _updateParticipantsText()
+        {
+            _participants.Text = "Du";
+            foreach (string userName in _userNames)
             {
-                elipse = "...";
-                text = text.Substring(0, text.Length - 1);
+                _participants.Text += ", " + userName;
             }
-
-            this.Text = text + elipse + add;
         }
 
         public void AddUser(string userName)
         {
             _userNames.Add(userName);
-            _updateText();
+            _updateTabText();
+            _updateParticipantsText();
         }
 
         public void RemoveUser(string userName)
@@ -82,7 +102,8 @@ namespace Chat.View
             //string regExp = string.Format("(^{0}, )|((, )?{0})", userName);
             //this.Text = Regex.Replace(this.Text, regExp, "");
             _userNames.Remove(userName);
-            _updateText();
+            _updateTabText();
+            _updateParticipantsText();
         }
 
         private void OnSendButtonClick(object obj, EventArgs args)
@@ -127,12 +148,13 @@ namespace Chat.View
             this.tableLayoutPanel = new TableLayoutPanel();
             
             this.tableLayoutPanel.Dock = DockStyle.Fill;
-            this.tableLayoutPanel.RowCount = 2;
+            this.tableLayoutPanel.RowCount = 3;
             this.tableLayoutPanel.ColumnCount = 2;
 
             this.tableLayoutPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
             this.tableLayoutPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 50));
             this.tableLayoutPanel.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
+            this.tableLayoutPanel.RowStyles.Add(new RowStyle(SizeType.Absolute, 18));
             this.tableLayoutPanel.RowStyles.Add(new RowStyle(SizeType.Absolute, 45));
             
             this.Controls.Add(this.tableLayoutPanel);
@@ -144,8 +166,28 @@ namespace Chat.View
             this.messagesBox.Multiline = true;
             this.messagesBox.Name = "tabControlTextBox2";
             this.messagesBox.Dock = DockStyle.Fill;
+            this.messagesBox.ReadOnly = true;
+            this.messagesBox.BackColor = System.Drawing.SystemColors.Window;
+            this.messagesBox.ScrollBars = ScrollBars.Vertical;
+
+            this.messagesBox.VisibleChanged += (sender, e) =>
+            {
+                if (this.messagesBox.Visible)
+                {
+                    this.messagesBox.AppendText(".");
+                }
+            };
+
             this.tableLayoutPanel.Controls.Add(this.messagesBox, 0, 0);
             this.tableLayoutPanel.SetColumnSpan(this.messagesBox, 2);
+
+            //
+            // LabelText
+            //
+            _participants = new Label();
+            _participants.Dock = DockStyle.Fill;
+            this.tableLayoutPanel.Controls.Add(_participants, 0, 1);
+            this.tableLayoutPanel.SetColumnSpan(_participants, 2);
 
             // 
             // inputBox
@@ -156,7 +198,7 @@ namespace Chat.View
             this.inputBox.Dock = DockStyle.Fill;
             this.inputBox.Tag = "";
             //this.tabControlTextBox1.TextChanged += new System.EventHandler(this.textBox1_TextChanged);
-            this.tableLayoutPanel.Controls.Add(this.inputBox, 0, 1);
+            this.tableLayoutPanel.Controls.Add(this.inputBox, 0, 2);
 
             // 
             // sendButton
@@ -168,7 +210,7 @@ namespace Chat.View
             this.sendButton.Text = "Send";
             this.sendButton.UseVisualStyleBackColor = true;
             this.sendButton.Click += this.OnSendButtonClick;
-            this.tableLayoutPanel.Controls.Add(this.sendButton, 1, 1);
+            this.tableLayoutPanel.Controls.Add(this.sendButton, 1, 2);
             
 
             //this.Location = new System.Drawing.Point(4, 4);
@@ -181,6 +223,7 @@ namespace Chat.View
         }
 
         private TableLayoutPanel tableLayoutPanel;
+        private Label _participants;
         private TextBox inputBox;
         private TextBox messagesBox;
         private Button sendButton;

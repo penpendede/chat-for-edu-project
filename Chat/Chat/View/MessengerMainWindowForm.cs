@@ -88,7 +88,7 @@ namespace Chat.View
 
 
             this.Name = "MessengerMainWindowForm";
-            this.Text = "Chat4edu";
+            this.Text = "ChatChatChat";
 
             
 
