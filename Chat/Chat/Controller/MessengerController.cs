@@ -9,126 +9,130 @@ namespace Chat.Controller
 {
     public class MessengerController
     {
-        private UserLocal userLocal;
-        private LoginForm loginForm;
-        private MessengerMainWindowForm mainWindow;
+        // Model
+        private UserLocal _userLocal;
 
-        private List<ConversationController> conversationControllers;
-        private BuddyListController buddyListController;
+        // View
+        private LoginForm _loginForm;
+        private MessengerMainWindowForm _mainWindow;
         //private ConversationTabControl TabControl;
 
-        private DatabaseController databaseController;
+        // Other controllers
+        private BuddyListController _buddyListController;
+        private DatabaseController _databaseController;
+        private List<ConversationController> _conversationControllers;
 
-        private bool loginFormClosedKeepMainWindow;
+        // Other 
+        private bool _loginFormClosedKeepMainWindow;
 
         public MessengerController()
         {
-            conversationControllers = new List<ConversationController>();
-            databaseController = new DatabaseController();
+            _conversationControllers = new List<ConversationController>();
+            _databaseController = new DatabaseController();
 
-            mainWindow = new MessengerMainWindowForm();
-            mainWindow.Hide();
-            mainWindow.FormClosing += this.mainWindowOnClosing;
-            mainWindow.ConversationTabControl.TabClose += _onConversationTabClose;
+            _mainWindow = new MessengerMainWindowForm();
+            _mainWindow.Hide();
+            _mainWindow.FormClosing += this._mainWindowOnClosing;
+            _mainWindow.ConversationTabControl.TabClose += _onConversationTabClose;
 
-            loginFormClosedKeepMainWindow = false;
+            _loginFormClosedKeepMainWindow = false;
 
-            loginForm = new LoginForm(databaseController.UserLocalRepo.GetAllUserNames());
-            loginForm.LoginSubmit += this.loginFormOnSubmit;
-            loginForm.NewUser += this.loginFormOnNewUser;
-            loginForm.FormClosing += this.onLoginFormClosing;
-            loginForm.ShowDialog();
+            _loginForm = new LoginForm(_databaseController.UserLocalRepo.GetAllUserNames());
+            _loginForm.LoginSubmit += _loginFormOnSubmit;
+            _loginForm.NewUser += _loginFormOnNewUser;
+            _loginForm.FormClosing += _onLoginFormClosing;
+            _loginForm.ShowDialog();
 
-            Application.Run(mainWindow);
+            Application.Run(_mainWindow);
         }
 
         // NOTE: Is this the right place for this functionality?
         public Conversation GetActiveConversation()
         {
-            return this.conversationControllers.Where(c => c.TabPage == this.mainWindow.ConversationTabControl.SelectedTab).First().Conversation;
+            return _conversationControllers.Where(c => c.TabPage == this._mainWindow.ConversationTabControl.SelectedTab).First().Conversation;
         }
 
-        private void onLoginFormClosing(object sender, EventArgs e)
+        private void _onLoginFormClosing(object sender, EventArgs e)
         {
-            if (!loginFormClosedKeepMainWindow)
+            if (!_loginFormClosedKeepMainWindow)
             {
                 Application.Exit();
             }
         }
 
-        private void loginFormOnNewUser(string userName, string password)
+        private void _loginFormOnNewUser(string userName, string password)
         {
             try
             {
-                userLocal = new UserLocal() { Name = userName };
+                _userLocal = new UserLocal() { Name = userName };
 
-                databaseController.UserLocalRepo.Insert(userLocal);
+                _databaseController.UserLocalRepo.Insert(_userLocal);
 
-                databaseController.UserLocalRepo.SetNewPassword(userName, "", password);
+                _databaseController.UserLocalRepo.SetNewPassword(userName, "", password);
 
-                loginFormClosedKeepMainWindow = true;
+                _loginFormClosedKeepMainWindow = true;
 
-                userLocal.ConversationAdd += userOnConversationAdd;
+                _userLocal.ConversationAdd += _userOnConversationAdd;
 
-                buddyListController = new BuddyListController(userLocal, this);
+                _buddyListController = new BuddyListController(_userLocal, this);
 
-                mainWindow.AddBuddyListGroupBox(buddyListController.BuddyListGroupBox);
+                _mainWindow.AddBuddyListGroupBox(_buddyListController.BuddyListGroupBox);
 
-                loginForm.Close(); // NOTE: dispose?
-                mainWindow.Show();
+                _loginForm.Close(); // NOTE: dispose?
+                _mainWindow.Show();
             }
             catch (NewUserNameAlreadyExists e)
             {
-                MessageBox.Show(string.Format("Der Username {0} existiert bereits.", e.UserName), mainWindow.Text, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show(string.Format("Der Username {0} existiert bereits.", e.UserName), _mainWindow.Text, MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
-        private void loginFormOnSubmit(string userName, string password)
+        private void _loginFormOnSubmit(string userName, string password)
         {
             try
             {
-                databaseController.UserLocalRepo.VerifyPassword(userName, password);
+                _databaseController.UserLocalRepo.VerifyPassword(userName, password);
 
                 // only reached if verifyPassword does not throw an error
 
-                userLocal = databaseController.UserLocalRepo.GetByName(userName);
+                _userLocal = _databaseController.UserLocalRepo.GetByName(userName);
 
-                loginFormClosedKeepMainWindow = true;
+                _loginFormClosedKeepMainWindow = true;
 
-                userLocal.ConversationAdd += userOnConversationAdd;
+                _userLocal.ConversationAdd += _userOnConversationAdd;
 
-                buddyListController = new BuddyListController(userLocal, this);
+                _buddyListController = new BuddyListController(_userLocal, this);
 
-                mainWindow.AddBuddyListGroupBox(buddyListController.BuddyListGroupBox);
+                _mainWindow.AddBuddyListGroupBox(_buddyListController.BuddyListGroupBox);
 
-                foreach (Conversation conversation in userLocal.Conversations)
+                foreach (Conversation conversation in _userLocal.Conversations)
                 {
-                    userOnConversationAdd(userLocal, conversation);
+                    _userOnConversationAdd(_userLocal, conversation);
                 }
 
-                loginForm.Close(); // NOTE: dispose?
-                mainWindow.Show();
+                _loginForm.Close(); // NOTE: dispose?
+                _mainWindow.Show();
             }
             catch (UserNameNotFoundException e)
             {
-                MessageBox.Show(string.Format("Der Username {0} ist nicht bekannt.", e.UserName), mainWindow.Text, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show(string.Format("Der Username {0} ist nicht bekannt.", e.UserName), _mainWindow.Text, MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
             catch (WrongPasswordException e)
             {
-                MessageBox.Show(string.Format("Der Passwort für User {0} ist falsch.", e.UserName), mainWindow.Text, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show(string.Format("Der Passwort für User {0} ist falsch.", e.UserName), _mainWindow.Text, MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
         private void _activateConversation(Conversation conv)
         {
-            ConversationController convController = new ConversationController(userLocal, conv, mainWindow.ConversationTabControl);
-            conversationControllers.Add(convController);
+            ConversationController convController = new ConversationController(_userLocal, conv, _mainWindow.ConversationTabControl);
+            _conversationControllers.Add(convController);
         }
 
         private void _deactivateConversation(Conversation conv)
         {
-            ConversationController convController = conversationControllers.Find(c => c.Conversation == conv);
-            conversationControllers.Remove(convController);
+            ConversationController convController = _conversationControllers.Find(c => c.Conversation == conv);
+            _conversationControllers.Remove(convController);
             convController.Dispose();
         }
 
@@ -144,7 +148,7 @@ namespace Chat.Controller
             }
         }
 
-        private void userOnConversationAdd(User user, Conversation conversation)
+        private void _userOnConversationAdd(User user, Conversation conversation)
         {
             if (conversation.Active)
             {
@@ -153,14 +157,14 @@ namespace Chat.Controller
             conversation.ChangeActive += _onConverationChangeActive;
         }
 
-        private void mainWindowOnClosing(object o, EventArgs e)
+        private void _mainWindowOnClosing(object o, EventArgs e)
         {
             // TODO: implement
         }
 
         private void _onConversationTabClose(TabPage tabPage)
         {
-            ConversationController convController = conversationControllers.Find(c => (c.TabPage as TabPage) == tabPage);
+            ConversationController convController = _conversationControllers.Find(c => (c.TabPage as TabPage) == tabPage);
             convController.Conversation.SetActive(false);
         }
     }

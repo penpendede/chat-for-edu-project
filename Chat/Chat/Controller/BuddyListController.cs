@@ -9,94 +9,101 @@ namespace Chat.Controller
 {
     public class BuddyListController
     {
+        // Model
+        private UserLocal _userLocal;
+
+        // View
         public BuddyListGroupBox BuddyListGroupBox;
+        private BuddyAddForm _buddyAddForm;
 
-        private UserLocal userLocal;
-        private MessengerController messengerController;
-
-        private BuddyAddForm buddyAddForm;
-
+        // Controller
+        private MessengerController _messengerController;
+        
         public BuddyListController(UserLocal userLocal, MessengerController messengerController)
         {
-            this.userLocal = userLocal;
-            this.messengerController = messengerController;
+            _userLocal = userLocal;
+            _messengerController = messengerController;
 
             BuddyListGroupBox = new BuddyListGroupBox();
 
-            foreach (UserRemote buddy in this.userLocal.Buddies)
+            foreach (UserRemote buddy in _userLocal.Buddies)
             {
-                onUserLocalBuddyAdd(userLocal, buddy);
+                _onUserLocalBuddyAdd(userLocal, buddy);
             }
 
-            this.userLocal.BuddyAdd += onUserLocalBuddyAdd;
-            this.userLocal.BuddyRemove += onUserLocalBuddyRemove;
+            // binding model delegates
+            _userLocal.BuddyAdd += _onUserLocalBuddyAdd;
+            _userLocal.BuddyRemove += _onUserLocalBuddyRemove;
 
-            BuddyListGroupBox.OpenChatAction += this.onOpenChatAction;
-            BuddyListGroupBox.AddToChatAction += this.onAddToChatAction;
-            BuddyListGroupBox.BuddyRemoveAction += this.onBuddyRemoveAction;
-            BuddyListGroupBox.BuddyAddAction += this.onBuddyAddAction;
-            BuddyListGroupBox.RemoveFromChatAction += this._onRemoveFromChatAction;
+            // binding view delegates
+            BuddyListGroupBox.OpenChatAction += _onOpenChatAction;
+            BuddyListGroupBox.AddToChatAction += _onAddToChatAction;
+            BuddyListGroupBox.BuddyRemoveAction += _onBuddyRemoveAction;
+            BuddyListGroupBox.BuddyAddAction += _onBuddyAddAction;
+            BuddyListGroupBox.RemoveFromChatAction += _onRemoveFromChatAction;
             BuddyListGroupBox.OpenRecentChatsAction += _onBuddyOpenRecentChatsAction;
         }
 
-        private void onUserLocalBuddyAdd(UserLocal userLocal, UserRemote buddy)
+        private UserRemote _getBuddyById(int id)
+        {
+            return _userLocal.Buddies.Where(b => b.Id == id).First();
+        }
+
+        // Model delegates
+        private void _onUserLocalBuddyAdd(UserLocal userLocal, UserRemote buddy)
         {
             BuddyListGroupBox.AddBuddy(buddy.Id, buddy.Name);
         }
 
-        private void onUserLocalBuddyRemove(UserLocal userLocal, UserRemote buddy)
+        private void _onUserLocalBuddyRemove(UserLocal userLocal, UserRemote buddy)
         {
             BuddyListGroupBox.RemoveBuddy(buddy.Id);
         }
 
-        private UserRemote getBuddyById(int id)
+        // View delegates
+        private void _onOpenChatAction(int id)
         {
-            return userLocal.Buddies.Where(b => b.Id == id).First();
-        }
-
-        private void onOpenChatAction(int id)
-        {
-            Conversation conv = new Conversation() { Owner = userLocal };
+            Conversation conv = new Conversation() { UserLocal = _userLocal };
             conv.SetActive(true);
-            conv.AddBuddy(getBuddyById(id));
-            this.userLocal.AddConversation(conv);
+            conv.AddBuddy(_getBuddyById(id));
+            _userLocal.AddConversation(conv);
         }
 
-        private void onAddToChatAction(int id)
+        private void _onAddToChatAction(int id)
         {
-            this.messengerController.GetActiveConversation().AddBuddy(getBuddyById(id));
+            _messengerController.GetActiveConversation().AddBuddy(_getBuddyById(id));
         }
 
         private void _onRemoveFromChatAction(int id)
         {
-            this.messengerController.GetActiveConversation().RemoveBuddy(getBuddyById(id));
+            _messengerController.GetActiveConversation().RemoveBuddy(_getBuddyById(id));
         }
 
-        private void onBuddyRemoveAction(int id)
+        private void _onBuddyRemoveAction(int id)
         {
             if (MessageBox.Show("Möchten Sie diesen Buddy wirklich von Ihrer Freundesliste entfernen? Der Nachrichtenverlauf wird gelöscht!", "Confirm", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
             {
-                this.userLocal.RemoveBuddy(getBuddyById(id));
+                _userLocal.RemoveBuddy(_getBuddyById(id));
             }
         }
 
-        private void onBuddyAddAction()
+        private void _onBuddyAddAction()
         {
-            buddyAddForm = new BuddyAddForm();
-            buddyAddForm.BuddyAddSubmit += this.onBuddyAddSubmit;
-            buddyAddForm.ShowDialog();
+            _buddyAddForm = new BuddyAddForm();
+            _buddyAddForm.BuddyAddSubmit += _onBuddyAddSubmit;
+            _buddyAddForm.ShowDialog();
         }
 
-        private void onBuddyAddSubmit(string userName, string IP)
+        private void _onBuddyAddSubmit(string userName, string IP)
         {
-            userLocal.AddBuddy(new UserRemote() { Name = userName, IP = IP, BuddyOf = userLocal });
-            buddyAddForm.Close();
+            _userLocal.AddBuddy(new UserRemote() { Name = userName, IP = IP, BuddyOf = _userLocal });
+            _buddyAddForm.Close();
         }
 
         private void _onBuddyOpenRecentChatsAction(int id)
         {
-            UserRemote buddy = getBuddyById(id);
-            foreach (Conversation conv in userLocal.Conversations)
+            UserRemote buddy = _getBuddyById(id);
+            foreach (Conversation conv in _userLocal.Conversations)
             {
                 if (conv.Buddies.Contains(buddy))
                 {

@@ -8,13 +8,15 @@ namespace Chat.Controller
 {
     public class DatabaseController
     {
+        // Model
         public Database Database;
         
+        // Repositories
         public ConversationRepository ConversationRepo;
-
         public UserLocalRepository UserLocalRepo;
         public UserRemoteRepository UserRemoteRepo;
         public MessageRepository MessageRepo;
+
 
         public DatabaseController()
         {
@@ -27,6 +29,7 @@ namespace Chat.Controller
 
             CreateDatabase();
         }
+
 
         public void CreateDatabase() {
             string createTableMessage = "CREATE TABLE IF NOT EXISTS message ("

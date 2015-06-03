@@ -10,21 +10,25 @@ namespace Chat.Controller
 {
     public class ConversationController
     {
+        // Model
         private UserLocal _userLocal;
-        private List<NetworkConnectionController> _networkConnectionControllers;
-        private ConversationTabControl _tabControl;
-
         public Conversation Conversation
         {
             private set;
             get;
         }
 
+        // View
+        private ConversationTabControl _tabControl;
         public ConversationTabPage TabPage
         {
             private set;
             get;
         }
+
+        // Other controllers
+        private List<NetworkConnectionController> _networkConnectionControllers;
+        
 
         public ConversationController(UserLocal userLocal, Conversation conversation, ConversationTabControl tabControl)
         {
@@ -33,9 +37,9 @@ namespace Chat.Controller
             _networkConnectionControllers = new List<NetworkConnectionController>();
             _tabControl = tabControl;
 
-            Conversation.MessageAdd += this._onConversationAddMessage;
-            Conversation.BuddyAdd += this._onConversationOnBuddyAdd;
-            Conversation.BuddyRemove += this._onConversationOnBuddyRemove;
+            Conversation.MessageAdd += _onConversationAddMessage;
+            Conversation.BuddyAdd += _onConversationOnBuddyAdd;
+            Conversation.BuddyRemove += _onConversationOnBuddyRemove;
 
             TabPage = new ConversationTabPage(_tabControl.MeasureLabelText);
             TabPage.OnTextSubmit += _tabPageOnTextSubmit;
@@ -81,9 +85,9 @@ namespace Chat.Controller
         public void Dispose()
         {
             _tabControl.RemoveTab(TabPage);
-            Conversation.MessageAdd -= this._onConversationAddMessage;
-            Conversation.BuddyAdd -= this._onConversationOnBuddyAdd;
-            Conversation.BuddyRemove -= this._onConversationOnBuddyRemove;
+            Conversation.MessageAdd -= _onConversationAddMessage;
+            Conversation.BuddyAdd -= _onConversationOnBuddyAdd;
+            Conversation.BuddyRemove -= _onConversationOnBuddyRemove;
             TabPage.OnTextSubmit -= _tabPageOnTextSubmit;
         }
     }

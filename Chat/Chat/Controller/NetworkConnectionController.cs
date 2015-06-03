@@ -8,6 +8,7 @@ namespace Chat.Controller
 {
     public class NetworkConnectionController
     {
+        // Model
         public Conversation Conversation
         {
             private set;
