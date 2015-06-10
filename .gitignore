@@ -1,7 +1,8 @@
 # own
 
 *.autosave
-
+*.orig
+*.bak
 
 # Compiled source #
 ###################

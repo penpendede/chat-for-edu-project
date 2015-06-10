@@ -8,29 +8,23 @@ namespace Chat.View
     public delegate void BuddyListBuddyRemoveAction(int id);
     public delegate void BuddyListOpenChatAction(int id);
     public delegate void BuddyListAddToChatAction(int id);
-    //public delegate void BuddyListRemoveFromChatAction(int id);
     public delegate void BuddyListOpenRecentChatsAction(int id);
 
     public class BuddyListGroupBox : GroupBox
     {
         private List<int> _buddyIds;
 
+        // delegates
         public BuddyListBuddyAddAction BuddyAddAction;
         public BuddyListBuddyRemoveAction BuddyRemoveAction;
         public BuddyListOpenChatAction OpenChatAction;
         public BuddyListAddToChatAction AddToChatAction;
-        //public BuddyListRemoveFromChatAction RemoveFromChatAction;
         public BuddyListOpenRecentChatsAction OpenRecentChatsAction;
 
+        // form elements
         private TableLayoutPanel _tableLayoutPanel;
         private ListBox _buddyListBox;
         private Button _addBuddyButton;
-        //private Button _removeBuddyButton;
-        //private Button _openChatButton;
-        //private Button _addToChatButton;
-
-        //TODO: Add doubleclick -> openChat
-        //private ContextMenu contextMenu;
 
         public BuddyListGroupBox()
         {
@@ -41,8 +35,12 @@ namespace Chat.View
 
             SuspendLayout();
 
-            _buddyListBox = new ListBox();
-            _addBuddyButton = new Button();
+            // 
+            // BuddyList
+            // 
+
+            Name = "BuddyList";
+            Text = "Buddies";
 
             //
             // FlowPanel
@@ -58,17 +56,11 @@ namespace Chat.View
 
             Controls.Add(_tableLayoutPanel);
 
-            // 
-            // BuddyList
-            // 
-
-            Name = "BuddyList";
-            Text = "Buddies";
-
 
             // 
             // BuddyListListBox
             // 
+            _buddyListBox = new ListBox();
             _buddyListBox.FormattingEnabled = true;
             _buddyListBox.Name = "BuddyListListBox";
             _buddyListBox.Dock = DockStyle.Fill;
@@ -80,6 +72,7 @@ namespace Chat.View
             // 
             // BuddyAddButton
             // 
+            _addBuddyButton = new Button();
             _addBuddyButton.Name = "BuddyListSubmitButton";
             _addBuddyButton.Dock = DockStyle.Fill;
             _addBuddyButton.TabIndex = 2;
@@ -111,11 +104,6 @@ namespace Chat.View
             menuItemAddToChat.Click += _invokeAddToChatWithSelectedBuddy;
             ContextMenu.MenuItems.Add(menuItemAddToChat);
 
-            //MenuItem menuItemRemoveFromChat = new MenuItem();
-            //menuItemRemoveFromChat.Text = "Buddy aus dem Chat entfernen";
-            //menuItemRemoveFromChat.Click += invokeRemoveFromChatWithSelectedBuddy;
-            //ContextMenu.MenuItems.Add(menuItemRemoveFromChat);
-
             MenuItem menuItemOpenRecentChats = new MenuItem();
             menuItemOpenRecentChats.Text = "Alle vergangenen Chats mit diesem Buddy öffnen";
             menuItemOpenRecentChats.Click += _invokeOpenRecentChatsWithSelectedBuddy;
@@ -125,17 +113,11 @@ namespace Chat.View
 
             #endregion
         }
-
-        //public BuddyListGroupBox(List<int> buddyIds, List<string> buddyNames)
-        //{
-        //    buddyNames = buddyNames;
-        //    buddyIds = buddyIds;
-        //    InitializeComponent();
-        //}
+        
+        // public methods
 
         public void AddBuddy(int id, string name)
         {
-            //buddyNames.Add(name);
             _buddyIds.Add(id);
             _buddyListBox.Items.Add(name);
         }
@@ -144,23 +126,24 @@ namespace Chat.View
         {
             int index = _buddyIds.IndexOf(id);
             _buddyIds.RemoveAt(index);
-            //buddyNames.RemoveAt(index);
             _buddyListBox.Items.RemoveAt(index);
         }
 
         public void ChangeBuddyName(int id, string name)
         {
             int index = _buddyIds.IndexOf(id);
-            //buddyNames[index] = name;
             _buddyListBox.Items[index] = name;
         }
 
-        //public BuddyListGroupBox(IContainer container)
-        //{
-        //    container.Add(this);
+        public bool AskForBuddyRemove(string name)
+        {
+            return
+                MessageBox.Show(
+                    string.Format( "Möchten Sie den Buddy {0} wirklich von Ihrer Freundesliste entfernen? Der Nachrichtenverlauf wird nicht mehr verfügbar sein!", name), 
+                    "Entfernen des Buddies bestätigen", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes;
+        }
 
-        //    InitializeComponent();
-        //}
+        // invoke custom delegates
 
         private void _doubleClickOpenChat(object sender, EventArgs e)
         {
@@ -209,14 +192,6 @@ namespace Chat.View
                 AddToChatAction(_buddyIds[_buddyListBox.SelectedIndex]);
             }
         }
-
-        //private void invokeRemoveFromChatWithSelectedBuddy(object sender, EventArgs e)
-        //{
-        //    if (RemoveFromChatAction != null)
-        //    {
-        //        RemoveFromChatAction(buddyIds[_buddyListBox.SelectedIndex]);
-        //    }
-        //}
 
         private void _invokeOpenRecentChatsWithSelectedBuddy(object sender, EventArgs e)
         {

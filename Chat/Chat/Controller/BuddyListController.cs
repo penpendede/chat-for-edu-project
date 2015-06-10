@@ -40,7 +40,6 @@ namespace Chat.Controller
             BuddyListGroupBox.AddToChatAction += _onAddToChatAction;
             BuddyListGroupBox.BuddyRemoveAction += _onBuddyRemoveAction;
             BuddyListGroupBox.BuddyAddAction += _onBuddyAddAction;
-            //BuddyListGroupBox.RemoveFromChatAction += _onRemoveFromChatAction;
             BuddyListGroupBox.OpenRecentChatsAction += _onBuddyOpenRecentChatsAction;
         }
 
@@ -66,7 +65,7 @@ namespace Chat.Controller
             UserRemote buddy = _getBuddyById(id);
             ConversationController convContr =
                 _messengerController.GetDialogController(buddy);
-            if (convContr != null)
+            if (convContr != null) // check if dialog already exists
             {
                 convContr.Conversation.SetActive(true);
                 _messengerController.TabControl.ChangeActiveTab(convContr.TabPage);
@@ -92,9 +91,10 @@ namespace Chat.Controller
 
         private void _onBuddyRemoveAction(int id)
         {
-            if (MessageBox.Show("Möchten Sie diesen Buddy wirklich von Ihrer Freundesliste entfernen? Der Nachrichtenverlauf wird nicht mehr verfügbar sein!", "Confirm", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
+            UserRemote buddy = _getBuddyById(id);
+            if (BuddyListGroupBox.AskForBuddyRemove(buddy.Name))
             {
-                _userLocal.RemoveBuddy(_getBuddyById(id));
+                _userLocal.RemoveBuddy(buddy);
             }
         }
 

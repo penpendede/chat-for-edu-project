@@ -18,8 +18,11 @@ namespace Chat.View
         private StatusStrip _statusStrip;
         private ToolStripStatusLabel _statusStripTimeLabel;
 
+        private string _programName;
+
         public MessengerMainWindowForm()
         {
+			this._programName = "ChatChatChat";
 
             this.SuspendLayout();
 
@@ -73,12 +76,23 @@ namespace Chat.View
 
 
             this.Name = "MessengerMainWindowForm";
-            this.Text = "ChatChatChat";
+            this.Text = this._programName;
 
             this._statusStrip.ResumeLayout(false);
             this._statusStrip.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
+        }
+        public void SetUserName(string userName)
+        {
+            if (userName == "")
+            {
+                this.Text = this._programName;
+            }
+            else
+            {
+                this.Text =  userName + " @ " + this._programName;
+            }
         }
 
         public void AddConversationTabControl(ConversationTabControl tabControl)
