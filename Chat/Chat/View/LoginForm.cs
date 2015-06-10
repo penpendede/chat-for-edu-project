@@ -139,6 +139,16 @@ namespace Chat
             this.PerformLayout();
         }
 
+        public void UsernameUnknownMessage(string userName)
+        {
+            MessageBox.Show(string.Format("Der Username {0} ist nicht bekannt.", userName), "Username unbekannt", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        }
+
+        public void WrongPasswordMessage(string userName)
+        {
+            MessageBox.Show(string.Format("Der Passwort für User {0} ist falsch.", userName), "Passwort falsch", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        }
+
         private void onNewUserButtonClick(object obj, EventArgs args)
         {
             this.NewUser();

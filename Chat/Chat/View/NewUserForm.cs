@@ -132,6 +132,32 @@ namespace Chat
             this.PerformLayout();
         }
 
+        public void UsernameIsMissingMessage()
+        {
+            MessageBox.Show("Benutzername fehlt", "Benutzername fehlt", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        }
+
+        public void PasswordIsMissingMessage()
+        {
+            MessageBox.Show("Kennwort fehlt", "Kennwort fehlt", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        }
+
+        public void PasswordRepeatIsMissingMessage()
+        {
+            MessageBox.Show("Kennwortwiederholung fehlt", "Kennwortwiederholung fehlt", MessageBoxButtons.OK,
+                MessageBoxIcon.Error);
+        }
+
+        public void PasswordsMismatchMessage()
+        {
+            MessageBox.Show("Kennwort und Wiederholung sind verschieden", "Kennwort und Wiederholung verschieden", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        }
+
+        public void UsernameExistsMessage(string userName)
+        {
+            MessageBox.Show(string.Format("Der Benutzername {0} existiert bereits.", userName), "Benutzername existiert bereits", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        }
+
         private void onNewUserButtonClick(object obj, EventArgs args)
         {
             if (NewUser != null)

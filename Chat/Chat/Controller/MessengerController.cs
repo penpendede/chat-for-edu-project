@@ -87,6 +87,24 @@ namespace Chat.Controller
             _newUserForm.ShowDialog();
         }
 
+        private void _initMainWindow()
+        {
+            _keepMainWindow = true;
+
+            _mainWindow.SetUserName(_userLocal.Name);
+
+            _userLocal.ConversationAdd += _userOnConversationAdd;
+            _buddyListController = new BuddyListController(_userLocal, this);
+            _mainWindow.AddBuddyListGroupBox(_buddyListController.BuddyListGroupBox);
+
+            foreach (Conversation conversation in _userLocal.Conversations)
+            {
+                _userOnConversationAdd(_userLocal, conversation);
+            }
+
+            _mainWindow.Show();
+        }
+
         private void _loginFormOnSubmit(string userName, string password)
         {
             try
@@ -97,29 +115,18 @@ namespace Chat.Controller
 
                 _userLocal = _databaseController.UserLocalRepo.GetByName(userName);
 
-                _keepMainWindow = true;
+                _initMainWindow();
 
-                _userLocal.ConversationAdd += _userOnConversationAdd;
-
-                _buddyListController = new BuddyListController(_userLocal, this);
-
-                _mainWindow.AddBuddyListGroupBox(_buddyListController.BuddyListGroupBox);
-
-                foreach (Conversation conversation in _userLocal.Conversations)
-                {
-                    _userOnConversationAdd(_userLocal, conversation);
-                }
-
-                _loginForm.Close(); // NOTE: dispose?
-                _mainWindow.Show();
+                _loginForm.Close();
+                _loginForm.Dispose();
             }
             catch (UserNameNotFoundException e)
             {
-                MessageBox.Show(string.Format("Der Username {0} ist nicht bekannt.", e.UserName), _mainWindow.Text, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                _loginForm.UsernameUnknownMessage(e.UserName);
             }
             catch (WrongPasswordException e)
             {
-                MessageBox.Show(string.Format("Der Passwort für User {0} ist falsch.", e.UserName), _mainWindow.Text, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                _loginForm.WrongPasswordMessage(e.UserName);
             }
         }
 
@@ -131,22 +138,22 @@ namespace Chat.Controller
 
                 if (userName.Length == 0)
                 {
-                    MessageBox.Show("Benutzername fehlt", "Benutzername fehlt", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    _newUserForm.UsernameIsMissingMessage();
                     isValid = false;
                 }
                 else if (password.Length == 0)
                 {
-                    MessageBox.Show("Kennwort fehlt", "Kennwort fehlt", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    _newUserForm.PasswordIsMissingMessage();   
                     isValid = false;
                 }
                 else if (passwordRepetition.Length == 0)
                 {
-                    MessageBox.Show("Kennwortwiederholung fehlt", "Kennwortwiederholung fehlt", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    _newUserForm.PasswordRepeatIsMissingMessage();
                     isValid = false;
                 }
                 else if (password != passwordRepetition)
                 {
-                    MessageBox.Show("Kennwort und Wiederholung sind verschieden", "Kennwort und Wiederholung verschieden", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    _newUserForm.PasswordsMismatchMessage();
                     isValid = false;
                 }
 
@@ -158,23 +165,15 @@ namespace Chat.Controller
 
                     _databaseController.UserLocalRepo.SetNewPassword(userName, "", password);
 
-                    _mainWindow.SetUserName(userName);
-
-                    _keepMainWindow = true;
-
-                    _userLocal.ConversationAdd += _userOnConversationAdd;
-
-                    _buddyListController = new BuddyListController(_userLocal, this);
-
-                    _mainWindow.AddBuddyListGroupBox(_buddyListController.BuddyListGroupBox);
+                    _initMainWindow();
 
                     _newUserForm.Close();
-                    //loginForm.Close();
+                    _newUserForm.Dispose();
                 }
             }
             catch (NewUserNameAlreadyExists e)
             {
-                MessageBox.Show(string.Format("Der Benutzername {0} existiert bereits.", e.UserName), _mainWindow.Text, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                _newUserForm.UsernameExistsMessage(e.UserName);
             }
         }
 
