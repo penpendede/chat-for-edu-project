@@ -11,7 +11,7 @@ namespace Chat.Model
         public string UserName;
 
         public UserNameNotFoundException(string userName) 
-            :base(string.Format("Username {0} not found!", userName)) 
+            :base(string.Format("Benutzername {0} not found!", userName)) 
         {
             UserName = userName;
         }

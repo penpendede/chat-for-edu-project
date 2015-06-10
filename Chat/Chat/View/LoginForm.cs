@@ -10,7 +10,8 @@ using System.Windows.Forms;
 namespace Chat
 {
     public delegate void OnLoginSubmit(string userName, string password);
-    public delegate void OnNewUser(string userName, string password);
+    //public delegate void OnNewUser(string userName, string password);
+    public delegate void LoginFormOnNewUser();
 
     public class LoginForm : Form
     {
@@ -23,7 +24,7 @@ namespace Chat
         private Button newUserButton;
 
         public OnLoginSubmit LoginSubmit;
-        public OnNewUser NewUser;
+        public LoginFormOnNewUser NewUser;
 
         public LoginForm(List<string> knownUserNames)
         {
@@ -46,6 +47,10 @@ namespace Chat
             this.tableLayoutPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
             this.tableLayoutPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
             this.tableLayoutPanel.RowStyles.Add(new RowStyle(SizeType.Absolute, 24));
+            this.tableLayoutPanel.RowStyles.Add(new RowStyle(SizeType.Absolute, 24));
+            this.tableLayoutPanel.RowStyles.Add(new RowStyle(SizeType.Absolute, 24));
+            this.tableLayoutPanel.RowStyles.Add(new RowStyle(SizeType.Absolute, 24));
+            this.tableLayoutPanel.RowStyles.Add(new RowStyle(SizeType.Absolute, 24));
 
             this.Controls.Add(this.tableLayoutPanel);
 
@@ -56,6 +61,7 @@ namespace Chat
             this.userNameLabel.Name = "label1";
             this.userNameLabel.Text = "Benutzername";
             this.userNameLabel.Dock = DockStyle.Fill;
+            this.userNameLabel.TextAlign = ContentAlignment.MiddleCenter;
             //this.label1.Click += new System.EventHandler(this.label1_Click);
             // 
             // UserName
@@ -65,6 +71,7 @@ namespace Chat
             this.userNameComboBox.TabIndex = 0;
             this.userNameComboBox.Dock = DockStyle.Fill;
             this.userNameComboBox.Items.AddRange(knownUserNames.ToArray());
+            this.userNameComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
             // 
             // label2
             // 
@@ -72,11 +79,12 @@ namespace Chat
             this.passwordLabel.Name = "label2";
             this.passwordLabel.Text = "Passwort";
             this.passwordLabel.Dock = DockStyle.Fill;
+            this.passwordLabel.TextAlign = ContentAlignment.MiddleCenter;
             // 
             // textBox1
             // 
             this.passwordTextBox.Name = "textBox1";
-            this.passwordTextBox.PasswordChar = '*';
+            this.passwordTextBox.PasswordChar = '\u25A0';
             this.passwordTextBox.TabIndex = 1;
             this.passwordTextBox.Dock = DockStyle.Fill;
             // 
@@ -88,7 +96,8 @@ namespace Chat
             this.newUserButton.UseVisualStyleBackColor = true;
             this.newUserButton.Click += onNewUserButtonClick;
             //this.newUserButton.Dock = DockStyle.Right;
-            this.newUserButton.Anchor = AnchorStyles.Right;
+            this.newUserButton.Anchor = AnchorStyles.Left;
+            this.newUserButton.Width = 90;
             // 
             // Submit
             // 
@@ -99,13 +108,15 @@ namespace Chat
             this.loginButton.Click += onSubmitButtonClick;
             //this.loginButton.Dock = DockStyle.Right;
             this.loginButton.Anchor = AnchorStyles.Right;
+            this.loginButton.Width = 90;
+            //this.
             
             // 
             // LoginForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(202, 138);
+            this.ClientSize = new System.Drawing.Size(190, 138);
 
             this.tableLayoutPanel.Controls.Add(this.userNameLabel, 0, 0);
             this.tableLayoutPanel.SetColumnSpan(this.userNameLabel, 2);
@@ -130,10 +141,7 @@ namespace Chat
 
         private void onNewUserButtonClick(object obj, EventArgs args)
         {
-            if (NewUser != null)
-            {
-                this.NewUser(this.userNameComboBox.Text, this.passwordTextBox.Text);
-            }
+            this.NewUser();
         }
 
         private void onSubmitButtonClick(object obj, EventArgs args)

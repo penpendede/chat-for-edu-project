@@ -11,6 +11,7 @@ namespace Chat.Controller
     {
         private UserLocal userLocal;
         private LoginForm loginForm;
+        private NewUserForm newUserForm;
         private MessengerMainWindowForm mainWindow;
 
         private List<ConversationController> conversationControllers;
@@ -19,10 +20,11 @@ namespace Chat.Controller
 
         private DatabaseController databaseController;
 
-        private bool loginFormClosedKeepMainWindow;
+        private bool _keepMainWindow;
 
         public MessengerController()
         {
+            List<string> usernames;
             conversationControllers = new List<ConversationController>();
             databaseController = new DatabaseController();
 
@@ -31,13 +33,26 @@ namespace Chat.Controller
             mainWindow.FormClosing += this.mainWindowOnClosing;
             mainWindow.ConversationTabControl.TabClose += _onConversationTabClose;
 
-            loginFormClosedKeepMainWindow = false;
+            usernames = databaseController.UserLocalRepo.GetAllUserNames();
+            
+            newUserForm = new NewUserForm(usernames);
+            newUserForm.NewUser += this.newUserFormOnNewUser;
+            newUserForm.FormClosing += this.onLoginFormClosing;
 
-            loginForm = new LoginForm(databaseController.UserLocalRepo.GetAllUserNames());
-            loginForm.LoginSubmit += this.loginFormOnSubmit;
-            loginForm.NewUser += this.loginFormOnNewUser;
-            loginForm.FormClosing += this.onLoginFormClosing;
-            loginForm.ShowDialog();
+            _keepMainWindow = false;
+
+            if (usernames.Count != 0)
+            {
+                loginForm = new LoginForm(databaseController.UserLocalRepo.GetAllUserNames());
+                loginForm.LoginSubmit += this.loginFormOnSubmit;
+                loginForm.NewUser += this.loginFormOnNewUser;
+                loginForm.FormClosing += this.onLoginFormClosing;
+                loginForm.ShowDialog();
+            }
+            else
+            {
+                newUserForm.ShowDialog();
+            }
 
             Application.Run(mainWindow);
         }
@@ -50,37 +65,16 @@ namespace Chat.Controller
 
         private void onLoginFormClosing(object sender, EventArgs e)
         {
-            if (!loginFormClosedKeepMainWindow)
+            if (!_keepMainWindow)
             {
                 Application.Exit();
             }
         }
 
-        private void loginFormOnNewUser(string userName, string password)
+        private void loginFormOnNewUser()
         {
-            try
-            {
-                userLocal = new UserLocal() { Name = userName };
-
-                databaseController.UserLocalRepo.Insert(userLocal);
-
-                databaseController.UserLocalRepo.SetNewPassword(userName, "", password);
-
-                loginFormClosedKeepMainWindow = true;
-
-                userLocal.ConversationAdd += userOnConversationAdd;
-
-                buddyListController = new BuddyListController(userLocal, this);
-
-                mainWindow.AddBuddyListGroupBox(buddyListController.BuddyListGroupBox);
-
-                loginForm.Close(); // NOTE: dispose?
-                mainWindow.Show();
-            }
-            catch (NewUserNameAlreadyExists e)
-            {
-                MessageBox.Show(string.Format("Der Username {0} existiert bereits.", e.UserName), mainWindow.Text, MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
+            loginForm.Hide();
+            newUserForm.ShowDialog();
         }
 
         private void loginFormOnSubmit(string userName, string password)
@@ -93,7 +87,7 @@ namespace Chat.Controller
 
                 userLocal = databaseController.UserLocalRepo.GetByName(userName);
 
-                loginFormClosedKeepMainWindow = true;
+                _keepMainWindow = true;
 
                 userLocal.ConversationAdd += userOnConversationAdd;
 
@@ -111,11 +105,66 @@ namespace Chat.Controller
             }
             catch (UserNameNotFoundException e)
             {
-                MessageBox.Show(string.Format("Der Username {0} ist nicht bekannt.", e.UserName), mainWindow.Text, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show(string.Format("Der Benutzername {0} ist nicht bekannt.", e.UserName), mainWindow.Text, MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
             catch (WrongPasswordException e)
             {
-                MessageBox.Show(string.Format("Der Passwort für User {0} ist falsch.", e.UserName), mainWindow.Text, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show(string.Format("Der Kennwort für User {0} ist falsch.", e.UserName), mainWindow.Text, MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private void newUserFormOnNewUser(string userName, string password, string passwordRepetition)
+        {
+            try
+            {
+                bool isValid = true;
+
+                if (userName.Length == 0)
+                {
+                    MessageBox.Show("Benutzername fehlt", "Benutzername fehlt", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    isValid = false;
+                }
+                else if (password.Length == 0)
+                {
+                    MessageBox.Show("Kennwort fehlt", "Kennwort fehlt", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    isValid = false;
+                }
+                else if (passwordRepetition.Length == 0)
+                {
+                    MessageBox.Show("Kennwortwiederholung fehlt", "Kennwortwiederholung fehlt", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    isValid = false;
+                }
+                else if (password != passwordRepetition)
+                {
+                    MessageBox.Show("Kennwort und Wiederholung sind verschieden", "Kennwort und Wiederholung verschieden", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    isValid = false;
+                }
+
+                if (isValid)
+                {
+                    userLocal = new UserLocal() { Name = userName };
+
+                    databaseController.UserLocalRepo.Insert(userLocal);
+
+                    databaseController.UserLocalRepo.SetNewPassword(userName, "", password);
+
+                    mainWindow.SetUserName(userName);
+
+                    _keepMainWindow = true;
+
+                    userLocal.ConversationAdd += userOnConversationAdd;
+
+                    buddyListController = new BuddyListController(userLocal, this);
+
+                    mainWindow.AddBuddyListGroupBox(buddyListController.BuddyListGroupBox);
+
+                    newUserForm.Close();
+                    //loginForm.Close();
+                }
+            }
+            catch (NewUserNameAlreadyExists e)
+            {
+                MessageBox.Show(string.Format("Der Benutzername {0} existiert bereits.", e.UserName), mainWindow.Text, MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
