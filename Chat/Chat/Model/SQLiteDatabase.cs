@@ -57,18 +57,14 @@ namespace Chat.Model
 
             List<string[]> resultSet = new List<string[]>();
 
-            if (reader.Read())
+            while (reader.Read())
             {
-                do
+                string[] row = new string[reader.FieldCount];
+                for (int i = 0; i < reader.FieldCount; i++)
                 {
-                    string[] row = new string[reader.FieldCount];
-                    for (int i = 0; i < reader.FieldCount; i++)
-                    {
-                        row[i] = reader[i].ToString();
-                    }
-                    resultSet.Add(row);
-
-                } while (reader.Read());
+                    row[i] = reader[i].ToString();
+                }
+                resultSet.Add(row);
 
             }
 

@@ -90,7 +90,7 @@ namespace Chat.Model
                 return false;
             }
             // ID in loaded obj -> contained
-            if (_loaded.Where(o => o.Id == obj.Id).Count() > 0)
+            if (_loaded.Any(o => o.Id == obj.Id))
             {
                 return true;
             }
@@ -126,9 +126,9 @@ namespace Chat.Model
         public UserLocal GetById(int id)
         {
             // if already fetched serve from memory
-            if (_loaded.Where(c => c.Id == id).Count() > 0)
+            if (_loaded.Any(c => c.Id == id))
             {
-                return _loaded.Where(c => c.Id == id).First();
+                return _loaded.First(c => c.Id == id);
             }
 
             List<string[]> resultLocalUser = _dbController.Database.ExecuteSQLQuery("SELECT name FROM user WHERE id = " + id + ";");

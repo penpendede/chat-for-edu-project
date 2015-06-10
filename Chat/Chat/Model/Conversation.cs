@@ -8,16 +8,19 @@ namespace Chat.Model
 {
     public delegate void ConversationOnBuddyAdd(Conversation conversation, UserRemote buddy);
 
-    public delegate void ConversationOnBuddyRemove(Conversation conversation, UserRemote buddy);
+    //public delegate void ConversationOnBuddyRemove(Conversation conversation, UserRemote buddy);
 
     public delegate void ConversationOnMessageAdd(Conversation conversation, Message message);
 
     public delegate void ConversationOnChangeActive(Conversation conversation, Boolean active);
 
+    public delegate void ConversationOnClose(Conversation conversation);
+
     public class Conversation
     {
         public int Id;
-        public UserLocal Owner;
+
+        public UserLocal UserLocal;
         private List<User> _buddies;
         private List<Message> _messages;
 
@@ -26,6 +29,7 @@ namespace Chat.Model
             private set;
             get;
         }
+
         public ReadOnlyCollection<Message> Messages
         {
             private set;
@@ -38,12 +42,17 @@ namespace Chat.Model
             get;
         }
 
+        public bool Closed
+        {
+            private set;
+            get;
+        }
+
         public ConversationOnBuddyAdd BuddyAdd;
-        public ConversationOnBuddyRemove BuddyRemove;
+        //public ConversationOnBuddyRemove BuddyRemove;
         public ConversationOnMessageAdd MessageAdd;
         public ConversationOnChangeActive ChangeActive;
-
-        
+        public ConversationOnClose OnClose;
 
         public Conversation()
         {
@@ -52,6 +61,7 @@ namespace Chat.Model
             Buddies = _buddies.AsReadOnly();
             Messages = _messages.AsReadOnly();
             Active = true;
+            Closed = false;
         }
 
         public void AddBuddy(UserRemote buddy)
@@ -66,14 +76,14 @@ namespace Chat.Model
             }
         }
 
-        public void RemoveBuddy(UserRemote buddy)
-        {
-            _buddies.Remove(buddy);
-            if (BuddyRemove != null)
-            {
-                BuddyRemove(this, buddy);
-            }
-        }
+        //public void RemoveBuddy(UserRemote buddy)
+        //{
+        //    _buddies.Remove(buddy);
+        //    if (BuddyRemove != null)
+        //    {
+        //        BuddyRemove(this, buddy);
+        //    }
+        //}
 
         public void AddMessage(Message message)
         {
@@ -92,6 +102,15 @@ namespace Chat.Model
             if (ChangeActive != null)
             {
                 ChangeActive(this, active);
+            }
+        }
+
+        public void Close()
+        {
+            Closed = true;
+            if (OnClose != null)
+            {
+                OnClose(this);
             }
         }
     }

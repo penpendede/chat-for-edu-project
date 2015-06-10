@@ -1,16 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Windows.Forms;
-using System.ComponentModel;
-using System.ComponentModel.Design;
+﻿using System.Windows.Forms;
 using System.Drawing;
 
 namespace Chat.View
 {
     public delegate void TabControlOnTabFocus(TabPage tabPage);
-    public delegate void TabControlOnTabClose(TabPage tabPage);
+    public delegate void TabControlOnTabClose(TabPage tabPage, bool closeConversation);
 
     //[Designer("System.Windows.Forms.Design.ParentControlDesigner, System.Design", typeof(IDesigner))]
     public class ConversationTabControl : TabControl
@@ -22,6 +16,8 @@ namespace Chat.View
             components = new System.ComponentModel.Container();
 
             this.SuspendLayout();
+
+            Name = "ConversationTabControl";
 
             this.Alignment = System.Windows.Forms.TabAlignment.Bottom;
 
@@ -69,14 +65,12 @@ namespace Chat.View
                 Rectangle closeButton = new Rectangle(r.Right - 15, r.Top + 4, 9, 7);
                 if (closeButton.Contains(e.Location))
                 {
-                    if (MessageBox.Show("Möchten Sie diesen Chat wirklich schließen?", "Confirm", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
-                    {
                         if (TabClose != null)
                         {
-                            TabClose(this.TabPages[i]);
+                            TabClose(this.TabPages[i], MessageBox.Show("Möchten Sie weiterhin Nachrichten aus dieser Konservation erhalten?", "Confirm",
+                    MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.No);
                         }
                         break;
-                    }
                 }
             }
         }

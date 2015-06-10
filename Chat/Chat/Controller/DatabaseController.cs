@@ -27,11 +27,11 @@ namespace Chat.Controller
             UserRemoteRepo = new UserRemoteRepository(this);
             MessageRepo = new MessageRepository(this);
 
-            CreateDatabase();
+            CreateTablesIfNotExistant();
         }
 
 
-        public void CreateDatabase() {
+        public void CreateTablesIfNotExistant() {
             string createTableMessage = "CREATE TABLE IF NOT EXISTS message ("
                 + "id integer primary key auto_increment, "
                 + "senderid integer references user(id), "
@@ -41,13 +41,15 @@ namespace Chat.Controller
             string createTableConversation = "CREATE TABLE IF NOT EXISTS conversation ("
                 + "id integer primary key auto_increment, "
                 + "ownerid integer references user(id), "
-                + "active boolean)";
+                + "active boolean, " 
+                + "closed boolean)";
             string createTableUser = "CREATE TABLE IF NOT EXISTS user ("
                 + "id integer primary key auto_increment, "
                 + "name varchar(32), "
                 + "islocal tinyint(1), "
                 + "passwordsaltedhash varchar(42), "
-                + "ip varchar(40));";
+                + "ip varchar(40), " 
+                + "deleted boolean);";
             string createTableUserHasBuddy = "CREATE TABLE IF NOT EXISTS user_has_buddy ("
                 + "userid integer references user(id), "
                 + "buddyid integer references user(id));";

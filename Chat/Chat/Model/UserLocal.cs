@@ -43,13 +43,6 @@ namespace Chat.Model
         public void RemoveBuddy(UserRemote buddy)
         {
             _buddies.Remove(buddy);
-            foreach (Conversation conv in Conversations)
-            {
-                if (conv.Buddies.Contains(buddy))
-                {
-                    conv.RemoveBuddy(buddy);
-                }
-            }
             if (BuddyRemove != null)
             {
                 BuddyRemove(this, buddy);

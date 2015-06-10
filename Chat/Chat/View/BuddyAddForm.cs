@@ -24,87 +24,87 @@ namespace Chat
 
         public BuddyAddForm()
         {
-            this._tableLayoutPanel = new TableLayoutPanel();
-            this._buddyNameTextBox = new TextBox();
-            this._ipTextBox = new TextBox();
-            this._buddyNameLabel = new Label();
-            this._ipLabel = new Label();
-            this._submitButton = new Button();
-            this.SuspendLayout();
+            _tableLayoutPanel = new TableLayoutPanel();
+            _buddyNameTextBox = new TextBox();
+            _ipTextBox = new TextBox();
+            _buddyNameLabel = new Label();
+            _ipLabel = new Label();
+            _submitButton = new Button();
+            SuspendLayout();
 
             //
             // Panel
             //
 
-            this._tableLayoutPanel = new TableLayoutPanel();
-            this._tableLayoutPanel.Dock = DockStyle.Fill;
-            this._tableLayoutPanel.RowCount = 4;
-            this._tableLayoutPanel.ColumnCount = 1;
+            _tableLayoutPanel = new TableLayoutPanel();
+            _tableLayoutPanel.Dock = DockStyle.Fill;
+            _tableLayoutPanel.RowCount = 4;
+            _tableLayoutPanel.ColumnCount = 1;
 
-            this._tableLayoutPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
-            this._tableLayoutPanel.RowStyles.Add(new RowStyle(SizeType.Absolute, 24));
-            this._tableLayoutPanel.RowStyles.Add(new RowStyle(SizeType.Absolute, 24));
-            this._tableLayoutPanel.RowStyles.Add(new RowStyle(SizeType.Absolute, 24));
-            this._tableLayoutPanel.RowStyles.Add(new RowStyle(SizeType.Absolute, 24));
+            _tableLayoutPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
+            _tableLayoutPanel.RowStyles.Add(new RowStyle(SizeType.Absolute, 24));
+            _tableLayoutPanel.RowStyles.Add(new RowStyle(SizeType.Absolute, 24));
+            _tableLayoutPanel.RowStyles.Add(new RowStyle(SizeType.Absolute, 24));
+            _tableLayoutPanel.RowStyles.Add(new RowStyle(SizeType.Absolute, 24));
 
-            this.Controls.Add(this._tableLayoutPanel);
+            Controls.Add(_tableLayoutPanel);
 
             // 
             // BuddyName
             // 
-            this._buddyNameTextBox.Name = "BuddyName";
-            this._buddyNameTextBox.TabIndex = 0;
-            this._buddyNameTextBox.Dock = DockStyle.Fill;
-            this._tableLayoutPanel.Controls.Add(this._buddyNameTextBox, 0, 1);
+            _buddyNameTextBox.Name = "BuddyName";
+            _buddyNameTextBox.TabIndex = 0;
+            _buddyNameTextBox.Dock = DockStyle.Fill;
+            _tableLayoutPanel.Controls.Add(_buddyNameTextBox, 0, 1);
             // 
             // IP
             // 
-            this._ipTextBox.Name = "IP";
-            this._ipTextBox.TabIndex = 1;
-            this._ipTextBox.Dock = DockStyle.Fill;
-            this._tableLayoutPanel.Controls.Add(this._ipTextBox, 0, 3);
+            _ipTextBox.Name = "IP";
+            _ipTextBox.TabIndex = 1;
+            _ipTextBox.Dock = DockStyle.Fill;
+            _tableLayoutPanel.Controls.Add(_ipTextBox, 0, 3);
             // 
             // label1
             // 
-            this._buddyNameLabel.AutoSize = true;
-            this._buddyNameLabel.Name = "label1";
-            this._buddyNameLabel.TabIndex = 2;
-            this._buddyNameLabel.Text = "Name des Buddies";
-            this._buddyNameLabel.Dock = DockStyle.Fill;
-            this._tableLayoutPanel.Controls.Add(this._buddyNameLabel, 0, 0);
-            this._tableLayoutPanel.SetColumnSpan(this._buddyNameLabel, 2);
+            _buddyNameLabel.AutoSize = true;
+            _buddyNameLabel.Name = "label1";
+            _buddyNameLabel.TabIndex = 2;
+            _buddyNameLabel.Text = "Name des Buddies";
+            _buddyNameLabel.Dock = DockStyle.Fill;
+            _tableLayoutPanel.Controls.Add(_buddyNameLabel, 0, 0);
+            _tableLayoutPanel.SetColumnSpan(_buddyNameLabel, 2);
             // 
             // label2
             // 
-            this._ipLabel.AutoSize = true;
-            this._ipLabel.Name = "label2";
-            this._ipLabel.TabIndex = 3;
-            this._ipLabel.Text = "IP des Buddies";
-            this._ipLabel.Dock = DockStyle.Fill;
-            this._tableLayoutPanel.Controls.Add(this._ipLabel, 0, 2);
-            this._tableLayoutPanel.SetColumnSpan(this._ipLabel, 2);
+            _ipLabel.AutoSize = true;
+            _ipLabel.Name = "label2";
+            _ipLabel.TabIndex = 3;
+            _ipLabel.Text = "IP des Buddies";
+            _ipLabel.Dock = DockStyle.Fill;
+            _tableLayoutPanel.Controls.Add(_ipLabel, 0, 2);
+            _tableLayoutPanel.SetColumnSpan(_ipLabel, 2);
             // 
             // Submit
             // 
-            this._submitButton.Name = "Submit";
-            this._submitButton.TabIndex = 4;
-            this._submitButton.Text = "Submit";
-            this._submitButton.UseVisualStyleBackColor = true;
-            this._submitButton.Dock = DockStyle.Fill;
-            this._submitButton.Click += (o, e) => { if (this.BuddyAddSubmit != null) { this.BuddyAddSubmit(this._buddyNameTextBox.Text, this._ipTextBox.Text); } };
-            this._tableLayoutPanel.Controls.Add(this._submitButton, 0, 4);
+            _submitButton.Name = "Submit";
+            _submitButton.TabIndex = 4;
+            _submitButton.Text = "Submit";
+            _submitButton.UseVisualStyleBackColor = true;
+            _submitButton.Dock = DockStyle.Fill;
+            _submitButton.Click += (o, e) => { if (BuddyAddSubmit != null) { BuddyAddSubmit(_buddyNameTextBox.Text, _ipTextBox.Text); } };
+            _tableLayoutPanel.Controls.Add(_submitButton, 0, 4);
             // 
             // BuddyAddForm
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
-            this.AutoScaleMode = AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(202, 138);
+            AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            AutoScaleMode = AutoScaleMode.Font;
+            ClientSize = new System.Drawing.Size(202, 138);
 
 
-            this.Name = "BuddyAddForm";
-            this.Text = "Buddy hinzufügen";
-            this.ResumeLayout(false);
-            this.PerformLayout();
+            Name = "BuddyAddForm";
+            Text = "Buddy hinzufügen";
+            ResumeLayout(false);
+            PerformLayout();
         }
 
         private System.ComponentModel.IContainer components = null;

@@ -5,12 +5,28 @@ using System.Text;
 
 namespace Chat.Model
 {
+    public delegate void UserRemoteOnDelete(UserRemote userRemote);
+
     public class UserRemote : User
     {
-        public String IP;
-
+        public string IP;
         public UserLocal BuddyOf;
+        public bool Deleted { private set; get; }
 
-        public UserRemote() : base() { }
+        public UserRemoteOnDelete OnDelete;
+
+        public UserRemote(bool deleted=false) : base()
+        {
+            Deleted = deleted;
+        }
+
+        public void Delete()
+        {
+            Deleted = true;
+            if (OnDelete != null)
+            {
+                OnDelete(this);
+            }
+        }
     }
 }

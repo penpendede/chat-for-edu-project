@@ -40,13 +40,13 @@ namespace Chat.Controller
             BuddyListGroupBox.AddToChatAction += _onAddToChatAction;
             BuddyListGroupBox.BuddyRemoveAction += _onBuddyRemoveAction;
             BuddyListGroupBox.BuddyAddAction += _onBuddyAddAction;
-            BuddyListGroupBox.RemoveFromChatAction += _onRemoveFromChatAction;
+            //BuddyListGroupBox.RemoveFromChatAction += _onRemoveFromChatAction;
             BuddyListGroupBox.OpenRecentChatsAction += _onBuddyOpenRecentChatsAction;
         }
 
         private UserRemote _getBuddyById(int id)
         {
-            return _userLocal.Buddies.Where(b => b.Id == id).First();
+            return _userLocal.Buddies.First(b => b.Id == id);
         }
 
         // Model delegates
@@ -63,10 +63,21 @@ namespace Chat.Controller
         // View delegates
         private void _onOpenChatAction(int id)
         {
-            Conversation conv = new Conversation() { UserLocal = _userLocal };
-            conv.SetActive(true);
-            conv.AddBuddy(_getBuddyById(id));
-            _userLocal.AddConversation(conv);
+            UserRemote buddy = _getBuddyById(id);
+            ConversationController convContr =
+                _messengerController.GetDialogController(buddy);
+            if (convContr != null)
+            {
+                convContr.Conversation.SetActive(true);
+                _messengerController.TabControl.ChangeActiveTab(convContr.TabPage);
+            }
+            else
+            {
+                Conversation conv = new Conversation() {UserLocal = _userLocal};
+                conv.SetActive(true);
+                conv.AddBuddy(buddy);
+                _userLocal.AddConversation(conv);
+            }
         }
 
         private void _onAddToChatAction(int id)
@@ -74,14 +85,14 @@ namespace Chat.Controller
             _messengerController.GetActiveConversation().AddBuddy(_getBuddyById(id));
         }
 
-        private void _onRemoveFromChatAction(int id)
-        {
-            _messengerController.GetActiveConversation().RemoveBuddy(_getBuddyById(id));
-        }
+        //private void _onRemoveFromChatAction(int id)
+        //{
+        //    _messengerController.GetActiveConversation().RemoveBuddy(_getBuddyById(id));
+        //}
 
         private void _onBuddyRemoveAction(int id)
         {
-            if (MessageBox.Show("Möchten Sie diesen Buddy wirklich von Ihrer Freundesliste entfernen? Der Nachrichtenverlauf wird gelöscht!", "Confirm", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
+            if (MessageBox.Show("Möchten Sie diesen Buddy wirklich von Ihrer Freundesliste entfernen? Der Nachrichtenverlauf wird nicht mehr verfügbar sein!", "Confirm", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
             {
                 _userLocal.RemoveBuddy(_getBuddyById(id));
             }

@@ -31,7 +31,7 @@ namespace Chat.Model
                 return false;
             }
             // ID in loaded obj -> contained
-            if (_loaded.Where(o => o.Id == obj.Id).Count() > 0)
+            if (_loaded.Any(o => o.Id == obj.Id))
             {
                 return true;
             }
@@ -57,14 +57,14 @@ namespace Chat.Model
         public UserRemote GetById(int id)
         {
             // if already fetched serve from memory
-            if (_loaded.Where(c => c.Id == id).Count() > 0)
+            if (_loaded.Any(c => c.Id == id))
             {
-                return _loaded.Where(c => c.Id == id).First();
+                return _loaded.First(c => c.Id == id);
             }
 
-            List<string[]> result = _dbController.Database.ExecuteSQLQuery("SELECT name, ip FROM user WHERE id = " + id + ";");
+            List<string[]> result = _dbController.Database.ExecuteSQLQuery("SELECT name, ip, deleted FROM user WHERE id = " + id + ";");
 
-            UserRemote userRemote = new UserRemote()
+            UserRemote userRemote = new UserRemote(bool.Parse(result[0][2]))
             {
                 Id = id,
                 Name = result[0][0],
@@ -87,12 +87,14 @@ namespace Chat.Model
                 userRemote.AddConversation(_dbController.ConversationRepo.GetById(Int32.Parse(row[0])));
             }
            
+            _bindAutoSaveDelegates(userRemote);
+
             return userRemote;
 
         }
         public void Insert(UserRemote obj)
         {
-            _dbController.Database.ExecuteSQLQuery("INSERT INTO user (name, islocal, ip) VALUES " + "('" + _dbController.Database.Escape(obj.Name) + "', 0, '" + _dbController.Database.Escape(obj.IP) + "');");
+            _dbController.Database.ExecuteSQLQuery("INSERT INTO user (name, islocal, ip, deleted) VALUES " + "('" + _dbController.Database.Escape(obj.Name) + "', 0, '" + _dbController.Database.Escape(obj.IP) + "', "+(obj.Deleted? 1: 0)+");");
 
             // set id
             obj.Id = Int32.Parse(_dbController.Database.LastInsertedId("user"));
@@ -103,6 +105,8 @@ namespace Chat.Model
             {
                 _dbController.Database.ExecuteSQLQuery("INSERT INTO conversation_has_user (conversationid, userid) VALUES (" + conversation.Id + ", " + obj.Id + ");");
             }
+
+            _bindAutoSaveDelegates(obj);
 
             // store
             _loaded.Add(obj);
@@ -127,7 +131,7 @@ namespace Chat.Model
             {
                 // update activity 
                 _dbController.Database.ExecuteSQLQuery("UPDATE user " +
-                    "SET name = '" + _dbController.Database.Escape(obj.Name) + "', SET ip = '" + _dbController.Database.Escape(obj.IP) + "'" + " WHERE id = " + obj.Id + ";");
+                    "SET name = '" + _dbController.Database.Escape(obj.Name) + "', SET ip = '" + _dbController.Database.Escape(obj.IP) + "', deleted = " + (obj.Deleted? 1: 0) + " WHERE id = " + obj.Id + ";");
 
                 _dbController.Database.ExecuteSQLQuery("DELETE FROM conversation_has_user WHERE userid = " + obj.Id + ";");
                 foreach (Conversation conversation in obj.Conversations)
@@ -148,6 +152,11 @@ namespace Chat.Model
             {
                 Insert(obj);
             }
+        }
+
+        private void _bindAutoSaveDelegates(UserRemote obj)
+        {
+            obj.OnDelete += u => Update(obj);
         }
     }
 }

@@ -31,7 +31,7 @@ namespace Chat.Model
                 return false;
             }
             // ID in loaded obj -> contained
-            if (_loaded.Where(o => o.Id == obj.Id).Count() > 0) 
+            if (_loaded.Any(o => o.Id == obj.Id)) 
             {
                 return true;
             }
@@ -62,9 +62,9 @@ namespace Chat.Model
         public Message GetById(int id)
         {
             // if already fetched serve from memory
-            if (_loaded.Where(c => c.Id == id).Count() > 0)
+            if (_loaded.Any(c => c.Id == id))
             {
-                return _loaded.Where(c => c.Id == id).First();
+                return _loaded.First(c => c.Id == id);
             }
 
             List<string[]> resultMessage = _dbController.Database.ExecuteSQLQuery("SELECT senderid, conversationid, text, time FROM message WHERE id = " + id + ";");

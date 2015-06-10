@@ -8,18 +8,18 @@ namespace Chat.View
     public delegate void BuddyListBuddyRemoveAction(int id);
     public delegate void BuddyListOpenChatAction(int id);
     public delegate void BuddyListAddToChatAction(int id);
-    public delegate void BuddyListRemoveFromChatAction(int id);
+    //public delegate void BuddyListRemoveFromChatAction(int id);
     public delegate void BuddyListOpenRecentChatsAction(int id);
 
     public class BuddyListGroupBox : GroupBox
     {
-        private List<int> buddyIds;
+        private List<int> _buddyIds;
 
         public BuddyListBuddyAddAction BuddyAddAction;
         public BuddyListBuddyRemoveAction BuddyRemoveAction;
         public BuddyListOpenChatAction OpenChatAction;
         public BuddyListAddToChatAction AddToChatAction;
-        public BuddyListRemoveFromChatAction RemoveFromChatAction;
+        //public BuddyListRemoveFromChatAction RemoveFromChatAction;
         public BuddyListOpenRecentChatsAction OpenRecentChatsAction;
 
         private TableLayoutPanel _tableLayoutPanel;
@@ -34,171 +34,125 @@ namespace Chat.View
 
         public BuddyListGroupBox()
         {
-            buddyIds = new List<int>();
+            _buddyIds = new List<int>();
 
             #region Initializing Components
             components = new System.ComponentModel.Container();
 
-            this.SuspendLayout();
+            SuspendLayout();
 
-            this._buddyListBox = new ListBox();
-            this._addBuddyButton = new Button();
+            _buddyListBox = new ListBox();
+            _addBuddyButton = new Button();
 
             //
             // FlowPanel
             //
-            this._tableLayoutPanel = new TableLayoutPanel();
-            this._tableLayoutPanel.Dock = DockStyle.Fill;
-            this._tableLayoutPanel.RowCount = 0;
-            this._tableLayoutPanel.ColumnCount = 1;
+            _tableLayoutPanel = new TableLayoutPanel();
+            _tableLayoutPanel.Dock = DockStyle.Fill;
+            _tableLayoutPanel.RowCount = 0;
+            _tableLayoutPanel.ColumnCount = 1;
 
-            this._tableLayoutPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
-            this._tableLayoutPanel.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
-            this._tableLayoutPanel.RowStyles.Add(new RowStyle(SizeType.Absolute, 30));
+            _tableLayoutPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
+            _tableLayoutPanel.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
+            _tableLayoutPanel.RowStyles.Add(new RowStyle(SizeType.Absolute, 30));
 
-            this.Controls.Add(this._tableLayoutPanel);
+            Controls.Add(_tableLayoutPanel);
 
             // 
             // BuddyList
             // 
 
-            this.Name = "BuddyList";
-            this.Text = "Buddies";
+            Name = "BuddyList";
+            Text = "Buddies";
 
 
             // 
             // BuddyListListBox
             // 
-            this._buddyListBox.FormattingEnabled = true;
-            //this.ListBox.Items.AddRange(this.buddyNames.ToArray());
-            this._buddyListBox.Name = "BuddyListListBox";
-            //this.listBox.Location = new System.Drawing.Point(8, 19);
-            //this.listBox.Size = new System.Drawing.Size(172, 394);
-            //this.listBox.Anchor = AnchorStyles.Left | AnchorStyles.Right | AnchorStyles.Top;
-            this._buddyListBox.Dock = DockStyle.Fill;
-            this._buddyListBox.MouseDown += this.rightClickSelect;
-            this._buddyListBox.DoubleClick += this.invokeOpenChatWithSelectedBuddy;
-            this._buddyListBox.TabIndex = 1;
-            //this.BuddyListListBox.SelectedIndexChanged += new System.EventHandler(this.listBox1_SelectedIndexChanged);
-            this._tableLayoutPanel.Controls.Add(this._buddyListBox);
+            _buddyListBox.FormattingEnabled = true;
+            _buddyListBox.Name = "BuddyListListBox";
+            _buddyListBox.Dock = DockStyle.Fill;
+            _buddyListBox.MouseDown += _rightClickSelect;
+            _buddyListBox.DoubleClick += _doubleClickOpenChat;
+            _buddyListBox.TabIndex = 1;
+            _tableLayoutPanel.Controls.Add(_buddyListBox);
 
             // 
             // BuddyAddButton
             // 
-            this._addBuddyButton.Name = "BuddyListSubmitButton";
-            //this.addBuddyButton.Location = new System.Drawing.Point(8, 420);
-            //this.addBuddyButton.Size = new System.Drawing.Size(174, 25);
-            //this.addBuddyButton.Height = 25;
-            //this.addBuddyButton.Anchor = AnchorStyles.Left | AnchorStyles.Right;
-            this._addBuddyButton.Dock = DockStyle.Fill;
-            this._addBuddyButton.TabIndex = 2;
-            this._addBuddyButton.Text = "Buddy zur Liste hinzufügen";
-            this._addBuddyButton.UseVisualStyleBackColor = true;
-            this._addBuddyButton.Click += this.invokeBuddyAddAction;
-            this._tableLayoutPanel.Controls.Add(this._addBuddyButton);
-            //// 
-            //// BuddyRemoveButton
-            //// 
-            //this._removeBuddyButton = new Button();
-            ////this.addBuddyButton.Location = new System.Drawing.Point(8, 420);
-            //this._removeBuddyButton.Name = "BuddyListSubmitButton";
-            ////this.addBuddyButton.Size = new System.Drawing.Size(174, 25);
-            //this._removeBuddyButton.Anchor = AnchorStyles.Left | AnchorStyles.Right;
-            //this._removeBuddyButton.TabIndex = 3;
-            //this._removeBuddyButton.Text = "Buddy von Liste entfernen";
-            //this._removeBuddyButton.UseVisualStyleBackColor = true;
-            ////this.removeBuddyButton.Click += new EventHandler((o, e) => { if (this.BuddyRemoveAction != null) { this.BuddyRemoveAction(this.listBox.SelectedIndex); } });
-            //this._removeBuddyButton.Click += this.invokeBuddyRemoveWithSelectedBuddy;
-            //this._tableLayoutPanel.Controls.Add(this._removeBuddyButton);
-            //// 
-            //// OpenChatButton
-            //// 
-            //this._openChatButton = new Button();
-            ////this.addBuddyButton.Location = new System.Drawing.Point(8, 420);
-            //this._openChatButton.Name = "BuddyListSubmitButton";
-            ////this.addBuddyButton.Size = new System.Drawing.Size(174, 25);
-            //this._openChatButton.Anchor = AnchorStyles.Left | AnchorStyles.Right;
-            //this._openChatButton.TabIndex = 4;
-            //this._openChatButton.Text = "Öffne Chat mit Buddy";
-            //this._openChatButton.UseVisualStyleBackColor = true;
-            //this._openChatButton.Click += this.invokeOpenChatWithSelectedBuddy;
-            //this._tableLayoutPanel.Controls.Add(this._openChatButton);
-
-            ////
-            //// AddToChatButton
-            ////
-            //this._addToChatButton = new Button();
-            //this._addToChatButton.Anchor = AnchorStyles.Left | AnchorStyles.Right;
-            //this._addToChatButton.Text = "Füge Buddy zu Chat hinzu";
-            //this._addToChatButton.UseVisualStyleBackColor = true;
-            //this._addToChatButton.Click += this.invokeAddToChatWithSelectedBuddy;
-            //this._tableLayoutPanel.Controls.Add(this._addToChatButton);
-            //// TODO: Implement this
+            _addBuddyButton.Name = "BuddyListSubmitButton";
+            _addBuddyButton.Dock = DockStyle.Fill;
+            _addBuddyButton.TabIndex = 2;
+            _addBuddyButton.Text = "Buddy zur Liste hinzufügen";
+            _addBuddyButton.UseVisualStyleBackColor = true;
+            _addBuddyButton.Click += _invokeBuddyAddAction;
+            _tableLayoutPanel.Controls.Add(_addBuddyButton);
+            
 
             //
             // ContextMenu
             //
 
-            this.ContextMenu = new ContextMenu();
+            ContextMenu = new ContextMenu();
 
             MenuItem menuItemOpenChat = new MenuItem();
             menuItemOpenChat.Text = "Chat öffnen";
-            menuItemOpenChat.Click += this.invokeOpenChatWithSelectedBuddy;
-            this.ContextMenu.MenuItems.Add(menuItemOpenChat);
+            menuItemOpenChat.Click += _invokeOpenChatWithSelectedBuddy;
+            ContextMenu.MenuItems.Add(menuItemOpenChat);
 
             MenuItem menuItemRemoveBuddy = new MenuItem();
             menuItemRemoveBuddy.Text = "Buddy entfernen";
-            menuItemRemoveBuddy.Click += this.invokeBuddyRemoveWithSelectedBuddy;
-            //menuItemRemoveBuddy.Click += new System.EventHandler((o, e) => { if (this.BuddyRemoveAction != null) { this.BuddyRemoveAction(this.listBox.SelectedIndex); } });
-            this.ContextMenu.MenuItems.Add(menuItemRemoveBuddy);
+            menuItemRemoveBuddy.Click += _invokeBuddyRemoveWithSelectedBuddy;
+            //menuItemRemoveBuddy.Click += new System.EventHandler((o, e) => { if (BuddyRemoveAction != null) { BuddyRemoveAction(listBox.SelectedIndex); } });
+            ContextMenu.MenuItems.Add(menuItemRemoveBuddy);
 
             MenuItem menuItemAddToChat = new MenuItem();
             menuItemAddToChat.Text = "Buddy zu Chat hinzufügen";
-            menuItemAddToChat.Click += this.invokeAddToChatWithSelectedBuddy;
-            this.ContextMenu.MenuItems.Add(menuItemAddToChat);
+            menuItemAddToChat.Click += _invokeAddToChatWithSelectedBuddy;
+            ContextMenu.MenuItems.Add(menuItemAddToChat);
 
-            MenuItem menuItemRemoveFromChat = new MenuItem();
-            menuItemRemoveFromChat.Text = "Buddy aus dem Chat entfernen";
-            menuItemRemoveFromChat.Click += this.invokeRemoveFromChatWithSelectedBuddy;
-            this.ContextMenu.MenuItems.Add(menuItemRemoveFromChat);
+            //MenuItem menuItemRemoveFromChat = new MenuItem();
+            //menuItemRemoveFromChat.Text = "Buddy aus dem Chat entfernen";
+            //menuItemRemoveFromChat.Click += invokeRemoveFromChatWithSelectedBuddy;
+            //ContextMenu.MenuItems.Add(menuItemRemoveFromChat);
 
             MenuItem menuItemOpenRecentChats = new MenuItem();
             menuItemOpenRecentChats.Text = "Alle vergangenen Chats mit diesem Buddy öffnen";
             menuItemOpenRecentChats.Click += _invokeOpenRecentChatsWithSelectedBuddy;
-            this.ContextMenu.MenuItems.Add(menuItemOpenRecentChats);
+            ContextMenu.MenuItems.Add(menuItemOpenRecentChats);
 
-            this.ResumeLayout(false);
+            ResumeLayout(false);
 
             #endregion
         }
 
         //public BuddyListGroupBox(List<int> buddyIds, List<string> buddyNames)
         //{
-        //    this.buddyNames = buddyNames;
-        //    this.buddyIds = buddyIds;
+        //    buddyNames = buddyNames;
+        //    buddyIds = buddyIds;
         //    InitializeComponent();
         //}
 
         public void AddBuddy(int id, string name)
         {
-            //this.buddyNames.Add(name);
-            this.buddyIds.Add(id);
-            this._buddyListBox.Items.Add(name);
+            //buddyNames.Add(name);
+            _buddyIds.Add(id);
+            _buddyListBox.Items.Add(name);
         }
 
         public void RemoveBuddy(int id)
         {
-            int index = this.buddyIds.IndexOf(id);
-            this.buddyIds.RemoveAt(index);
-            //this.buddyNames.RemoveAt(index);
-            this._buddyListBox.Items.RemoveAt(index);
+            int index = _buddyIds.IndexOf(id);
+            _buddyIds.RemoveAt(index);
+            //buddyNames.RemoveAt(index);
+            _buddyListBox.Items.RemoveAt(index);
         }
 
         public void ChangeBuddyName(int id, string name)
         {
-            int index = this.buddyIds.IndexOf(id);
-            //this.buddyNames[index] = name;
-            this._buddyListBox.Items[index] = name;
+            int index = _buddyIds.IndexOf(id);
+            //buddyNames[index] = name;
+            _buddyListBox.Items[index] = name;
         }
 
         //public BuddyListGroupBox(IContainer container)
@@ -208,56 +162,67 @@ namespace Chat.View
         //    InitializeComponent();
         //}
 
-        private void rightClickSelect(object sender, MouseEventArgs e)
+        private void _doubleClickOpenChat(object sender, EventArgs e)
+        {
+            if (_buddyListBox.SelectedIndex > -1)
+            {
+                if (OpenChatAction != null)
+                {
+                    OpenChatAction(_buddyIds[_buddyListBox.SelectedIndex]);
+                }
+            }
+        }
+
+        private void _rightClickSelect(object sender, MouseEventArgs e)
         {
             _buddyListBox.SelectedIndex = _buddyListBox.IndexFromPoint(e.X, e.Y);
         }
 
-        private void invokeBuddyAddAction(object sender, EventArgs e)
+        private void _invokeBuddyAddAction(object sender, EventArgs e)
         {
-            if (this.BuddyAddAction != null)
+            if (BuddyAddAction != null)
             {
-                this.BuddyAddAction();
+                BuddyAddAction();
             }
         }
 
-        private void invokeOpenChatWithSelectedBuddy(object sender, EventArgs e)
+        private void _invokeOpenChatWithSelectedBuddy(object sender, EventArgs e)
         {
-            if (this.OpenChatAction != null)
+            if (OpenChatAction != null)
             {
-                this.OpenChatAction(this.buddyIds[this._buddyListBox.SelectedIndex]);
+                OpenChatAction(_buddyIds[_buddyListBox.SelectedIndex]);
             }
         }
 
-        private void invokeBuddyRemoveWithSelectedBuddy(object sender, EventArgs e)
+        private void _invokeBuddyRemoveWithSelectedBuddy(object sender, EventArgs e)
         {
-            if (this.BuddyRemoveAction != null)
+            if (BuddyRemoveAction != null)
             {
-                this.BuddyRemoveAction(this.buddyIds[this._buddyListBox.SelectedIndex]);
+                BuddyRemoveAction(_buddyIds[_buddyListBox.SelectedIndex]);
             }
         }
 
-        private void invokeAddToChatWithSelectedBuddy(object sender, EventArgs e)
+        private void _invokeAddToChatWithSelectedBuddy(object sender, EventArgs e)
         {
-            if (this.AddToChatAction != null)
+            if (AddToChatAction != null)
             {
-                this.AddToChatAction(this.buddyIds[this._buddyListBox.SelectedIndex]);
+                AddToChatAction(_buddyIds[_buddyListBox.SelectedIndex]);
             }
         }
 
-        private void invokeRemoveFromChatWithSelectedBuddy(object sender, EventArgs e)
-        {
-            if (this.RemoveFromChatAction != null)
-            {
-                this.RemoveFromChatAction(this.buddyIds[this._buddyListBox.SelectedIndex]);
-            }
-        }
+        //private void invokeRemoveFromChatWithSelectedBuddy(object sender, EventArgs e)
+        //{
+        //    if (RemoveFromChatAction != null)
+        //    {
+        //        RemoveFromChatAction(buddyIds[_buddyListBox.SelectedIndex]);
+        //    }
+        //}
 
         private void _invokeOpenRecentChatsWithSelectedBuddy(object sender, EventArgs e)
         {
-            if (this.OpenRecentChatsAction != null)
+            if (OpenRecentChatsAction != null)
             {
-                this.OpenRecentChatsAction(this.buddyIds[this._buddyListBox.SelectedIndex]);
+                OpenRecentChatsAction(_buddyIds[_buddyListBox.SelectedIndex]);
             }
         }
 

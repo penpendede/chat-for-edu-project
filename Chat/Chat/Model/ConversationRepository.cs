@@ -32,7 +32,7 @@ namespace Chat.Model
                 return false;
             }
             // ID in loaded obj -> contained
-            if (_loaded.Where(o => o.Id == obj.Id).Count() > 0)
+            if (_loaded.Any(o => o.Id == obj.Id))
             {
                 return true;
             }
@@ -64,21 +64,26 @@ namespace Chat.Model
         public Conversation GetById(int id)
         {
             // if already fetched serve from memory
-            if (_loaded.Where(c => c.Id == id).Count() > 0)
+            if (_loaded.Any(c => c.Id == id))
             {
-                return _loaded.Where(c => c.Id == id).First();
+                return _loaded.First(c => c.Id == id);
             }
 
-            List<string[]> result = _dbController.Database.ExecuteSQLQuery("SELECT active, ownerid FROM conversation WHERE id = " + id + ";");
+            List<string[]> result = _dbController.Database.ExecuteSQLQuery("SELECT ownerid, active, closed FROM conversation WHERE id = " + id + ";");
 
             Conversation conversation = new Conversation()
             {
                 Id = id,
-                Owner = _dbController.UserLocalRepo.GetById(Int32.Parse(result[0][1]))
+                UserLocal = _dbController.UserLocalRepo.GetById(Int32.Parse(result[0][0]))
             };
 
-            conversation.SetActive(Boolean.Parse(result[0][0]));
-            conversation.Owner.AddConversation(conversation);
+            if (Boolean.Parse(result[0][2]))
+            {
+                conversation.Close();
+            }
+
+            conversation.SetActive(Boolean.Parse(result[0][1]));
+            conversation.UserLocal.AddConversation(conversation);
 
             // store reference
             _loaded.Add(conversation);
@@ -107,7 +112,7 @@ namespace Chat.Model
         public void Insert(Conversation obj)
         {
             // Add conversation to conversation table
-            _dbController.Database.ExecuteSQLQuery("INSERT INTO conversation (active, ownerid) VALUES (" + (obj.Active? 1:0) + ", " + obj.Owner.Id + ");");
+            _dbController.Database.ExecuteSQLQuery("INSERT INTO conversation (active, ownerid, closed) VALUES (" + (obj.Active? 1:0) + ", " + obj.UserLocal.Id + ", " + (obj.Closed? 1: 0) + ");");
 
             // get id
             obj.Id = Int32.Parse(_dbController.Database.LastInsertedId("conversation"));
@@ -151,7 +156,7 @@ namespace Chat.Model
             if (obj != null)
             {
                 // update activity 
-                _dbController.Database.ExecuteSQLQuery("UPDATE conversation SET active = " + (obj.Active? 1: 0) + " WHERE id = " + obj.Id + ";");
+                _dbController.Database.ExecuteSQLQuery("UPDATE conversation SET active = " + (obj.Active? 1: 0) + ", closed = " + (obj.Closed? 1: 0) + " WHERE id = " + obj.Id + ";");
 
                 // rebuild buddy list ()
                 _dbController.Database.ExecuteSQLQuery("DELETE FROM conversation_has_user WHERE conversationid = " + obj.Id + ";");
@@ -178,9 +183,10 @@ namespace Chat.Model
         private void _bindAutoSaveDelegates(Conversation obj)
         {
             obj.BuddyAdd += (conv, bud) => Update(conv);
-            obj.BuddyRemove += (conv, bud) => Update(conv);
+            //obj.BuddyRemove += (conv, bud) => Update(conv);
             obj.ChangeActive += (conv, act) => Update(conv);
             obj.MessageAdd += (conv, mes) => _dbController.MessageRepo.Insert(mes);
+            obj.OnClose += conv => Update(conv);
         }
     }
 }

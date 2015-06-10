@@ -37,7 +37,7 @@ namespace Chat.Model
             Conversation conv1 = new Conversation()
             {
                 Id = 1,
-                Owner = user
+                UserLocal = user
             };
             conv1.AddBuddy(buddy1);
             conv1.AddBuddy(buddy3);
@@ -47,7 +47,7 @@ namespace Chat.Model
             Conversation conv2 = new Conversation()
             {
                 Id = 2,
-                Owner = user
+                UserLocal = user
             };
             conv2.AddBuddy(buddy2);
             conv2.AddMessage(new Message() { Text = "Hi", Sender = buddy2, Time = DateTime.Now });

@@ -15,16 +15,11 @@ namespace Chat.View
 
         private TableLayoutPanel _tableLayoutPanel;
 
-        public ConversationTabControl ConversationTabControl;
-
-        public BuddyListGroupBox BuddyListGroupBox;
-
         private StatusStrip _statusStrip;
         private ToolStripStatusLabel _statusStripTimeLabel;
 
         public MessengerMainWindowForm()
         {
-            this.ConversationTabControl = new ConversationTabControl();
 
             this.SuspendLayout();
 
@@ -44,16 +39,6 @@ namespace Chat.View
             this._tableLayoutPanel.RowStyles.Add(new RowStyle(SizeType.Absolute, 20));
 
             this.Controls.Add(this._tableLayoutPanel);
-
-            //
-            // ConversationTabControl
-            //
-            this.ConversationTabControl.Name = "ConversationTabControl";
-            this.ConversationTabControl.SelectedIndex = 0;
-            this.ConversationTabControl.Dock = DockStyle.Fill;
-            this.ConversationTabControl.TabIndex = 0;
-            this._tableLayoutPanel.Controls.Add(this.ConversationTabControl, 0, 0);
-
 
             this._statusStrip = new StatusStrip();
             this._statusStripTimeLabel = new ToolStripStatusLabel();
@@ -90,13 +75,25 @@ namespace Chat.View
             this.Name = "MessengerMainWindowForm";
             this.Text = "ChatChatChat";
 
-            
-
-
             this._statusStrip.ResumeLayout(false);
             this._statusStrip.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
+        }
+
+        public void AddConversationTabControl(ConversationTabControl tabControl)
+        {
+            tabControl.TabIndex = 0;
+            tabControl.Dock = DockStyle.Fill;
+            this._tableLayoutPanel.Controls.Add(tabControl, 0, 0);
+        }
+
+        public void AddBuddyListGroupBox(BuddyListGroupBox buddyList)
+        {
+            buddyList.Dock = DockStyle.Fill;
+            buddyList.TabIndex = 1;
+            buddyList.TabStop = false;
+            this._tableLayoutPanel.Controls.Add(buddyList, 1, 0);
         }
 
         private System.Timers.Timer _timer;
@@ -115,17 +112,6 @@ namespace Chat.View
             _timer.Interval = 60000 - DateTime.Now.Second * 1000 - DateTime.Now.Millisecond;
             _timer.Elapsed += (o, e) => { _updateClock(); };
             _timer.Start();
-        }
-
-        public void AddBuddyListGroupBox(BuddyListGroupBox buddyList)
-        {
-            //
-            // BuddyListGroupBox
-            //
-            buddyList.Dock = DockStyle.Fill;
-            buddyList.TabIndex = 1;
-            buddyList.TabStop = false;
-            this._tableLayoutPanel.Controls.Add(buddyList, 1, 0);
         }
 
         /// <summary>

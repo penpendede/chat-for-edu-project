@@ -12,6 +12,15 @@ namespace Chat.View
 
     public class ConversationTabPage : TabPage
     {
+        private List<string> _userNames;
+        private Func<string, bool> _measureLabelText;
+
+        private TableLayoutPanel _tableLayoutPanel;
+        private Label _participants;
+        private TextBox _inputBox;
+        private TextBox _messagesBox;
+        private Button _sendButton;
+
         public ConversationTabPage(Func<string, bool> measureLabelText)
         {
             _userNames = new List<string>();
@@ -19,26 +28,45 @@ namespace Chat.View
             InitializeComponent();
         }
 
+        public void Disable()
+        {
+            _inputBox.ReadOnly = true;
+            _sendButton.Enabled = false;
+            if (_messagesBox.Text != "")
+            {
+                _messagesBox.AppendText("\r\n");
+            }
+            _messagesBox.AppendText("------ CONVERSATION IS CLOSED ------");
+        }
+
         public OnTextSubmit OnTextSubmit;
 
-        private string formatMessage(string userName, string text, DateTime time)
+        private string formatMessage(string userName, string text, DateTime time, bool deleted = false)
         {
             string timeStamp = time.ToString("[hh:mm] ");
-            string nameTag = String.Format("{0}: ", userName);
+            string nameTag;
+
+            if (!deleted)
+            {
+                nameTag = String.Format("{0}: ", userName);
+            } 
+            else
+            {
+                nameTag = String.Format("{0} [DELETED]: ", userName);
+            }
+
             return timeStamp + nameTag + text;
         }
 
-        public void AddMessage(string userName, string text, DateTime time ) {
+        public void AddMessage(string userName, string text, DateTime time, bool deleted = false)
+        {
             
-            if (this.messagesBox.Text != "")
+            if (this._messagesBox.Text != "")
             {
-                this.messagesBox.AppendText("\r\n");
+                this._messagesBox.AppendText("\r\n");
             }
-            this.messagesBox.AppendText(formatMessage(userName, text, time));
+            this._messagesBox.AppendText(formatMessage(userName, text, time, deleted));
         }
-
-        private List<string> _userNames;
-        private Func<string, bool> _measureLabelText;
 
         //private void _updateText()
         //{
@@ -110,9 +138,9 @@ namespace Chat.View
         {
             if (this.OnTextSubmit != null)
             {
-                this.OnTextSubmit(this.inputBox.Text);
+                this.OnTextSubmit(this._inputBox.Text);
             }
-            this.inputBox.Text = "";
+            this._inputBox.Text = "";
         }
 
         /// <summary>
@@ -145,72 +173,73 @@ namespace Chat.View
             // tableLayoutPanel
             //
 
-            this.tableLayoutPanel = new TableLayoutPanel();
+            this._tableLayoutPanel = new TableLayoutPanel();
             
-            this.tableLayoutPanel.Dock = DockStyle.Fill;
-            this.tableLayoutPanel.RowCount = 3;
-            this.tableLayoutPanel.ColumnCount = 2;
+            this._tableLayoutPanel.Dock = DockStyle.Fill;
+            this._tableLayoutPanel.RowCount = 3;
+            this._tableLayoutPanel.ColumnCount = 2;
 
-            this.tableLayoutPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
-            this.tableLayoutPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 50));
-            this.tableLayoutPanel.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
-            this.tableLayoutPanel.RowStyles.Add(new RowStyle(SizeType.Absolute, 18));
-            this.tableLayoutPanel.RowStyles.Add(new RowStyle(SizeType.Absolute, 45));
+            this._tableLayoutPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
+            this._tableLayoutPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 50));
+            this._tableLayoutPanel.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
+            this._tableLayoutPanel.RowStyles.Add(new RowStyle(SizeType.Absolute, 18));
+            this._tableLayoutPanel.RowStyles.Add(new RowStyle(SizeType.Absolute, 45));
             
-            this.Controls.Add(this.tableLayoutPanel);
+            this.Controls.Add(this._tableLayoutPanel);
             
             // 
             // messagesBox
             // 
-            this.messagesBox = new TextBox();
-            this.messagesBox.Multiline = true;
-            this.messagesBox.Name = "tabControlTextBox2";
-            this.messagesBox.Dock = DockStyle.Fill;
-            this.messagesBox.ReadOnly = true;
-            this.messagesBox.BackColor = System.Drawing.SystemColors.Window;
-            this.messagesBox.ScrollBars = ScrollBars.Vertical;
+            this._messagesBox = new TextBox();
+            this._messagesBox.Multiline = true;
+            this._messagesBox.Name = "tabControlTextBox2";
+            this._messagesBox.Dock = DockStyle.Fill;
+            this._messagesBox.ReadOnly = true;
+            this._messagesBox.BackColor = System.Drawing.SystemColors.Window;
+            this._messagesBox.ScrollBars = ScrollBars.Vertical;
 
-            this.messagesBox.VisibleChanged += (sender, e) =>
+            this._messagesBox.VisibleChanged += (sender, e) =>
             {
-                if (this.messagesBox.Visible)
+                if (this._messagesBox.Visible)
                 {
-                    this.messagesBox.AppendText(".");
+                    _messagesBox.AppendText(".");
+                    _messagesBox.Text = _messagesBox.Text.Substring(0, _messagesBox.Text.Length - 1);
                 }
             };
 
-            this.tableLayoutPanel.Controls.Add(this.messagesBox, 0, 0);
-            this.tableLayoutPanel.SetColumnSpan(this.messagesBox, 2);
+            this._tableLayoutPanel.Controls.Add(this._messagesBox, 0, 0);
+            this._tableLayoutPanel.SetColumnSpan(this._messagesBox, 2);
 
             //
             // LabelText
             //
             _participants = new Label();
             _participants.Dock = DockStyle.Fill;
-            this.tableLayoutPanel.Controls.Add(_participants, 0, 1);
-            this.tableLayoutPanel.SetColumnSpan(_participants, 2);
+            this._tableLayoutPanel.Controls.Add(_participants, 0, 1);
+            this._tableLayoutPanel.SetColumnSpan(_participants, 2);
 
             // 
             // inputBox
             //
-            this.inputBox = new TextBox();
-            this.inputBox.Multiline = true;
-            this.inputBox.Name = "tabControlTextBox1";
-            this.inputBox.Dock = DockStyle.Fill;
-            this.inputBox.Tag = "";
+            this._inputBox = new TextBox();
+            this._inputBox.Multiline = true;
+            this._inputBox.Name = "tabControlTextBox1";
+            this._inputBox.Dock = DockStyle.Fill;
+            this._inputBox.Tag = "";
             //this.tabControlTextBox1.TextChanged += new System.EventHandler(this.textBox1_TextChanged);
-            this.tableLayoutPanel.Controls.Add(this.inputBox, 0, 2);
+            this._tableLayoutPanel.Controls.Add(this._inputBox, 0, 2);
 
             // 
             // sendButton
             // 
-            this.sendButton = new Button();
-            this.sendButton.Location = new System.Drawing.Point(537, 377);
-            this.sendButton.Name = "tabControlButton2";
-            this.sendButton.Size = new System.Drawing.Size(46, 41);
-            this.sendButton.Text = "Send";
-            this.sendButton.UseVisualStyleBackColor = true;
-            this.sendButton.Click += this.OnSendButtonClick;
-            this.tableLayoutPanel.Controls.Add(this.sendButton, 1, 2);
+            this._sendButton = new Button();
+            this._sendButton.Location = new System.Drawing.Point(537, 377);
+            this._sendButton.Name = "tabControlButton2";
+            this._sendButton.Size = new System.Drawing.Size(46, 41);
+            this._sendButton.Text = "Send";
+            this._sendButton.UseVisualStyleBackColor = true;
+            this._sendButton.Click += this.OnSendButtonClick;
+            this._tableLayoutPanel.Controls.Add(this._sendButton, 1, 2);
             
 
             //this.Location = new System.Drawing.Point(4, 4);
@@ -221,11 +250,5 @@ namespace Chat.View
 
             
         }
-
-        private TableLayoutPanel tableLayoutPanel;
-        private Label _participants;
-        private TextBox inputBox;
-        private TextBox messagesBox;
-        private Button sendButton;
     }
 }
