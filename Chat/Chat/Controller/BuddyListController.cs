@@ -18,9 +18,13 @@ namespace Chat.Controller
 
         // Controller
         private MessengerController _messengerController;
+
+        private int _standardPort;
         
-        public BuddyListController(UserLocal userLocal, MessengerController messengerController)
+        public BuddyListController(UserLocal userLocal, MessengerController messengerController, int port)
         {
+            _standardPort = port;
+
             _userLocal = userLocal;
             _messengerController = messengerController;
 
@@ -63,25 +67,24 @@ namespace Chat.Controller
         private void _onOpenChatAction(int id)
         {
             UserRemote buddy = _getBuddyById(id);
-            ConversationController convContr =
-                _messengerController.GetDialogController(buddy);
-            if (convContr != null) // check if dialog already exists
-            {
-                convContr.Conversation.SetActive(true);
-                _messengerController.TabControl.ChangeActiveTab(convContr.TabPage);
-            }
-            else
-            {
-                Conversation conv = new Conversation() {UserLocal = _userLocal};
-                conv.SetActive(true);
-                conv.AddBuddy(buddy);
-                _userLocal.AddConversation(conv);
-            }
+
+            Conversation conv = _messengerController.GetDialog(buddy);
+
+            conv.SetActive(true);
+
+            //try
+            //{
+                _messengerController.TabControl.ChangeActiveTab(_messengerController.GetConversationController(conv).TabPage);
+            //}
+            //catch
+            //{
+
+            //}
         }
 
         private void _onAddToChatAction(int id)
         {
-            _messengerController.GetActiveConversation().AddBuddy(_getBuddyById(id));
+            _messengerController.GetActiveConversationController().AddBuddy(_getBuddyById(id));
         }
 
         //private void _onRemoveFromChatAction(int id)
@@ -100,14 +103,14 @@ namespace Chat.Controller
 
         private void _onBuddyAddAction()
         {
-            _buddyAddForm = new BuddyAddForm();
+            _buddyAddForm = new BuddyAddForm(_standardPort);
             _buddyAddForm.BuddyAddSubmit += _onBuddyAddSubmit;
             _buddyAddForm.ShowDialog();
         }
 
-        private void _onBuddyAddSubmit(string userName, string IP)
+        private void _onBuddyAddSubmit(string userName, string IP, int port)
         {
-            _userLocal.AddBuddy(new UserRemote() { Name = userName, IP = IP, BuddyOf = _userLocal });
+            _userLocal.AddBuddy(new UserRemote() { Name = userName, IP = IP, Port = port, BuddyOf = _userLocal });
             _buddyAddForm.Close();
         }
 

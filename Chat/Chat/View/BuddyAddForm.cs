@@ -9,7 +9,7 @@ using System.Windows.Forms;
 
 namespace Chat
 {
-    public delegate void OnBuddyAddSubmit(string name, string IP);
+    public delegate void OnBuddyAddSubmit(string name, string IP, int port);
 
     public class BuddyAddForm : Form
     {
@@ -18,11 +18,13 @@ namespace Chat
         private TableLayoutPanel _tableLayoutPanel;
         private TextBox _buddyNameTextBox;
         private TextBox _ipTextBox;
+        private TextBox _portTextBox;
         private Label _buddyNameLabel;
         private Label _ipLabel;
+        private Label _portLabel;
         private Button _submitButton;
 
-        public BuddyAddForm()
+        public BuddyAddForm(int port)
         {
             _tableLayoutPanel = new TableLayoutPanel();
             _buddyNameTextBox = new TextBox();
@@ -30,6 +32,8 @@ namespace Chat
             _buddyNameLabel = new Label();
             _ipLabel = new Label();
             _submitButton = new Button();
+            _portTextBox = new TextBox();
+            _portLabel = new Label();
             SuspendLayout();
 
             //
@@ -42,6 +46,8 @@ namespace Chat
             _tableLayoutPanel.ColumnCount = 1;
 
             _tableLayoutPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
+            _tableLayoutPanel.RowStyles.Add(new RowStyle(SizeType.Absolute, 24));
+            _tableLayoutPanel.RowStyles.Add(new RowStyle(SizeType.Absolute, 24));
             _tableLayoutPanel.RowStyles.Add(new RowStyle(SizeType.Absolute, 24));
             _tableLayoutPanel.RowStyles.Add(new RowStyle(SizeType.Absolute, 24));
             _tableLayoutPanel.RowStyles.Add(new RowStyle(SizeType.Absolute, 24));
@@ -64,6 +70,14 @@ namespace Chat
             _ipTextBox.Dock = DockStyle.Fill;
             _tableLayoutPanel.Controls.Add(_ipTextBox, 0, 3);
             // 
+            // port
+            // 
+            _portTextBox.Name = "Port";
+            _portTextBox.TabIndex = 1;
+            _portTextBox.Text = port.ToString();
+            _portTextBox.Dock = DockStyle.Fill;
+            _tableLayoutPanel.Controls.Add(_portTextBox, 0, 5);
+            // 
             // label1
             // 
             _buddyNameLabel.AutoSize = true;
@@ -84,6 +98,16 @@ namespace Chat
             _tableLayoutPanel.Controls.Add(_ipLabel, 0, 2);
             _tableLayoutPanel.SetColumnSpan(_ipLabel, 2);
             // 
+            // label2
+            // 
+            _portLabel.AutoSize = true;
+            _portLabel.Name = "label2";
+            _portLabel.TabIndex = 3;
+            _portLabel.Text = "Port des Buddies";
+            _portLabel.Dock = DockStyle.Fill;
+            _tableLayoutPanel.Controls.Add(_portLabel, 0, 4);
+            _tableLayoutPanel.SetColumnSpan(_portLabel, 2);
+            // 
             // Submit
             // 
             _submitButton.Name = "Submit";
@@ -91,20 +115,28 @@ namespace Chat
             _submitButton.Text = "Submit";
             _submitButton.UseVisualStyleBackColor = true;
             _submitButton.Dock = DockStyle.Fill;
-            _submitButton.Click += (o, e) => { if (BuddyAddSubmit != null) { BuddyAddSubmit(_buddyNameTextBox.Text, _ipTextBox.Text); } };
-            _tableLayoutPanel.Controls.Add(_submitButton, 0, 4);
+            _submitButton.Click += _buddyAddClick;
+            _tableLayoutPanel.Controls.Add(_submitButton, 0, 6);
             // 
             // BuddyAddForm
             // 
             AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new System.Drawing.Size(202, 138);
+            ClientSize = new System.Drawing.Size(202, 170);
 
 
             Name = "BuddyAddForm";
             Text = "Buddy hinzufügen";
             ResumeLayout(false);
             PerformLayout();
+        }
+
+        private void _buddyAddClick(object obj, EventArgs args)
+        {
+            if (BuddyAddSubmit != null)
+            {
+                BuddyAddSubmit(_buddyNameTextBox.Text, _ipTextBox.Text, Int32.Parse(_portTextBox.Text));
+            }
         }
 
         private System.ComponentModel.IContainer components = null;

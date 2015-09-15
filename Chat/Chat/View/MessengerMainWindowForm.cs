@@ -110,6 +110,12 @@ namespace Chat.View
             this._tableLayoutPanel.Controls.Add(buddyList, 1, 0);
         }
 
+        public bool AskForBuddyAdd(string userName, string ip, int port)
+        {
+             return MessageBox.Show(string.Format("Wollen Sie den Benutzer {0} mit der Addresse {1}:{2} Ihrer Buddyliste hinzufügen?", userName, ip, port), "Bestätigen",
+                    MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes;
+        }
+
         private System.Timers.Timer _timer;
 
         private void _updateClock()

@@ -10,26 +10,33 @@ using System.Windows.Forms;
 namespace Chat
 {
     public delegate void OnNewUserSubmit(string userName, string password);
-    public delegate void NewUserFormOnNewUser(string userName, string password, string passwordRepetition);
+    public delegate void NewUserFormOnNewUser(string userName, int port, string password, string passwordRepetition);
 
     public class NewUserForm : Form
     {
         private TableLayoutPanel tableLayoutPanel;
-        private TextBox userNameTextBox;
+        
         private Label userNameLabel;
+        private Label portLabel;
         private Label passwordLabel1;
         private Label passwordLabel2;
+
+        private TextBox userNameTextBox;
+        private TextBox portTextBox;
         private TextBox passwordTextBox1;
         private TextBox passwordTextBox2;
+        
         private Button newUserButton;
 
         public NewUserFormOnNewUser NewUser;
 
-        public NewUserForm(List<string> knownUserNames)
+        public NewUserForm(List<string> knownUserNames, int standardPort)
         {
             this.tableLayoutPanel = new TableLayoutPanel();
             this.userNameTextBox = new TextBox();
             this.userNameLabel = new Label();
+            this.portLabel = new Label();
+            this.portTextBox = new TextBox();
             this.passwordLabel1 = new Label();
             this.passwordLabel2 = new Label();
             this.newUserButton = new Button();
@@ -46,6 +53,8 @@ namespace Chat
 
             this.tableLayoutPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
             this.tableLayoutPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
+            this.tableLayoutPanel.RowStyles.Add(new RowStyle(SizeType.Absolute, 24));
+            this.tableLayoutPanel.RowStyles.Add(new RowStyle(SizeType.Absolute, 24));
             this.tableLayoutPanel.RowStyles.Add(new RowStyle(SizeType.Absolute, 24));
             this.tableLayoutPanel.RowStyles.Add(new RowStyle(SizeType.Absolute, 24));
             this.tableLayoutPanel.RowStyles.Add(new RowStyle(SizeType.Absolute, 24));
@@ -69,6 +78,19 @@ namespace Chat
             this.userNameTextBox.Name = "UserName";
             this.userNameTextBox.TabIndex = 0;
             this.userNameTextBox.Dock = DockStyle.Fill;
+            //
+            // Port
+            //
+            this.portLabel.AutoSize = true;
+            this.portLabel.Name = "label2";
+            this.portLabel.Text = "Port";
+            this.portLabel.Dock = DockStyle.Fill;
+            this.portLabel.TextAlign = ContentAlignment.MiddleCenter;
+
+            this.portTextBox.Name = "textBox1";
+            this.portTextBox.Text = standardPort.ToString();
+            this.portTextBox.TabIndex = 1;
+            this.portTextBox.Dock = DockStyle.Fill;
             // 
             // label2
             // 
@@ -116,15 +138,17 @@ namespace Chat
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(150, 200);
+            this.ClientSize = new System.Drawing.Size(150, 250);
 
             this.tableLayoutPanel.Controls.Add(this.userNameLabel, 0, 0);
             this.tableLayoutPanel.Controls.Add(this.userNameTextBox, 0, 1);
-            this.tableLayoutPanel.Controls.Add(this.passwordLabel1, 0, 2);
-            this.tableLayoutPanel.Controls.Add(this.passwordTextBox1, 0, 3);
-            this.tableLayoutPanel.Controls.Add(this.passwordLabel2, 0, 4);
-            this.tableLayoutPanel.Controls.Add(this.passwordTextBox2, 0, 5);
-            this.tableLayoutPanel.Controls.Add(this.newUserButton, 0, 6);
+            this.tableLayoutPanel.Controls.Add(this.portLabel, 0, 2);
+            this.tableLayoutPanel.Controls.Add(this.portTextBox, 0, 3);
+            this.tableLayoutPanel.Controls.Add(this.passwordLabel1, 0, 4);
+            this.tableLayoutPanel.Controls.Add(this.passwordTextBox1, 0, 5);
+            this.tableLayoutPanel.Controls.Add(this.passwordLabel2, 0, 6);
+            this.tableLayoutPanel.Controls.Add(this.passwordTextBox2, 0, 7);
+            this.tableLayoutPanel.Controls.Add(this.newUserButton, 0, 8);
 
             this.Name = "NewUserForm";
             this.Text = "Neuer Benutzer";
@@ -162,7 +186,7 @@ namespace Chat
         {
             if (NewUser != null)
             {
-                NewUser(this.userNameTextBox.Text, this.passwordTextBox1.Text, this.passwordTextBox2.Text);
+                NewUser(this.userNameTextBox.Text, Int32.Parse(this.portTextBox.Text), this.passwordTextBox1.Text, this.passwordTextBox2.Text);
             }
         }
 

@@ -19,15 +19,20 @@ namespace Chat.Controller
         public ConversationTabControl TabControl;
 
         // Other controllers
-        private BuddyListController _buddyListController;
+        private BuddyListController _senderListController;
         private DatabaseController _databaseController;
         private List<ConversationController> _conversationControllers;
+        private TcpPeerManager _peerManager;
+        
 
         // Other 
         private bool _keepMainWindow;
+        private int _standardPort;
 
         public MessengerController()
         {
+            _standardPort = 4711;
+
 			List<string> usernames;
             _conversationControllers = new List<ConversationController>();
             _databaseController = new DatabaseController();
@@ -41,9 +46,11 @@ namespace Chat.Controller
             _mainWindow.AddConversationTabControl(TabControl);
 
 			usernames = _databaseController.UserLocalRepo.GetAllUserNames();
-            _newUserForm = new NewUserForm(usernames);
-            _newUserForm.NewUser += this._newUserFormOnNewUser;
+            _newUserForm = new NewUserForm(usernames, _standardPort);
+            _newUserForm.NewUser += _newUserFormOnNewUser;
             _newUserForm.FormClosing += _onLoginFormClosing;
+
+            // peerManager gets initialized after login
 
             _keepMainWindow = false;
 
@@ -63,15 +70,31 @@ namespace Chat.Controller
             Application.Run(_mainWindow);
         }
 
-        public Conversation GetActiveConversation()
+        public Conversation GetActiveConversationController()
         {
             return _conversationControllers.First(cC => cC.TabPage == TabControl.SelectedTab).Conversation;
         }
 
-        public ConversationController GetDialogController(UserRemote buddy)
+        public Conversation GetDialog(UserRemote sender)
         {
-            return _conversationControllers.FirstOrDefault(cC => cC.Conversation.Buddies.Contains(buddy) && !cC.Conversation.Closed && cC.Conversation.Buddies.Count == 1);
+            Conversation conv = _userLocal.Conversations.FirstOrDefault(c => c.Buddies.Contains(sender) && !c.Closed && c.Buddies.Count == 1);
+            
+            if (conv == null) 
+            {
+                conv = new Conversation() { UserLocal = _userLocal };
+                conv.AddBuddy(sender);
+                _userLocal.AddConversation(conv);
+            }
+
+            return conv;
         }
+
+        public ConversationController GetConversationController(Conversation conv)
+        {
+            return _conversationControllers.FirstOrDefault(cC => cC.Conversation == conv);
+        }
+
+        #region login process
 
         private void _onLoginFormClosing(object sender, EventArgs e)
         {
@@ -93,9 +116,15 @@ namespace Chat.Controller
 
             _mainWindow.SetUserName(_userLocal.Name);
 
+            _peerManager = new TcpPeerManager(_userLocal.Port);
+
+            _peerManager.OnConnect += _onPeerManagerConnection;
+
+            _userLocal.IP = _peerManager.GetLocalIpAddress();
+
             _userLocal.ConversationAdd += _userOnConversationAdd;
-            _buddyListController = new BuddyListController(_userLocal, this);
-            _mainWindow.AddBuddyListGroupBox(_buddyListController.BuddyListGroupBox);
+            _senderListController = new BuddyListController(_userLocal, this, _standardPort);
+            _mainWindow.AddBuddyListGroupBox(_senderListController.BuddyListGroupBox);
 
             foreach (Conversation conversation in _userLocal.Conversations)
             {
@@ -107,63 +136,65 @@ namespace Chat.Controller
 
         private void _loginFormOnSubmit(string userName, string password)
         {
-            try
+
+            StatusVerifyPassword status = _databaseController.GetUserLocal(userName, password, out _userLocal);
+
+            if (status == StatusVerifyPassword.OK)
             {
-                _databaseController.UserLocalRepo.VerifyPassword(userName, password);
-
-                // only reached if verifyPassword does not throw an error
-
-                _userLocal = _databaseController.UserLocalRepo.GetByName(userName);
-
                 _initMainWindow();
 
                 _loginForm.Close();
                 _loginForm.Dispose();
+
             }
-            catch (UserNameNotFoundException e)
+            else if (status == StatusVerifyPassword.USER_NAME_NOT_FOUND)
             {
-                _loginForm.UsernameUnknownMessage(e.UserName);
+                _loginForm.UsernameUnknownMessage(userName);
             }
-            catch (WrongPasswordException e)
+            else if (status == StatusVerifyPassword.WRONG_PASSWORD)
             {
-                _loginForm.WrongPasswordMessage(e.UserName);
+                _loginForm.WrongPasswordMessage(userName);
             }
         }
 
-        private void _newUserFormOnNewUser(string userName, string password, string passwordRepetition)
+        private void _newUserFormOnNewUser(string userName, int port, string password, string passwordRepetition)
         {
-            try
+            bool isValid = true;
+
+            if (userName.Length == 0)
             {
-                bool isValid = true;
+                _newUserForm.UsernameIsMissingMessage();
+                isValid = false;
+            }
+            else if (password.Length == 0)
+            {
+                _newUserForm.PasswordIsMissingMessage();   
+                isValid = false;
+            }
+            else if (passwordRepetition.Length == 0)
+            {
+                _newUserForm.PasswordRepeatIsMissingMessage();
+                isValid = false;
+            }
+            else if (password != passwordRepetition)
+            {
+                _newUserForm.PasswordsMismatchMessage();
+                isValid = false;
+            }
 
-                if (userName.Length == 0)
+            if (isValid)
+            {
+                if (_databaseController.UserLocalRepo.IsUserNameTaken(userName))
                 {
-                    _newUserForm.UsernameIsMissingMessage();
-                    isValid = false;
+                    _newUserForm.UsernameExistsMessage(userName);
                 }
-                else if (password.Length == 0)
+                else 
                 {
-                    _newUserForm.PasswordIsMissingMessage();   
-                    isValid = false;
-                }
-                else if (passwordRepetition.Length == 0)
-                {
-                    _newUserForm.PasswordRepeatIsMissingMessage();
-                    isValid = false;
-                }
-                else if (password != passwordRepetition)
-                {
-                    _newUserForm.PasswordsMismatchMessage();
-                    isValid = false;
-                }
-
-                if (isValid)
-                {
-                    _userLocal = new UserLocal() { Name = userName };
+                    _userLocal = new UserLocal { Name = userName, Port = port };
 
                     _databaseController.UserLocalRepo.Insert(_userLocal);
 
-                    _databaseController.UserLocalRepo.SetNewPassword(userName, "", password);
+                    _databaseController.UserLocalRepo.SetNewPassword(userName, password);
 
                     _initMainWindow();
 
@@ -171,22 +202,24 @@ namespace Chat.Controller
                     _newUserForm.Dispose();
                 }
             }
-            catch (NewUserNameAlreadyExists e)
-            {
-                _newUserForm.UsernameExistsMessage(e.UserName);
-            }
         }
 
-        private void _activateConversation(Conversation conv)
+        #endregion
+
+        #region managing conversations
+
+        private ConversationController _activateConversation(Conversation conv)
         {
             ConversationController convController =
                 _conversationControllers.FirstOrDefault(cC => cC.Conversation == conv);
             if (convController == null)
             {
-                 convController = new ConversationController(_userLocal, conv, TabControl);
+                 convController = new ConversationController(_userLocal, conv, TabControl, _peerManager);
                 _conversationControllers.Add(convController);
             }
             TabControl.ChangeActiveTab(convController.TabPage);
+
+            return convController;
         }
 
         private void _deactivateConversation(Conversation conv)
@@ -220,8 +253,55 @@ namespace Chat.Controller
             conversation.ChangeActive += _onConverationChangeActive;
         }
 
+        #endregion
+
+        #region network
+
+        private void _onPeerManagerConnection(TcpPeer peer)
+        {
+            bool resolved = false;
+
+            peer.MessageReceive += s =>
+            {
+                if (!resolved)
+                {
+                    Dictionary<string, string> messageDict = NetworkMessageInterpreter.Deserialize(s);
+
+                    UserRemote sender = NetworkMessageInterpreter.GetSender(messageDict, _userLocal);
+
+                    if (!_userLocal.Buddies.Contains(sender))
+                    {
+                        if (_mainWindow.AskForBuddyAdd(sender.Name, sender.IP, sender.Port))
+                        {
+                            _userLocal.AddBuddy(sender);
+                        }
+                    }
+
+                    Conversation conv = GetDialog(sender); // TODO: support group chats
+
+                    //get the networkCommunicationController which handles the communication with the sender in the given conversation
+                    ConversationController convContr = GetConversationController(conv);
+                    if (convContr == null) {
+                        convContr = _activateConversation(conv);
+                    }
+
+                    NetworkCommunicationController netContr = convContr.GetNetworkCommunicationController(sender);
+                    netContr.Peer = peer;
+                    netContr.OnMessageReceive(s);
+
+                    resolved = true;
+                }
+            };
+            
+        }
+
+        #endregion
+
+        #region closing windows
+
         private void _mainWindowOnClosing(object o, EventArgs e)
         {
+            _peerManager.Dispose();
             // TODO: implement
         }
 
@@ -234,5 +314,7 @@ namespace Chat.Controller
                 convController.Conversation.Close();    
             }
         }
+
+        #endregion
     }
 }

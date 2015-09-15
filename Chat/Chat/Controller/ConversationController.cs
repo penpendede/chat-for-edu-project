@@ -1,6 +1,7 @@
 ﻿using Chat.Model;
 using Chat.View;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Chat.Controller
 {
@@ -23,13 +24,16 @@ namespace Chat.Controller
         }
 
         // Other controllers
-        private List<NetworkConnectionController> _networkConnectionControllers;
-        
-        public ConversationController(UserLocal userLocal, Conversation conversation, ConversationTabControl tabControl)
+        private List<NetworkCommunicationController> _networkConnectionControllers;
+        private TcpPeerManager _peerManager; // only for pass-through
+
+        public ConversationController(UserLocal userLocal, Conversation conversation, ConversationTabControl tabControl, TcpPeerManager peerManager)
         {
+            _peerManager = peerManager;
+
             _userLocal = userLocal;
             Conversation = conversation;
-            _networkConnectionControllers = new List<NetworkConnectionController>();
+            _networkConnectionControllers = new List<NetworkCommunicationController>();
             _tabControl = tabControl;
 
             Conversation.MessageAdd += _conversationAddMessage;
@@ -57,6 +61,11 @@ namespace Chat.Controller
             }
         }
 
+        public NetworkCommunicationController GetNetworkCommunicationController(UserRemote remoteUser)
+        {
+            return _networkConnectionControllers.FirstOrDefault(c => c.UserRemote == remoteUser);
+        }
+
         private void _conversationAddMessage(Conversation conv, Model.Message message)
         {
             TabPage.AddMessage(message.Sender.Name, message.Text, message.Time);
@@ -64,8 +73,8 @@ namespace Chat.Controller
 
         private void _conversationOnBuddyAdd(Conversation conv, UserRemote buddy)
         {
-            _networkConnectionControllers.Add(new NetworkConnectionController(_userLocal, conv, buddy));
             TabPage.AddUser(buddy.Name);
+            _networkConnectionControllers.Add(new NetworkCommunicationController(_peerManager, _userLocal, conv, buddy));
         }
 
         //private void _ConversationOnBuddyRemove(Conversation conv, UserRemote buddy)

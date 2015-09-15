@@ -1,10 +1,14 @@
 ﻿using System.Windows.Forms;
 using System.Drawing;
+using System;
 
 namespace Chat.View
 {
     public delegate void TabControlOnTabFocus(TabPage tabPage);
     public delegate void TabControlOnTabClose(TabPage tabPage, bool closeConversation);
+
+    delegate void AccessAddTabPageFromOtherThread(ConversationTabPage tabPage);
+
 
     //[Designer("System.Windows.Forms.Design.ParentControlDesigner, System.Design", typeof(IDesigner))]
     public class ConversationTabControl : TabControl
@@ -79,7 +83,14 @@ namespace Chat.View
 
         public void AddTab(ConversationTabPage tabPage)
         {
-            this.Controls.Add(tabPage);
+            if (InvokeRequired)
+            {
+                Invoke(new AccessAddTabPageFromOtherThread(AddTab), tabPage);
+            }
+            else
+            {
+                this.Controls.Add(tabPage);
+            }
         }
 
         public void RemoveTab(ConversationTabPage tabPage)
@@ -89,7 +100,14 @@ namespace Chat.View
 
         public void ChangeActiveTab(ConversationTabPage tabPage)
         {
-            this.SelectTab(tabPage);
+            if (InvokeRequired)
+            {
+                Invoke((Action<ConversationTabPage>)ChangeActiveTab, tabPage);
+            }
+            else
+            {
+                this.SelectTab(tabPage);
+            }
         }
 
         /// <summary>

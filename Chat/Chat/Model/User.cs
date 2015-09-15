@@ -12,6 +12,8 @@ namespace Chat.Model
     {
         public int Id;
         public string Name;
+        public string IP;
+        public int Port;
 
         private List<Conversation> _conversations;
 

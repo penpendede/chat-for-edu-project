@@ -82,9 +82,12 @@ namespace Chat.Model
             // store reference
             _loaded.Add(message);
 
-            if (_dbController.UserLocalRepo.IsLocalById(senderId)) {
+            if (_dbController.UserLocalRepo.IsLocalById(senderId))
+            {
                 message.Sender = _dbController.UserLocalRepo.GetById(senderId);
-            } else {
+            }
+            else
+            {
                 message.Sender = _dbController.UserRemoteRepo.GetById(senderId);
             }
 

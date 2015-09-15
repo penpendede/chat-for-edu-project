@@ -9,7 +9,6 @@ namespace Chat.Model
 
     public class UserRemote : User
     {
-        public string IP;
         public UserLocal BuddyOf;
         public bool Deleted { private set; get; }
 
@@ -26,6 +25,21 @@ namespace Chat.Model
             if (OnDelete != null)
             {
                 OnDelete(this);
+            }
+        }
+
+        // Instance of UserRemote but actually local
+
+        private static UserRemote _systemUser;
+
+        public static UserRemote SystemUser {
+            get
+            {
+                if (_systemUser == null)
+                {
+                    _systemUser = new UserRemote() { Id = -1, Name = "System" };
+                }
+                return _systemUser;
             }
         }
     }

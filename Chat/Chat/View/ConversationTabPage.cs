@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -10,6 +11,13 @@ namespace Chat.View
 {
     public delegate void OnTextSubmit(string text);
 
+    delegate void AccessAddMessageFromOtherThread(string userName, string text, DateTime time, bool deleted = false);
+
+    public class Smileys
+    {
+        
+    }
+
     public class ConversationTabPage : TabPage
     {
         private List<string> _userNames;
@@ -18,7 +26,7 @@ namespace Chat.View
         private TableLayoutPanel _tableLayoutPanel;
         private Label _participants;
         private TextBox _inputBox;
-        private TextBox _messagesBox;
+        private RichTextBox _messagesBox;
         private Button _sendButton;
 
         public ConversationTabPage(Func<string, bool> measureLabelText)
@@ -41,6 +49,8 @@ namespace Chat.View
 
         public OnTextSubmit OnTextSubmit;
 
+
+
         private string formatMessage(string userName, string text, DateTime time, bool deleted = false)
         {
             string timeStamp = time.ToString("[hh:mm] ");
@@ -55,17 +65,61 @@ namespace Chat.View
                 nameTag = String.Format("{0} [DELETED]: ", userName);
             }
 
+            //_addImages(text);
             return timeStamp + nameTag + text;
+        }
+
+        private string _addImages(string text) {
+
+            MemoryStream stream = new MemoryStream();
+            Image img = Image.FromFile("Images/Face-smile200px.png");
+            img.Save(stream, System.Drawing.Imaging.ImageFormat.Png);
+
+            string str = BitConverter.ToString(stream.ToArray()).Replace("-", string.Empty);
+
+            //string str = BitConverter.ToString(System.IO.File.ReadAllBytes("Images/Face-smile200px.png")).Replace("-", string.Empty);
+
+            int twips_per_inch = 1440;
+            int hmm_per_inch = 2540;
+            Graphics g = this._messagesBox.CreateGraphics();
+
+            int picw = (int) Math.Round((img.Width/g.DpiX)*hmm_per_inch);
+            int pich = (int) Math.Round((img.Height/g.DpiY)*hmm_per_inch);
+
+            //int picwgoal = (int) Math.Round((img.Width/g.DpiX)*twips_per_inch);
+
+            return text + @"{\pict\pngblip\picw" + picw + @"\pich" + pich + @"\picwgoal1300\pichgoal1300 " + str + "}";
         }
 
         public void AddMessage(string userName, string text, DateTime time, bool deleted = false)
         {
-            
-            if (this._messagesBox.Text != "")
+            if (InvokeRequired)
             {
-                this._messagesBox.AppendText("\r\n");
+                Invoke(new AccessAddMessageFromOtherThread(AddMessage), userName, text, time, deleted);
             }
-            this._messagesBox.AppendText(formatMessage(userName, text, time, deleted));
+            else
+            {
+                if (this._messagesBox.Text != "")
+                {
+                    this._messagesBox.AppendText("\r\n");
+                }
+
+                string msg = this.formatMessage(userName, text, time, deleted);
+
+                this._messagesBox.AppendText(msg);
+                //string rtf = Regex.Replace(_messagesBox.Rtf, "\\\\par\\s*}\\s*$", msg + "\\par}");
+                //string rtf = Regex.Replace(_messagesBox.Rtf, "\\\\par\\\r\n}\\\r\n$", "soso\\par}"); // geht
+                this._messagesBox.Select(this._messagesBox.TextLength, 0);
+
+                //StringBuilder rtf = new StringBuilder();
+
+                //rtf.Append()
+
+                //this._messagesBox.Rtf = rtf;
+                //this._messagesBox.AppendText(formatMessage(userName, text, time, deleted));
+                //this._messagesBox.AppendText("bye");
+            }
+            
         }
 
         //private void _updateText()
@@ -120,9 +174,17 @@ namespace Chat.View
 
         public void AddUser(string userName)
         {
-            _userNames.Add(userName);
-            _updateTabText();
-            _updateParticipantsText();
+            if (InvokeRequired)
+            {
+                //Invoke(new AccessAddUserFromOtherThread(AddUser), userName)
+                Invoke((Action<string>)AddUser, userName);
+            }
+            else
+            {
+                _userNames.Add(userName);
+                _updateTabText();
+                _updateParticipantsText();
+            }
         }
 
         public void RemoveUser(string userName)
@@ -190,13 +252,13 @@ namespace Chat.View
             // 
             // messagesBox
             // 
-            this._messagesBox = new TextBox();
+            this._messagesBox = new RichTextBox();
             this._messagesBox.Multiline = true;
             this._messagesBox.Name = "tabControlTextBox2";
             this._messagesBox.Dock = DockStyle.Fill;
             this._messagesBox.ReadOnly = true;
             this._messagesBox.BackColor = System.Drawing.SystemColors.Window;
-            this._messagesBox.ScrollBars = ScrollBars.Vertical;
+            this._messagesBox.ScrollBars = RichTextBoxScrollBars.Vertical;
 
             this._messagesBox.VisibleChanged += (sender, e) =>
             {

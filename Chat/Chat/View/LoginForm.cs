@@ -110,7 +110,7 @@ namespace Chat
             this.loginButton.Anchor = AnchorStyles.Right;
             this.loginButton.Width = 90;
             //this.
-            
+
             // 
             // LoginForm
             // 
@@ -120,13 +120,13 @@ namespace Chat
 
             this.tableLayoutPanel.Controls.Add(this.userNameLabel, 0, 0);
             this.tableLayoutPanel.SetColumnSpan(this.userNameLabel, 2);
-            
+
             this.tableLayoutPanel.Controls.Add(this.userNameComboBox, 0, 1);
             this.tableLayoutPanel.SetColumnSpan(this.userNameComboBox, 2);
-            
+
             this.tableLayoutPanel.Controls.Add(this.passwordLabel, 0, 2);
             this.tableLayoutPanel.SetColumnSpan(this.passwordLabel, 2);
-            
+
             this.tableLayoutPanel.Controls.Add(this.passwordTextBox, 0, 3);
             this.tableLayoutPanel.SetColumnSpan(this.passwordTextBox, 2);
 
@@ -174,3 +174,4 @@ namespace Chat
         }
     }
 }
+

@@ -6,39 +6,6 @@ using System.Text;
 
 namespace Chat.Model
 {
-    public class UserNameNotFoundException : Exception
-    {
-        public string UserName;
-
-        public UserNameNotFoundException(string userName) 
-            :base(string.Format("Username {0} not found!", userName)) 
-        {
-            UserName = userName;
-        }
-    }
-
-    public class WrongPasswordException : Exception
-    {
-        public string UserName;
-
-        public WrongPasswordException(string userName)
-            : base(string.Format("Wrong password for username {0}!", userName)) 
-        {
-            UserName = userName;
-        }
-    }
-
-    public class NewUserNameAlreadyExists : Exception
-    {
-        public string UserName;
-
-        public NewUserNameAlreadyExists(string userName)
-            : base(string.Format("The username {0} already exists!", userName))
-        {
-            UserName = userName;
-        }
-    }
-
     public class UserLocalRepository : IRepository<UserLocal>
     {
         private DatabaseController _dbController;
@@ -51,29 +18,23 @@ namespace Chat.Model
             _loaded = new List<UserLocal>();
         }
 
-
-
-        public void VerifyPassword(string userName, string password)
+        public bool IsUserNameTaken(string userName)
         {
-            if (!GetAllUserNames().Contains(userName))
-            {
-                throw new UserNameNotFoundException(userName);
-            }
-
-            #warning password is not salted yet
-
-            if (Int32.Parse(_dbController.Database.ExecuteSQLQuery(string.Format("SELECT COUNT(*) FROM user WHERE name='{0}' AND passwordsaltedhash='{1}';", userName, password))[0][0]) < 1)
-            {
-                throw new WrongPasswordException(userName);
-            }
+            return GetAllUserNames().Contains(userName);
         }
 
-        public void SetNewPassword(string userName, string oldPassword, string newPassword)
+        public bool VerifyPassword(string userName, string password)
         {
-            VerifyPassword(userName, oldPassword);
+            // TODO: Funktioniert gerade irgendwie nicht
+            return
+                Int32.Parse(
+                    _dbController.Database.ExecuteSQLQuery(
+                        string.Format("SELECT COUNT(*) FROM user WHERE name='{0}' AND passwordsaltedhash='{1}';",
+                            userName, password))[0][0]) < 1;
+        }
 
-            // only reached if verifyPassword does not throw an error
-
+        public void SetNewPassword(string userName, string newPassword)
+        {
             _dbController.Database.ExecuteSQLQuery(string.Format("UPDATE user SET passwordsaltedhash='{0}' WHERE name='{1}';", newPassword, _dbController.Database.Escape(userName)));
         }
 
@@ -120,7 +81,14 @@ namespace Chat.Model
 
         public bool IsLocalById(int id)
         {
-            return Int32.Parse(_dbController.Database.ExecuteSQLQuery("SELECT islocal FROM user WHERE id=" + id + ";")[0][0]) > 0;
+            if (id >= 0)
+            {
+                return Int32.Parse(_dbController.Database.ExecuteSQLQuery("SELECT islocal FROM user WHERE id=" + id + ";")[0][0]) > 0;
+            }
+            else
+            {
+                return false;
+            }
         }
 
         public UserLocal GetById(int id)
@@ -131,12 +99,13 @@ namespace Chat.Model
                 return _loaded.First(c => c.Id == id);
             }
 
-            List<string[]> resultLocalUser = _dbController.Database.ExecuteSQLQuery("SELECT name FROM user WHERE id = " + id + ";");
+            List<string[]> resultLocalUser = _dbController.Database.ExecuteSQLQuery("SELECT name, port FROM user WHERE id = " + id + ";");
 
             UserLocal userLocal = new UserLocal()
             {
                 Id = id,
-                Name = resultLocalUser[0][0] //,
+                Name = resultLocalUser[0][0],
+                Port = Int32.Parse(resultLocalUser[0][1]) //,
                 //PasswordSaltedHash = resultLocalUser[0][2] cannot be set like this
             };
 
@@ -166,11 +135,11 @@ namespace Chat.Model
         {
             if (GetAllUserNames().Contains(obj.Name))
             {
-                throw new NewUserNameAlreadyExists(obj.Name);
+                throw new Exception("Username already exists.");
             }
 
-            _dbController.Database.ExecuteSQLQuery("INSERT INTO user (name, islocal, passwordsaltedhash) VALUES " +
-                "('" + _dbController.Database.Escape(obj.Name) + "', 1, '');");
+            _dbController.Database.ExecuteSQLQuery("INSERT INTO user (name, port, islocal, passwordsaltedhash) VALUES " +
+                "('" + _dbController.Database.Escape(obj.Name) + "', " + obj.Port.ToString() + ", 1, '');");
 
             // set id
             obj.Id = Int32.Parse(_dbController.Database.LastInsertedId("user"));
@@ -211,8 +180,8 @@ namespace Chat.Model
             if (obj != null)
             {
                 // update activity 
-                _dbController.Database.ExecuteSQLQuery("UPDATE user " + 
-                    "SET name = '" + _dbController.Database.Escape(obj.Name) + "', SET passwordsaltedhash = '' WHERE id = " + obj.Id + ";");
+                _dbController.Database.ExecuteSQLQuery("UPDATE user " +
+                    "SET name = '" + _dbController.Database.Escape(obj.Name) + "', port = " + obj.Port.ToString() + ", SET passwordsaltedhash = '' WHERE id = " + obj.Id + ";");
 
                 // rebuild buddy list ()
                 _dbController.Database.ExecuteSQLQuery("DELETE FROM user_has_buddy WHERE userid = " + obj.Id + ";");

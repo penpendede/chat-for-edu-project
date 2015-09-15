@@ -118,8 +118,15 @@ namespace Chat.View
 
         public void AddBuddy(int id, string name)
         {
-            _buddyIds.Add(id);
-            _buddyListBox.Items.Add(name);
+            if (InvokeRequired)
+            {
+                Invoke((Action<int, string>)AddBuddy, id, name);
+            }
+            else
+            {
+                _buddyIds.Add(id);
+                _buddyListBox.Items.Add(name);
+            }
         }
 
         public void RemoveBuddy(int id)
