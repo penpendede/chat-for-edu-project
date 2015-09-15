@@ -292,7 +292,8 @@ namespace Chat.Controller
                     resolved = true;
                 }
             };
-            
+
+            peer.StartListening();
         }
 
         #endregion

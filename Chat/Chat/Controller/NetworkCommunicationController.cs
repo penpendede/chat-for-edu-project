@@ -34,6 +34,7 @@ namespace Chat.Controller
                 {
                     _peer = _peerManager.GetPeer(UserRemote.IP, UserRemote.Port);
                     _peer.MessageReceive += OnMessageReceive;
+                    _peer.StartListening();
                 }
                 return _peer;
             }
@@ -41,6 +42,7 @@ namespace Chat.Controller
             {
                 _peer = value;
                 _peer.MessageReceive += OnMessageReceive;
+                _peer.StartListening();
 
                 // if peer received messages before being added to a conversation, handle them
                 //while (Peer.UnhandledMessages.Count > 0)

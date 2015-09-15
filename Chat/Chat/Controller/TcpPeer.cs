@@ -76,7 +76,6 @@ namespace Chat.Controller
                     if (OnConnect != null)
                     {
                         OnConnect(peer);
-
                     }
                 }
             }
@@ -142,8 +141,6 @@ namespace Chat.Controller
             _ip = ((IPEndPoint)client.Client.RemoteEndPoint).Address.ToString();
 
             _client = client;
-
-            _listen();
         }
 
         public TcpPeer(string ip, int port)
@@ -154,8 +151,6 @@ namespace Chat.Controller
             _port = port;
 
             _client = new TcpClient();
-
-            _listen();
         }
 
         public bool IsConnected()
@@ -201,20 +196,19 @@ namespace Chat.Controller
                         {
                             MessageReceive(msg);
                         }
-                        else
-                        {
-                            throw new Exception("bäääh"); // UnhandledMessages.Enqueue(msg);
-                        }
                     }
                 }
             }
         }
 
-        private void _listen()
+        public void StartListening()
         {
-            _listenerThread = new Thread(new ThreadStart(_listenerThreadMethod));
+            if (_listenerThread == null)
+            {
+                _listenerThread = new Thread(new ThreadStart(_listenerThreadMethod));
 
-            _listenerThread.Start();
+                _listenerThread.Start();
+            }
         }
 
         private bool _disposed = false;
