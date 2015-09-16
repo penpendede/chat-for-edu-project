@@ -49,6 +49,7 @@ namespace Chat.Controller
 
         private UserRemote _getBuddyById(int id)
         {
+            // find buddy in buddies with id == id
             return _userLocal.Buddies.First(b => b.Id == id);
         }
 
@@ -66,24 +67,25 @@ namespace Chat.Controller
         // View delegates
         private void _onOpenChatAction(int id)
         {
+            // find the buddy by id
             UserRemote buddy = _getBuddyById(id);
 
+            // get a converstation with buddy
             Conversation conv = _messengerController.GetDialog(buddy);
 
+            // activate conversation
             conv.SetActive(true);
+            
+            // get the tabPage that displays this conversation
+            ConversationTabPage tabPage = _messengerController.GetConversationController(conv).TabPage;
 
-            //try
-            //{
-                _messengerController.TabControl.ChangeActiveTab(_messengerController.GetConversationController(conv).TabPage);
-            //}
-            //catch
-            //{
-
-            //}
+            // change the displayed tab of tabControl to this tabPage
+            _messengerController.TabControl.ChangeActiveTab(tabPage);
         }
 
         private void _onAddToChatAction(int id)
         {
+            // add the buddy with the given id to the active conversation
             _messengerController.GetActiveConversationController().AddBuddy(_getBuddyById(id));
         }
 

@@ -63,6 +63,8 @@ namespace Chat.Controller
 
         public NetworkCommunicationController GetNetworkCommunicationController(UserRemote remoteUser)
         {
+            // returns the communication controller which is responsible for the communication with the given user
+            // returns null if it doesn't exist
             return _networkConnectionControllers.FirstOrDefault(c => c.UserRemote == remoteUser);
         }
 
