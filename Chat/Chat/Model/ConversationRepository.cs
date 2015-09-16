@@ -182,10 +182,14 @@ namespace Chat.Model
 
         private void _bindAutoSaveDelegates(Conversation obj)
         {
+            // update conversation when a buddy gets added to it
             obj.BuddyAdd += (conv, bud) => Update(conv);
             //obj.BuddyRemove += (conv, bud) => Update(conv);
+            // update a conversations active status
             obj.ChangeActive += (conv, act) => Update(conv);
+            // save new messages that gets added to the conversation 
             obj.MessageAdd += (conv, mes) => _dbController.MessageRepo.Insert(mes);
+            // update a conversations open status
             obj.OnClose += conv => Update(conv);
         }
     }

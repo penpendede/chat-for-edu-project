@@ -72,15 +72,18 @@ namespace Chat.Controller
 
         public Conversation GetActiveConversationController()
         {
+            // returns the conversation whichs tab is selected
             return _conversationControllers.First(cC => cC.TabPage == TabControl.SelectedTab).Conversation;
         }
 
         public Conversation GetDialog(UserRemote sender)
         {
+            // find a conversation with sender, that is not closed and not a group chat
             Conversation conv = _userLocal.Conversations.FirstOrDefault(c => c.Buddies.Contains(sender) && !c.Closed && c.Buddies.Count == 1);
             
             if (conv == null) 
             {
+                // create this conversation if it doesn't exist
                 conv = new Conversation() { UserLocal = _userLocal };
                 conv.AddBuddy(sender);
                 _userLocal.AddConversation(conv);
@@ -91,6 +94,7 @@ namespace Chat.Controller
 
         public ConversationController GetConversationController(Conversation conv)
         {
+            // find the conversation controller for conv (if it exists)
             return _conversationControllers.FirstOrDefault(cC => cC.Conversation == conv);
         }
 
@@ -210,13 +214,15 @@ namespace Chat.Controller
 
         private ConversationController _activateConversation(Conversation conv)
         {
-            ConversationController convController =
-                _conversationControllers.FirstOrDefault(cC => cC.Conversation == conv);
+
+            ConversationController convController = GetConversationController(conv);
+
             if (convController == null)
             {
                  convController = new ConversationController(_userLocal, conv, TabControl, _peerManager);
                 _conversationControllers.Add(convController);
             }
+
             TabControl.ChangeActiveTab(convController.TabPage);
 
             return convController;
@@ -224,7 +230,8 @@ namespace Chat.Controller
 
         private void _deactivateConversation(Conversation conv)
         {
-            ConversationController convController = _conversationControllers.Find(c => c.Conversation == conv);
+            ConversationController convController = GetConversationController(conv);
+
             if (convController != null)
             {
                 _conversationControllers.Remove(convController);
@@ -261,14 +268,20 @@ namespace Chat.Controller
         {
             bool resolved = false;
 
+            // this lambda expression waits for the first incoming message
+            // then it decides to which conversation this tcpPeer belongs
+            // after that it doesn't do anything anymore
             peer.MessageReceive += s =>
             {
                 if (!resolved)
                 {
+                    // deserialize the message
                     Dictionary<string, string> messageDict = NetworkMessageInterpreter.Deserialize(s);
 
+                    // get the sender of the message
                     UserRemote sender = NetworkMessageInterpreter.GetSender(messageDict, _userLocal);
 
+                    // if the sender is not a buddy ask the user if the buddy should be added
                     if (!_userLocal.Buddies.Contains(sender))
                     {
                         if (_mainWindow.AskForBuddyAdd(sender.Name, sender.IP, sender.Port))
@@ -280,13 +293,12 @@ namespace Chat.Controller
                     Conversation conv = GetDialog(sender); // TODO: support group chats
 
                     //get the networkCommunicationController which handles the communication with the sender in the given conversation
-                    ConversationController convContr = GetConversationController(conv);
-                    if (convContr == null) {
-                        convContr = _activateConversation(conv);
-                    }
-
+                    ConversationController convContr = _activateConversation(conv);
                     NetworkCommunicationController netContr = convContr.GetNetworkCommunicationController(sender);
+
+                    // give the peer to this networkconversation controller
                     netContr.Peer = peer;
+                    // handle the first message
                     netContr.OnMessageReceive(s);
 
                     resolved = true;
