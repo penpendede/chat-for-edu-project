@@ -120,17 +120,16 @@ namespace Chat.View
 
         private void _updateClock()
         {
-
-            this._statusStripTimeLabel.Text = DateTime.Now.ToString("hh:mm");
+            this._statusStripTimeLabel.Text = DateTime.Now.ToString("HH:mm");
 
             if (_timer == null)
             {
                 _timer = new System.Timers.Timer();
                 _timer.AutoReset = false;
+                _timer.Elapsed += (o, e) => { _updateClock(); };
             }
             
-            _timer.Interval = 60000 - DateTime.Now.Second * 1000 - DateTime.Now.Millisecond;
-            _timer.Elapsed += (o, e) => { _updateClock(); };
+            _timer.Interval = 60000 - 1000 * DateTime.Now.Second - DateTime.Now.Millisecond;
             _timer.Start();
         }
 
