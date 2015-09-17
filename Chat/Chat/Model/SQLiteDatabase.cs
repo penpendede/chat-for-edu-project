@@ -13,6 +13,9 @@ namespace Chat.Model
     {
         private SQLiteConnection connection;
 
+        /// <summary>
+        /// Initialize SQLite db
+        /// </summary>
         public SQLiteDatabase()
         {
             string connectionString = "Data Source=Chat.db3;Version=3;Compress=True;";
@@ -26,16 +29,27 @@ namespace Chat.Model
             Open();
         }
 
+        /// <summary>
+        /// Open db
+        /// </summary>
         public override void Open()
         {
             connection.Open();
         }
 
+        /// <summary>
+        /// close db
+        /// </summary>
         public override void Close()
         {
             connection.Close();
         }
 
+        /// <summary>
+        /// modify SQL command to match database used
+        /// </summary>
+        /// <param name="query">incoming query</param>
+        /// <returns>modified query</returns>
         private string _modifySQL(string query)
         {
             Regex pattern = new Regex("auto_increment", RegexOptions.IgnoreCase);
@@ -45,6 +59,11 @@ namespace Chat.Model
             return query;
         }
 
+        /// <summary>
+        /// Execute SQL query
+        /// </summary>
+        /// <param name="query">query to perform</param>
+        /// <returns>query result as a list of string arrays</returns>
         public override List<string[]> ExecuteSQLQuery(string query)
         {
             query = _modifySQL(query);
@@ -76,10 +95,20 @@ namespace Chat.Model
             return resultSet;
         }
 
+        /// <summary>
+        /// find id that was last inserted into db
+        /// </summary>
+        /// <param name="tableName"></param>
+        /// <returns></returns>
         public override string LastInsertedId(string tableName)
         {
             return ExecuteSQLQuery("SELECT last_insert_rowid() FROM " + tableName + ";")[0][0];
         }
+        /// <summary>
+        /// turn date and time into a representation
+        /// </summary>
+        /// <param name="dt">date and time as DateTime object</param>
+        /// <returns></returns>
 
         public override string FormatDateTime(DateTime dt)
         {

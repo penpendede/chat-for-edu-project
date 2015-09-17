@@ -14,11 +14,18 @@ namespace Chat.Model
 
         public UserRemoteOnDelete OnDelete;
 
+        /// <summary>
+        /// TODO
+        /// </summary>
+        /// <param name="deleted"></param>
         public UserRemote(bool deleted=false) : base()
         {
             Deleted = deleted;
         }
 
+        /// <summary>
+        /// TODO
+        /// </summary>
         public void Delete()
         {
             Deleted = true;
@@ -32,6 +39,9 @@ namespace Chat.Model
 
         private static UserRemote _systemUser;
 
+        /// <summary>
+        /// TODO
+        /// </summary>
         public static UserRemote SystemUser {
             get
             {

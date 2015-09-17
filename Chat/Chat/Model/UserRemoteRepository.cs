@@ -12,12 +12,21 @@ namespace Chat.Model
 
         private List<UserRemote> _loaded;
 
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="dbController">database controller to be used</param>
         public UserRemoteRepository(DatabaseController dbController)
         {
             _dbController = dbController;
             _loaded = new List<UserRemote>();
         }
 
+        /// <summary>
+        /// Does Repository contain object?
+        /// </summary>
+        /// <param name="obj">object to find (a remote user)</param>
+        /// <returns></returns>
         public bool Contains(UserRemote obj)
         {
             // empty object -> not contained
@@ -54,6 +63,11 @@ namespace Chat.Model
         //    return null;
         //}
         
+        /// <summary>
+        /// Get remote user by id
+        /// </summary>
+        /// <param name="id">remote user's id</param>
+        /// <returns>remote user having the given id</returns>
         public UserRemote GetById(int id)
         {
             if (id == -1)
@@ -98,6 +112,11 @@ namespace Chat.Model
             return userRemote;
 
         }
+
+        /// <summary>
+        /// Insert object into repository
+        /// </summary>
+        /// <param name="obj">object to insert (a remote user)</param>
         public void Insert(UserRemote obj)
         {
             if (obj.Id != -1)
@@ -121,6 +140,10 @@ namespace Chat.Model
             }
         }
 
+        /// <summary>
+        /// Remove object from Repository
+        /// </summary>
+        /// <param name="obj">obect to remove (a remote user)</param>
         public void Remove(UserRemote obj)
         {
             if (obj.Id != -1)
@@ -130,6 +153,10 @@ namespace Chat.Model
             }
         }
 
+        /// <summary>
+        /// Remove object from Repository given id
+        /// </summary>
+        /// <param name="id">object's id</param>
         public void RemoveById(int id)
         {
             if (id >= 0)
@@ -140,6 +167,10 @@ namespace Chat.Model
             }
         }
 
+        /// <summary>
+        /// Update object
+        /// </summary>
+        /// <param name="obj">object to be updated (a remote user)</param>
         public void Update(UserRemote obj)
         {
             if (obj != null && obj.Id != -1)
@@ -157,6 +188,10 @@ namespace Chat.Model
             }
         }
 
+        /// <summary>
+        /// Depending on being already in repository either insert or update object
+        /// </summary>
+        /// <param name="obj">object to be inserted or updated (a remote user)</param>
         public void InsertOrUpdate(UserRemote obj)
         {
             if (Contains(obj))
@@ -168,7 +203,10 @@ namespace Chat.Model
                 Insert(obj);
             }
         }
-
+        /// <summary>
+        /// TODO
+        /// </summary>
+        /// <param name="obj"></param>
         private void _bindAutoSaveDelegates(UserRemote obj)
         {
             obj.OnDelete += u => Update(obj);

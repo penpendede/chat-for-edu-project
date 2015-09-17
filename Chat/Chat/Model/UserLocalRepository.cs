@@ -12,17 +12,32 @@ namespace Chat.Model
 
         private List<UserLocal> _loaded;
 
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="dbController">database controller to be used</param>
         public UserLocalRepository(DatabaseController dbController)
         {
             _dbController = dbController;
             _loaded = new List<UserLocal>();
         }
 
+        /// <summary>
+        /// Check if user name is already in use
+        /// </summary>
+        /// <param name="userName">user name to seek</param>
+        /// <returns></returns>
         public bool IsUserNameTaken(string userName)
         {
             return GetAllUserNames().Contains(userName);
         }
 
+        /// <summary>
+        /// Verify password
+        /// </summary>
+        /// <param name="userName">user's name</param>
+        /// <param name="password">user's password</param>
+        /// <returns>TODO</returns>
         public bool VerifyPassword(string userName, string password)
         {
             // TODO: Funktioniert gerade irgendwie nicht
@@ -33,11 +48,21 @@ namespace Chat.Model
                             userName, password))[0][0]) < 1;
         }
 
+        /// <summary>
+        /// Set new password
+        /// </summary>
+        /// <param name="userName">user's name</param>
+        /// <param name="newPassword">user's new password</param>
         public void SetNewPassword(string userName, string newPassword)
         {
             _dbController.Database.ExecuteSQLQuery(string.Format("UPDATE user SET passwordsaltedhash='{0}' WHERE name='{1}';", newPassword, _dbController.Database.Escape(userName)));
         }
 
+        /// <summary>
+        /// Check if repository contains object
+        /// </summary>
+        /// <param name="obj">object to seek (a local user)</param>
+        /// <returns></returns>
         public bool Contains(UserLocal obj)
         {
             // empty object -> not contained
@@ -64,11 +89,20 @@ namespace Chat.Model
             return false;
         }
 
+        /// <summary>
+        /// obtain a list of all existing user names
+        /// </summary>
+        /// <returns>list of user names as strings</returns>
         public List<string> GetAllUserNames()
         {
             return _dbController.Database.ExecuteSQLQuery("SELECT name FROM user WHERE islocal = 1;").Select(s => s[0]).ToList();
         }
 
+        /// <summary>
+        /// find local user by his/her name
+        /// </summary>
+        /// <param name="userName">the user name</param>
+        /// <returns>the user with the given name</returns>
         public UserLocal GetByName(string userName)
         {
             if (userName != null)
@@ -79,6 +113,11 @@ namespace Chat.Model
             return null;
         }
 
+        /// <summary>
+        /// Is user with the given id a local user?
+        /// </summary>
+        /// <param name="id">user id</param>
+        /// <returns>truth value for "user with given id is local user"</returns>
         public bool IsLocalById(int id)
         {
             if (id >= 0)
@@ -91,6 +130,11 @@ namespace Chat.Model
             }
         }
 
+        /// <summary>
+        /// get local user by id
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         public UserLocal GetById(int id)
         {
             // if already fetched serve from memory

@@ -8,6 +8,9 @@ namespace Chat.Model
 {
     public delegate void UserOnConversationAdd(User user, Conversation conversation);
 
+    /// <summary>
+    /// General user class - child classes are UserRemote and UserLocal
+    /// </summary>
     public class User
     {
         public int Id;
@@ -17,6 +20,7 @@ namespace Chat.Model
 
         private List<Conversation> _conversations;
 
+        // getter/setter for different access
         public ReadOnlyCollection<Conversation> Conversations
         {
             private set;
@@ -25,12 +29,19 @@ namespace Chat.Model
 
         public UserOnConversationAdd ConversationAdd;
 
+        /// <summary>
+        /// Constructor
+        /// </summary>
         public User()
         {
             _conversations = new List<Conversation>();
             Conversations = _conversations.AsReadOnly();
         }
 
+        /// <summary>
+        /// Add a conversation to the user
+        /// </summary>
+        /// <param name="conversation">the conversation to be added</param>
         public void AddConversation(Conversation conversation)
         {
             _conversations.Add(conversation);
