@@ -29,6 +29,9 @@ namespace Chat.Controller
         private bool _keepMainWindow;
         private int _standardPort;
 
+        /// <summary>
+        /// Create new Messenger Controller
+        /// </summary>
         public MessengerController()
         {
             _standardPort = 4711;
@@ -70,12 +73,23 @@ namespace Chat.Controller
             Application.Run(_mainWindow);
         }
 
+        /// <summary>
+        /// Get the active conversation
+        /// </summary>
+        /// <returns>the active conversation</returns>
         public Conversation GetActiveConversationController()
         {
             // returns the conversation whichs tab is selected
+            // lambda maps a conversation controller to the truth value of
+            // "conversation controller's tab page is tab control's selected tab"
             return _conversationControllers.First(cC => cC.TabPage == TabControl.SelectedTab).Conversation;
         }
 
+        /// <summary>
+        /// Get conversation for a given (remote) sender
+        /// </summary>
+        /// <param name="sender">the sender (a remote user)</param>
+        /// <returns>the dialog for the sender</returns>
         public Conversation GetDialog(UserRemote sender)
         {
             // find a conversation with sender, that is not closed and not a group chat
@@ -92,6 +106,11 @@ namespace Chat.Controller
             return conv;
         }
 
+        /// <summary>
+        /// Obtain conversation controller for a given conversation
+        /// </summary>
+        /// <param name="conv">the conversation for which the controller is searched</param>
+        /// <returns>conversation's controller</returns>
         public ConversationController GetConversationController(Conversation conv)
         {
             // find the conversation controller for conv (if it exists)
@@ -100,6 +119,11 @@ namespace Chat.Controller
 
         #region login process
 
+        /// <summary>
+        /// Handler for "login form closing"
+        /// </summary>
+        /// <param name="sender">unused</param>
+        /// <param name="e">unused</param>
         private void _onLoginFormClosing(object sender, EventArgs e)
         {
             if (!_keepMainWindow)
@@ -108,12 +132,18 @@ namespace Chat.Controller
             }
         }
 
+        /// <summary>
+        /// Handler for "new user" (occurring in login form)
+        /// </summary>
         private void _loginFormOnNewUser()
         {
             _loginForm.Hide();
             _newUserForm.ShowDialog();
         }
 
+        /// <summary>
+        /// Initialize main window
+        /// </summary>
         private void _initMainWindow()
         {
             _keepMainWindow = true;
@@ -138,6 +168,11 @@ namespace Chat.Controller
             _mainWindow.Show();
         }
 
+        /// <summary>
+        /// Handler for "submit (credentials)" (occurring in login form)
+        /// </summary>
+        /// <param name="userName">user name</param>
+        /// <param name="password"></param>
         private void _loginFormOnSubmit(string userName, string password)
         {
 
@@ -161,6 +196,13 @@ namespace Chat.Controller
             }
         }
 
+        /// <summary>
+        /// Handler for "(add) new user" (occurring in new user form)
+        /// </summary>
+        /// <param name="userName">name of user to be added</param>
+        /// <param name="port">user's port</param>
+        /// <param name="password">user's password</param>
+        /// <param name="passwordRepetition">user's password, repeated</param>
         private void _newUserFormOnNewUser(string userName, int port, string password, string passwordRepetition)
         {
             bool isValid = true;
@@ -212,6 +254,11 @@ namespace Chat.Controller
 
         #region managing conversations
 
+        /// <summary>
+        /// activate conversation
+        /// </summary>
+        /// <param name="conv">conversation</param>
+        /// <returns>controller for the provided conversation</returns>
         private ConversationController _activateConversation(Conversation conv)
         {
 
@@ -228,6 +275,10 @@ namespace Chat.Controller
             return convController;
         }
 
+        /// <summary>
+        /// deactivate conversation
+        /// </summary>
+        /// <param name="conv">conversation to be deacitvated</param>
         private void _deactivateConversation(Conversation conv)
         {
             ConversationController convController = GetConversationController(conv);
@@ -239,6 +290,11 @@ namespace Chat.Controller
             }
         }
 
+        /// <summary>
+        /// handler for "toggle activity state of conversation"
+        /// </summary>
+        /// <param name="conv">conversation</param>
+        /// <param name="active">conversation's current activity status</param>
         private void _onConverationChangeActive(Conversation conv, bool active)
         {
             if (active)
@@ -251,6 +307,11 @@ namespace Chat.Controller
             }
         }
 
+        /// <summary>
+        /// Handler for "add conversation"
+        /// </summary>
+        /// <param name="user"></param>
+        /// <param name="conversation"></param>
         private void _userOnConversationAdd(User user, Conversation conversation)
         {
             if (conversation.Active)
@@ -264,6 +325,10 @@ namespace Chat.Controller
 
         #region network
 
+        /// <summary>
+        /// handler for "peer manager connection occurs"
+        /// </summary>
+        /// <param name="peer">TODO</param>
         private void _onPeerManagerConnection(TcpPeer peer)
         {
             bool resolved = false;
@@ -312,12 +377,22 @@ namespace Chat.Controller
 
         #region closing windows
 
+        /// <summary>
+        /// HAndler for "main window closing"
+        /// </summary>
+        /// <param name="o">unused</param>
+        /// <param name="e">unused</param>
         private void _mainWindowOnClosing(object o, EventArgs e)
         {
             _peerManager.Dispose();
             // TODO: implement
         }
 
+        /// <summary>
+        /// handler for "conversation tab closing"
+        /// </summary>
+        /// <param name="tabPage"></param>
+        /// <param name="closeConversation"></param>
         private void _conversationTabOnClose(TabPage tabPage, bool closeConversation)
         {
             ConversationController convController = _conversationControllers.Find(c => (c.TabPage as TabPage) == tabPage);

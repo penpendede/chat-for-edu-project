@@ -10,12 +10,15 @@ namespace Chat.Controller
     public class NetworkCommunicationController
     {
         // Model
+
+        // getter and setter for having different access restrictions
         public Conversation Conversation
         {
             private set;
             get;
         }
 
+        // getter and setter for having different access restrictions
         public UserRemote UserRemote
         {
             private set;
@@ -26,11 +29,12 @@ namespace Chat.Controller
 
         private TcpPeer _peer;
 
+        // getter and setter actually perform tasks besides assigning values
         public TcpPeer Peer
         {
             get
             {
-                if (_peer == null || !_peer.IsConnected())
+                if (_peer == null || !_peer.IsConnected()) // create if not yet existing or not connected
                 {
                     _peer = _peerManager.GetPeer(UserRemote.IP, UserRemote.Port);
                     _peer.MessageReceive += OnMessageReceive;
@@ -55,6 +59,13 @@ namespace Chat.Controller
 
         private TcpPeerManager _peerManager;
 
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="peerManager">peer manager to use</param>
+        /// <param name="userLocal">local user to use</param>
+        /// <param name="conv">conversation to use</param>
+        /// <param name="userRemote">remote user to use</param>
         public NetworkCommunicationController(TcpPeerManager peerManager, UserLocal userLocal, Conversation conv, UserRemote userRemote)
         {
             _peerManager = peerManager;
@@ -65,6 +76,11 @@ namespace Chat.Controller
             Conversation.MessageAdd += _conversationOnMessageAdd;
         }
 
+        /// <summary>
+        /// Handler for "add message to conversation"
+        /// </summary>
+        /// <param name="conv">conversation to which message is to be added</param>
+        /// <param name="message">message to be added</param>
         private void _conversationOnMessageAdd(Conversation conv, Message message)
         {
             if (message.Sender == _userLocal)
@@ -77,6 +93,10 @@ namespace Chat.Controller
             }
         }
 
+        /// <summary>
+        /// Handler for "message received"
+        /// </summary>
+        /// <param name="msg">the message that is received</param>
         public void OnMessageReceive(string msg)
         {
             Dictionary<string, string> messageDict = NetworkMessageInterpreter.Deserialize(msg);
@@ -91,11 +111,14 @@ namespace Chat.Controller
                     break;
                 case MessageType.BINARY:
                     throw new NotImplementedException();
-                    break;
+                    // no break here as it would be unreachable code
             }
             
         }
 
+        /// <summary>
+        /// Dispose network communication controller: just don't use _conversationOnMessageAdd anymore
+        /// </summary>
         public void Dispose()
         {
             Conversation.MessageAdd -= _conversationOnMessageAdd;
