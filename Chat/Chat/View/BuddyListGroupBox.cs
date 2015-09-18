@@ -116,6 +116,11 @@ namespace Chat.View
         
         // public methods
 
+        /// <summary>
+        /// Add buddy to list
+        /// </summary>
+        /// <param name="id">buddy's ID</param>
+        /// <param name="name">buddy's name</param>
         public void AddBuddy(int id, string name)
         {
             if (InvokeRequired)
@@ -129,6 +134,10 @@ namespace Chat.View
             }
         }
 
+        /// <summary>
+        /// Remove buddy from lsit
+        /// </summary>
+        /// <param name="id">buddy's ID</param>
         public void RemoveBuddy(int id)
         {
             int index = _buddyIds.IndexOf(id);
@@ -136,12 +145,22 @@ namespace Chat.View
             _buddyListBox.Items.RemoveAt(index);
         }
 
+        /// <summary>
+        /// Change the name displayed for a buddy
+        /// </summary>
+        /// <param name="id">buddy's ID</param>
+        /// <param name="name">buddy's (new) name</param>
         public void ChangeBuddyName(int id, string name)
         {
             int index = _buddyIds.IndexOf(id);
             _buddyListBox.Items[index] = name;
         }
 
+        /// <summary>
+        /// Ask user to confirm buddy removal
+        /// </summary>
+        /// <param name="name">buddy's name</param>
+        /// <returns>truth value of "user confirmed removed"</returns>
         public bool AskForBuddyRemove(string name)
         {
             return
@@ -152,6 +171,11 @@ namespace Chat.View
 
         // invoke custom delegates
 
+        /// <summary>
+        /// open chat if buddy's name is double-clicked
+        /// </summary>
+        /// <param name="sender">ignored</param>
+        /// <param name="e">ignored</param>
         private void _doubleClickOpenChat(object sender, EventArgs e)
         {
             if (_buddyListBox.SelectedIndex > -1)
@@ -163,11 +187,21 @@ namespace Chat.View
             }
         }
 
+        /// <summary>
+        /// Select by right click
+        /// </summary>
+        /// <param name="sender">ignored</param>
+        /// <param name="e">used to obtain coordinates</param>
         private void _rightClickSelect(object sender, MouseEventArgs e)
         {
             _buddyListBox.SelectedIndex = _buddyListBox.IndexFromPoint(e.X, e.Y);
         }
 
+        /// <summary>
+        /// trigger "add buddy" action 
+        /// </summary>
+        /// <param name="sender">ignored</param>
+        /// <param name="e">ignored</param>
         private void _invokeBuddyAddAction(object sender, EventArgs e)
         {
             if (BuddyAddAction != null)
@@ -176,6 +210,11 @@ namespace Chat.View
             }
         }
 
+        /// <summary>
+        /// trigger "open chat with selected buddy"
+        /// </summary>
+        /// <param name="sender">ignored</param>
+        /// <param name="e">ignored</param>
         private void _invokeOpenChatWithSelectedBuddy(object sender, EventArgs e)
         {
             if (OpenChatAction != null)
@@ -184,6 +223,11 @@ namespace Chat.View
             }
         }
 
+        /// <summary>
+        /// trigger "remove buddy" action for selected buddy
+        /// </summary>
+        /// <param name="sender">ignored</param>
+        /// <param name="e">ignored</param>
         private void _invokeBuddyRemoveWithSelectedBuddy(object sender, EventArgs e)
         {
             if (BuddyRemoveAction != null)
@@ -192,6 +236,11 @@ namespace Chat.View
             }
         }
 
+        /// <summary>
+        /// trigger "add to chat" action for selected buddy
+        /// </summary>
+        /// <param name="sender">unused</param>
+        /// <param name="e">unused</param>
         private void _invokeAddToChatWithSelectedBuddy(object sender, EventArgs e)
         {
             if (AddToChatAction != null)
@@ -200,6 +249,11 @@ namespace Chat.View
             }
         }
 
+        /// <summary>
+        /// trigger "open recent chats" action for selected buddy
+        /// </summary>
+        /// <param name="sender">ignored</param>
+        /// <param name="e">ignored</param>
         private void _invokeOpenRecentChatsWithSelectedBuddy(object sender, EventArgs e)
         {
             if (OpenRecentChatsAction != null)
@@ -210,6 +264,10 @@ namespace Chat.View
 
         private System.ComponentModel.IContainer components = null;
 
+        /// <summary>
+        /// TODO
+        /// </summary>
+        /// <param name="disposing"></param>
         protected override void Dispose(bool disposing)
         {
             if (disposing && (components != null))

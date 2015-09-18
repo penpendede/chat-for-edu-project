@@ -13,11 +13,17 @@ namespace Chat.View
 
     delegate void AccessAddMessageFromOtherThread(string userName, string text, DateTime time, bool deleted = false);
 
+    /// <summary>
+    /// No smiles so far
+    /// </summary>
     public class Smileys
     {
         
     }
 
+    /// <summary>
+    /// A conversation tab page is a tab page (obviously)
+    /// </summary>
     public class ConversationTabPage : TabPage
     {
         private List<string> _userNames;
@@ -29,6 +35,10 @@ namespace Chat.View
         private RichTextBox _messagesBox;
         private Button _sendButton;
 
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="measureLabelText">TODO</param>
         public ConversationTabPage(Func<string, bool> measureLabelText)
         {
             _userNames = new List<string>();
@@ -36,6 +46,9 @@ namespace Chat.View
             InitializeComponent();
         }
 
+        /// <summary>
+        /// Disable tab page
+        /// </summary>
         public void Disable()
         {
             _inputBox.ReadOnly = true;
@@ -49,8 +62,14 @@ namespace Chat.View
 
         public OnTextSubmit OnTextSubmit;
 
-
-
+        /// <summary>
+        /// format message for display
+        /// </summary>
+        /// <param name="userName">user from who the message originated</param>
+        /// <param name="text">the message's text</param>
+        /// <param name="time">time (and date) the message was sent</param>
+        /// <param name="deleted">whether the user in the meantime has been deleted</param>
+        /// <returns></returns>
         private string formatMessage(string userName, string text, DateTime time, bool deleted = false)
         {
             string timeStamp = time.ToString("[hh:mm] ");
@@ -69,6 +88,11 @@ namespace Chat.View
             return timeStamp + nameTag + text;
         }
 
+        /// <summary>
+        /// TODO
+        /// </summary>
+        /// <param name="text"></param>
+        /// <returns></returns>
         private string _addImages(string text) {
 
             MemoryStream stream = new MemoryStream();
@@ -91,6 +115,13 @@ namespace Chat.View
             return text + @"{\pict\pngblip\picw" + picw + @"\pich" + pich + @"\picwgoal1300\pichgoal1300 " + str + "}";
         }
 
+        /// <summary>
+        /// Add a nessage
+        /// </summary>
+        /// <param name="userName">sender of the message</param>
+        /// <param name="text">text of the message</param>
+        /// <param name="time">time (and date) the message was sent)</param>
+        /// <param name="deleted">whether the user in the meantime has been deleted</param>
         public void AddMessage(string userName, string text, DateTime time, bool deleted = false)
         {
             if (InvokeRequired)
@@ -131,6 +162,9 @@ namespace Chat.View
         //    }
         //}
 
+        /// <summary>
+        /// TODO
+        /// </summary>
         private void _updateTabText()
         {
             string text = "";
@@ -163,6 +197,9 @@ namespace Chat.View
             }
         }
 
+        /// <summary>
+        /// TODO
+        /// </summary>
         private void _updateParticipantsText()
         {
             _participants.Text = "Du";
@@ -172,6 +209,10 @@ namespace Chat.View
             }
         }
 
+        /// <summary>
+        /// Add user
+        /// </summary>
+        /// <param name="userName">name of the user to be added</param>
         public void AddUser(string userName)
         {
             if (InvokeRequired)
@@ -187,6 +228,10 @@ namespace Chat.View
             }
         }
 
+        /// <summary>
+        /// Remove user
+        /// </summary>
+        /// <param name="userName">name of the user to be removed</param>
         public void RemoveUser(string userName)
         {
             //string regExp = string.Format("(^{0}, )|((, )?{0})", userName);
@@ -196,6 +241,11 @@ namespace Chat.View
             _updateParticipantsText();
         }
 
+        /// <summary>
+        /// Handler for "submit button was clicked"
+        /// </summary>
+        /// <param name="obj">unused</param>
+        /// <param name="args">unused</param>
         private void OnSendButtonClick(object obj, EventArgs args)
         {
             if (this.OnTextSubmit != null)
@@ -226,7 +276,6 @@ namespace Chat.View
         /// <summary>
         /// Erforderliche Methode für die Designerunterstützung.
         /// </summary>
-
         private void InitializeComponent()
         {
             components = new System.ComponentModel.Container();

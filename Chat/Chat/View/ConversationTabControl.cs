@@ -81,6 +81,10 @@ namespace Chat.View
 
         #endregion
 
+        /// <summary>
+        /// Add tab (for a new conversation) to tab control
+        /// </summary>
+        /// <param name="tabPage">tab to be added</param>
         public void AddTab(ConversationTabPage tabPage)
         {
             if (InvokeRequired)
@@ -93,11 +97,19 @@ namespace Chat.View
             }
         }
 
+        /// <summary>
+        /// Remove tab (for existing conversation) from tab control
+        /// </summary>
+        /// <param name="tabPage"></param>
         public void RemoveTab(ConversationTabPage tabPage)
         {
             this.Controls.Remove(tabPage);
         }
 
+        /// <summary>
+        /// Change activity of a tab
+        /// </summary>
+        /// <param name="tabPage">tab of which the activity is to be changed</param>
         public void ChangeActiveTab(ConversationTabPage tabPage)
         {
             if (InvokeRequired)
@@ -118,7 +130,7 @@ namespace Chat.View
         /// <summary>
         /// Verwendete Ressourcen bereinigen.
         /// </summary>
-        /// <param name="disposing">1, wenn verwaltete Ressourcen gelöscht werden sollen; andernfalls False.</param>
+        /// <param name="disposing">1, wenn verwaltete Ressourcen gelöscht werden sollen; andernfalls False. TODO</param>
         protected override void Dispose(bool disposing)
         {
             if (disposing && (components != null))

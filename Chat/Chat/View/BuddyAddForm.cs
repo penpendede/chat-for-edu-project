@@ -11,6 +11,9 @@ namespace Chat
 {
     public delegate void OnBuddyAddSubmit(string name, string IP, int port);
 
+    /// <summary>
+    /// add buddy form: a form
+    /// </summary>
     public class BuddyAddForm : Form
     {
         public OnBuddyAddSubmit BuddyAddSubmit;
@@ -24,6 +27,10 @@ namespace Chat
         private Label _portLabel;
         private Button _submitButton;
 
+        /// <summary>
+        /// make the buddy add form
+        /// </summary>
+        /// <param name="port">default value for the port number</param>
         public BuddyAddForm(int port)
         {
             _tableLayoutPanel = new TableLayoutPanel();
@@ -131,6 +138,11 @@ namespace Chat
             PerformLayout();
         }
 
+        /// <summary>
+        ///  Handler for "buddy add has been clicked"
+        /// </summary>
+        /// <param name="obj">ignored</param>
+        /// <param name="args">ignored</param>
         private void _buddyAddClick(object obj, EventArgs args)
         {
             if (BuddyAddSubmit != null)
@@ -141,6 +153,10 @@ namespace Chat
 
         private System.ComponentModel.IContainer components = null;
 
+        /// <summary>
+        /// TODO
+        /// </summary>
+        /// <param name="disposing"></param>
         protected override void Dispose(bool disposing)
         {
             if (disposing && (components != null))

@@ -11,6 +11,9 @@ namespace Chat
 {
     public delegate void OnPortSubmit(int port);
 
+    /// <summary>
+    /// TODO
+    /// </summary>
     public class PortForm : Form
     {
         private TableLayoutPanel tableLayoutPanel;
@@ -95,12 +98,19 @@ namespace Chat
             this.PerformLayout();
         }
 
-
+        /// <summary>
+        /// Display "port cannot be parsed" message
+        /// </summary>
         public void UnparsablePortMessage()
         {
-            MessageBox.Show("Der Angegebene Port hat ein ungültiges Format.", "Port ungültig", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            MessageBox.Show("Der angegebene Port hat ein ungültiges Format.", "Port ungültig", MessageBoxButtons.OK, MessageBoxIcon.Error);
         }
 
+        /// <summary>
+        /// TODO
+        /// </summary>
+        /// <param name="obj">ignored</param>
+        /// <param name="args">ignored</param>
         private void onPortButtonClick(object obj, EventArgs args)
         {
             try
@@ -121,6 +131,10 @@ namespace Chat
 
         private System.ComponentModel.IContainer components = null;
 
+        /// <summary>
+        /// TODO
+        /// </summary>
+        /// <param name="disposing"></param>
         protected override void Dispose(bool disposing)
         {
             if (disposing && (components != null))

@@ -13,6 +13,9 @@ namespace Chat
     //public delegate void OnNewUser(string userName, string password);
     public delegate void LoginFormOnNewUser();
 
+    /// <summary>
+    ///  Login form - a form
+    /// </summary>
     public class LoginForm : Form
     {
         private TableLayoutPanel tableLayoutPanel;
@@ -26,6 +29,10 @@ namespace Chat
         public OnLoginSubmit LoginSubmit;
         public LoginFormOnNewUser NewUser;
 
+        /// <summary>
+        /// Make the login form
+        /// </summary>
+        /// <param name="knownUserNames">the list of known users</param>
         public LoginForm(List<string> knownUserNames)
         {
             this.tableLayoutPanel = new TableLayoutPanel();
@@ -139,21 +146,39 @@ namespace Chat
             this.PerformLayout();
         }
 
+        /// <summary>
+        /// Display "user unknown" message box
+        /// </summary>
+        /// <param name="userName">unkown user</param>
         public void UsernameUnknownMessage(string userName)
         {
             MessageBox.Show(string.Format("Der Username {0} ist nicht bekannt.", userName), "Username unbekannt", MessageBoxButtons.OK, MessageBoxIcon.Error);
         }
 
+        /// <summary>
+        /// Display "wrong password" message box
+        /// </summary>
+        /// <param name="userName">name of user for who the wrong password was provided</param>
         public void WrongPasswordMessage(string userName)
         {
             MessageBox.Show(string.Format("Der Passwort für User {0} ist falsch.", userName), "Passwort falsch", MessageBoxButtons.OK, MessageBoxIcon.Error);
         }
 
+        /// <summary>
+        /// Handler for "new user button was clicked"
+        /// </summary>
+        /// <param name="obj">ignored</param>
+        /// <param name="args">ignored</param>
         private void onNewUserButtonClick(object obj, EventArgs args)
         {
             this.NewUser();
         }
 
+        /// <summary>
+        ///  Handler for "submit button was clicked"
+        /// </summary>
+        /// <param name="obj">ignored</param>
+        /// <param name="args">ignored</param>
         private void onSubmitButtonClick(object obj, EventArgs args)
         {
             if (LoginSubmit != null)
@@ -164,6 +189,10 @@ namespace Chat
 
         private System.ComponentModel.IContainer components = null;
 
+        /// <summary>
+        /// TODO
+        /// </summary>
+        /// <param name="disposing"></param>
         protected override void Dispose(bool disposing)
         {
             if (disposing && (components != null))

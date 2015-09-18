@@ -9,6 +9,9 @@ using System.Windows.Forms;
 
 namespace Chat.View
 {
+    /// <summary>
+    /// The main window is a form
+    /// </summary>
     public class MessengerMainWindowForm : Form
     {
         private System.ComponentModel.IContainer components = null;
@@ -83,6 +86,11 @@ namespace Chat.View
             this.ResumeLayout(false);
             this.PerformLayout();
         }
+
+        /// <summary>
+        /// Set user name to be displayed
+        /// </summary>
+        /// <param name="userName">user name</param>
         public void SetUserName(string userName)
         {
             if (userName == "")
@@ -95,6 +103,10 @@ namespace Chat.View
             }
         }
 
+        /// <summary>
+        /// Add a tab control
+        /// </summary>
+        /// <param name="tabControl">Tab control to be added</param>
         public void AddConversationTabControl(ConversationTabControl tabControl)
         {
             tabControl.TabIndex = 0;
@@ -102,6 +114,10 @@ namespace Chat.View
             this._tableLayoutPanel.Controls.Add(tabControl, 0, 0);
         }
 
+        /// <summary>
+        /// Add buddy list grup box
+        /// </summary>
+        /// <param name="buddyList">Buddy lists group box</param>
         public void AddBuddyListGroupBox(BuddyListGroupBox buddyList)
         {
             buddyList.Dock = DockStyle.Fill;
@@ -110,6 +126,13 @@ namespace Chat.View
             this._tableLayoutPanel.Controls.Add(buddyList, 1, 0);
         }
 
+        /// <summary>
+        /// Ask user to confirm adding a buddy
+        /// </summary>
+        /// <param name="userName">the buddy's user name</param>
+        /// <param name="ip">the buddy's IP</param>
+        /// <param name="port">the buddy's port</param>
+        /// <returns>user confirmed adding</returns>
         public bool AskForBuddyAdd(string userName, string ip, int port)
         {
              return MessageBox.Show(string.Format("Wollen Sie den Benutzer {0} mit der Addresse {1}:{2} Ihrer Buddyliste hinzufügen?", userName, ip, port), "Bestätigen",
@@ -118,6 +141,9 @@ namespace Chat.View
 
         private System.Timers.Timer _timer;
 
+        /// <summary>
+        /// Keep clock updated
+        /// </summary>
         private void _updateClock()
         {
             this._statusStripTimeLabel.Text = DateTime.Now.ToString("HH:mm");

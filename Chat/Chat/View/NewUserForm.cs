@@ -12,6 +12,9 @@ namespace Chat
     public delegate void OnNewUserSubmit(string userName, string password);
     public delegate void NewUserFormOnNewUser(string userName, int port, string password, string passwordRepetition);
 
+    /// <summary>
+    /// Form for adding a new user is a form (obviously)
+    /// </summary>
     public class NewUserForm : Form
     {
         private TableLayoutPanel tableLayoutPanel;
@@ -30,6 +33,11 @@ namespace Chat
 
         public NewUserFormOnNewUser NewUser;
 
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="knownUserNames">list of known users</param>
+        /// <param name="standardPort">default port</param>
         public NewUserForm(List<string> knownUserNames, int standardPort)
         {
             this.tableLayoutPanel = new TableLayoutPanel();
@@ -156,32 +164,53 @@ namespace Chat
             this.PerformLayout();
         }
 
+        /// <summary>
+        /// Display "user name is missing" message box
+        /// </summary>
         public void UsernameIsMissingMessage()
         {
             MessageBox.Show("Benutzername fehlt", "Benutzername fehlt", MessageBoxButtons.OK, MessageBoxIcon.Error);
         }
 
+        /// <summary>
+        /// Display "password is missing" message box
+        /// </summary>
         public void PasswordIsMissingMessage()
         {
             MessageBox.Show("Kennwort fehlt", "Kennwort fehlt", MessageBoxButtons.OK, MessageBoxIcon.Error);
         }
 
+        /// <summary>
+        /// Display "Password repetition is missing" message box
+        /// </summary>
         public void PasswordRepeatIsMissingMessage()
         {
             MessageBox.Show("Kennwortwiederholung fehlt", "Kennwortwiederholung fehlt", MessageBoxButtons.OK,
                 MessageBoxIcon.Error);
         }
 
+        /// <summary>
+        /// Display "password and repetition mismatch" message box
+        /// </summary>
         public void PasswordsMismatchMessage()
         {
             MessageBox.Show("Kennwort und Wiederholung sind verschieden", "Kennwort und Wiederholung verschieden", MessageBoxButtons.OK, MessageBoxIcon.Error);
         }
 
+        /// <summary>
+        /// Display "user name (already) exists" message box
+        /// </summary>
+        /// <param name="userName"></param>
         public void UsernameExistsMessage(string userName)
         {
             MessageBox.Show(string.Format("Der Benutzername {0} existiert bereits.", userName), "Benutzername existiert bereits", MessageBoxButtons.OK, MessageBoxIcon.Error);
         }
 
+        /// <summary>
+        /// Handler for "new user button is clicked"
+        /// </summary>
+        /// <param name="obj"></param>
+        /// <param name="args"></param>
         private void onNewUserButtonClick(object obj, EventArgs args)
         {
             if (NewUser != null)
@@ -192,6 +221,10 @@ namespace Chat
 
         private System.ComponentModel.IContainer components = null;
 
+        /// <summary>
+        /// TODO
+        /// </summary>
+        /// <param name="disposing"></param>
         protected override void Dispose(bool disposing)
         {
             if (disposing && (components != null))
