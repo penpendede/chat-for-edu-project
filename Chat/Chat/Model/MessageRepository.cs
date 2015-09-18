@@ -12,12 +12,21 @@ namespace Chat.Model
 
         private List<Message> _loaded;
 
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="dbController">database controller to be used</param>
         public MessageRepository(DatabaseController dbController)
         {
             _dbController = dbController;
             _loaded = new List<Message>();
         }
 
+        /// <summary>
+        /// Check if message is contained in database
+        /// </summary>
+        /// <param name="obj">message</param>
+        /// <returns>truth value of "message is contained in database"</returns>
         public bool Contains(Message obj)
         {
             // empty object -> not contained
@@ -59,6 +68,11 @@ namespace Chat.Model
         //    return messages;
         //}
 
+        /// <summary>
+        /// Get message given its ID
+        /// </summary>
+        /// <param name="id">The ID to seek</param>
+        /// <returns>message that has been seeked</returns>
         public Message GetById(int id)
         {
             // if already fetched serve from memory
@@ -98,6 +112,10 @@ namespace Chat.Model
             return message;
         }
 
+        /// <summary>
+        /// Insert a message
+        /// </summary>
+        /// <param name="obj">message to be inserted into database</param>
         public void Insert(Message obj)
         {
             _dbController.Database.ExecuteSQLQuery("INSERT INTO message (senderid, conversationid, text, time) VALUES (" +
@@ -110,6 +128,10 @@ namespace Chat.Model
             _loaded.Add(obj);
         }
 
+        /// <summary>
+        /// Remove a message
+        /// </summary>
+        /// <param name="obj">message to be removed</param>
         public void Remove(Message obj)
         {
             if (obj != null)
@@ -119,11 +141,19 @@ namespace Chat.Model
             }
         }
 
+        /// <summary>
+        /// Remove message of given ID
+        /// </summary>
+        /// <param name="id">ID of the message to be removed</param>
         public void RemoveById(int id)
         {
             _dbController.Database.ExecuteSQLQuery("DELETE FROM message WHERE id = " + id + ";");
         }
 
+        /// <summary>
+        /// Update message
+        /// </summary>
+        /// <param name="obj">the message to be updated</param>
         public void Update(Message obj)
         {
             if (obj != null)
@@ -138,6 +168,10 @@ namespace Chat.Model
             }
         }
 
+        /// <summary>
+        /// Insert or update message
+        /// </summary>
+        /// <param name="obj">message to be added or, if it already exists, to be updated</param>
         public void InsertOrUpdate(Message obj)
         {
             if (Contains(obj))

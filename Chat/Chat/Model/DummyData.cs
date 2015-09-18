@@ -5,6 +5,9 @@ using System.Text;
 
 namespace Chat.Model
 {
+    /// <summary>
+    /// Just dummy data here, therefore uncommented
+    /// </summary>
     public class DummyData
     {
         public static UserLocal CreateUserLocalTest1() {

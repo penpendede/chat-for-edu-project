@@ -5,6 +5,10 @@ using System.Text;
 
 namespace Chat.Model
 {
+    /// <summary>
+    /// Repository interface
+    /// </summary>
+    /// <typeparam name="T">Type for which the repository is created</typeparam>
     public interface IRepository<T>
     {
         //List<T> Get();

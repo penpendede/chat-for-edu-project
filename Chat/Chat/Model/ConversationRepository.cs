@@ -12,13 +12,21 @@ namespace Chat.Model
 
         private List<Conversation> _loaded;
 
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="dbController">database controller to be used</param>
         public ConversationRepository(DatabaseController dbController)
         {
             _dbController = dbController;
             _loaded = new List<Conversation>();
         }
 
-        // check if conversation is contained in database
+        /// <summary>
+        /// check if conversation is contained in database
+        /// </summary>
+        /// <param name="obj">the conversation to seek</param>
+        /// <returns>truth value for "conversation is in database"</returns>
         public bool Contains(Conversation obj)
         {
             // empty object -> not contained
@@ -60,7 +68,11 @@ namespace Chat.Model
         //    return conversations;
         //}
 
-        // get a single Conversation by ID
+        /// <summary>
+        /// get a single Conversation by ID
+        /// </summary>
+        /// <param name="id">conversation's ID</param>
+        /// <returns>the conversation you've been looking for</returns>
         public Conversation GetById(int id)
         {
             // if already fetched serve from memory
@@ -108,7 +120,10 @@ namespace Chat.Model
             return conversation;
         }
 
-        // Insert conversation into database
+        /// <summary>
+        /// Insert conversation into database
+        /// </summary>
+        /// <param name="obj">Conversation to be inserted into database</param>
         public void Insert(Conversation obj)
         {
             // Add conversation to conversation table
@@ -131,7 +146,10 @@ namespace Chat.Model
             _bindAutoSaveDelegates(obj);
         }
 
-        // Remove conversation: Obtain conversation's ID, then remove by ID
+        /// <summary>
+        /// Remove conversation: Obtain conversation's ID, then remove by ID
+        /// </summary>
+        /// <param name="obj">Conversation to be removed</param>
         public void Remove(Conversation obj)
         {
             if (obj != null)
@@ -141,7 +159,10 @@ namespace Chat.Model
             }
         }
 
-        // Remove conversation by ID
+        /// <summary>
+        /// Remove conversation by ID
+        /// </summary>
+        /// <param name="id">ID of the conversation to be removed</param>
         public void RemoveById(int id)
         {
             // remove from conversation_has_user
@@ -150,7 +171,10 @@ namespace Chat.Model
             _dbController.Database.ExecuteSQLQuery("DELETE FROM conversation WHERE id = " + id + ";");
         }
 
-        // update a single conversation
+        /// <summary>
+        /// update (as in SQL's UPDATE) a single conversation
+        /// </summary>
+        /// <param name="obj">the Conversation to be removed</param>
         public void Update(Conversation obj)
         {
             if (obj != null)
@@ -167,7 +191,10 @@ namespace Chat.Model
             }
         }
 
-        // insert new conversation or update existing one
+        /// <summary>
+        /// insert new conversation or update existing one
+        /// </summary>
+        /// <param name="obj">the conversation to be either inserted or updated</param>
         public void InsertOrUpdate(Conversation obj)
         {
             if (Contains(obj))
@@ -180,6 +207,10 @@ namespace Chat.Model
             }
         }
 
+        /// <summary>
+        /// Bind the auto-save delegates to be used by the conversation
+        /// </summary>
+        /// <param name="obj">Conversation to which auto-save delegates are to be added</param>
         private void _bindAutoSaveDelegates(Conversation obj)
         {
             // update conversation when a buddy gets added to it

@@ -104,12 +104,12 @@ namespace Chat.Model
         {
             return ExecuteSQLQuery("SELECT last_insert_rowid() FROM " + tableName + ";")[0][0];
         }
+
         /// <summary>
         /// turn date and time into a representation
         /// </summary>
         /// <param name="dt">date and time as DateTime object</param>
         /// <returns></returns>
-
         public override string FormatDateTime(DateTime dt)
         {
             return dt.ToString("yyyy-MM-dd HH:mm:ss");

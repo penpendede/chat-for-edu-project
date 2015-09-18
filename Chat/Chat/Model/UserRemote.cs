@@ -15,16 +15,16 @@ namespace Chat.Model
         public UserRemoteOnDelete OnDelete;
 
         /// <summary>
-        /// TODO
+        /// Mark remote user as (not) deleted
         /// </summary>
-        /// <param name="deleted"></param>
+        /// <param name="deleted">if true remote user is marked as deleted, otherwise as not deleted</param>
         public UserRemote(bool deleted=false) : base()
         {
             Deleted = deleted;
         }
 
         /// <summary>
-        /// TODO
+        /// Delete remote user: mark as deleted, if method is available also call OnDelete for this remote user
         /// </summary>
         public void Delete()
         {

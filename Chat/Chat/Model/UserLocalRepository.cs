@@ -175,6 +175,10 @@ namespace Chat.Model
             return userLocal;
         }
 
+        /// <summary>
+        /// Add local user to database
+        /// </summary>
+        /// <param name="obj">local user to be added</param>
         public void Insert(UserLocal obj)
         {
             if (GetAllUserNames().Contains(obj.Name))
@@ -205,12 +209,20 @@ namespace Chat.Model
             _bindAutoSaveDelegates(obj);
         }
 
+        /// <summary>
+        /// Remove local user from database
+        /// </summary>
+        /// <param name="obj">local user</param>
         public void Remove(UserLocal obj)
         {
             RemoveById(obj.Id);
             _loaded.Remove(obj);
         }
 
+        /// <summary>
+        /// Remove local user from database given his/her ID
+        /// </summary>
+        /// <param name="id">local user's ID</param>
         public void RemoveById(int id)
         {
             _dbController.Database.ExecuteSQLQuery("DELETE FROM user_has_buddy WHERE userid = " + id + ";");
@@ -219,6 +231,10 @@ namespace Chat.Model
             _dbController.Database.ExecuteSQLQuery("DELETE FROM user where id = " + id + ";");
         }
 
+        /// <summary>
+        /// Update local user
+        /// </summary>
+        /// <param name="obj">local user to be updated</param>
         public void Update(UserLocal obj)
         {
             if (obj != null)
@@ -242,6 +258,11 @@ namespace Chat.Model
                 }
             }
         }
+
+        /// <summary>
+        /// Insert or updated local user
+        /// </summary>
+        /// <param name="obj">local user to be either inserted into databased or to be updated</param>
         public void InsertOrUpdate(UserLocal obj)
         {
             if (Contains(obj))
@@ -254,6 +275,10 @@ namespace Chat.Model
             }
         }
 
+        /// <summary>
+        /// Bind auto-save delegates to local user
+        /// </summary>
+        /// <param name="obj">local user to add the delegates to</param>
         private void _bindAutoSaveDelegates(UserLocal obj)
         {
             obj.BuddyAdd += (user, bud) => _dbController.UserRemoteRepo.Insert(bud);

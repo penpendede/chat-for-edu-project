@@ -54,6 +54,9 @@ namespace Chat.Model
         public ConversationOnChangeActive ChangeActive;
         public ConversationOnClose OnClose;
 
+        /// <summary>
+        /// Constructor, nothing sexy here
+        /// </summary>
         public Conversation()
         {
             _buddies = new List<User>();
@@ -64,6 +67,10 @@ namespace Chat.Model
             Closed = false;
         }
 
+        /// <summary>
+        /// Add Buddy (unless he/she already is a buddy that is)
+        /// </summary>
+        /// <param name="buddy">buddy to be added (a remote user)</param>
         public void AddBuddy(UserRemote buddy)
         {
             if (!_buddies.Contains(buddy))
@@ -85,6 +92,10 @@ namespace Chat.Model
         //    }
         //}
 
+        /// <summary>
+        /// Add message to conversation and call MessageAdd if it is defined
+        /// </summary>
+        /// <param name="message"></param>
         public void AddMessage(Message message)
         {
             _messages.Add(message);
@@ -96,6 +107,10 @@ namespace Chat.Model
             }
         }
 
+        /// <summary>
+        /// Make conversation active or inactive (and call ChangeActive if it is defined)
+        /// </summary>
+        /// <param name="active">if true conversation becomes active, otherwise inactive</param>
         public void SetActive(Boolean active)
         {
             Active = active;
@@ -105,6 +120,9 @@ namespace Chat.Model
             }
         }
 
+        /// <summary>
+        /// Close conversation, call handler OnClose if it is defined
+        /// </summary>
         public void Close()
         {
             Closed = true;

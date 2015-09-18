@@ -23,6 +23,9 @@ namespace Chat.Model
         public UserLocalOnBuddyAdd BuddyAdd;
         public UserLocalOnBuddyRemove BuddyRemove;
 
+        /// <summary>
+        /// Constructor is derived from the base class's constructor
+        /// </summary>
         public UserLocal() 
             :base() 
         { 
@@ -30,6 +33,10 @@ namespace Chat.Model
             Buddies = _buddies.AsReadOnly();
         }
 
+        /// <summary>
+        /// Add a buddy to the local user
+        /// </summary>
+        /// <param name="buddy">buddy to be added</param>
         public void AddBuddy(UserRemote buddy)
         {
             _buddies.Add(buddy);
@@ -40,6 +47,10 @@ namespace Chat.Model
             }
         }
 
+        /// <summary>
+        /// Remove a buddy from the local user
+        /// </summary>
+        /// <param name="buddy">buddy to be removed</param>
         public void RemoveBuddy(UserRemote buddy)
         {
             _buddies.Remove(buddy);

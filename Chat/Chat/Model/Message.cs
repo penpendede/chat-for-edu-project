@@ -5,6 +5,9 @@ using System.Text;
 
 namespace Chat.Model
 {
+    /// <summary>
+    /// properties are public; the class's only method is the constructor
+    /// </summary>
     public class Message
     {
         public int Id;
