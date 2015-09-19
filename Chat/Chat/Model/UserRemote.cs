@@ -40,7 +40,7 @@ namespace Chat.Model
         private static UserRemote _systemUser;
 
         /// <summary>
-        /// TODO
+        /// This represents the System itself as a user. It is used to display informative messages like 'user is not online' etc.
         /// </summary>
         public static UserRemote SystemUser {
             get

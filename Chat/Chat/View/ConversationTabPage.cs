@@ -38,7 +38,7 @@ namespace Chat.View
         /// <summary>
         /// Constructor
         /// </summary>
-        /// <param name="measureLabelText">TODO</param>
+        /// <param name="measureLabelText">This is a function to measure the width of the text on the tabs label</param>
         public ConversationTabPage(Func<string, bool> measureLabelText)
         {
             _userNames = new List<string>();
@@ -89,11 +89,14 @@ namespace Chat.View
         }
 
         /// <summary>
-        /// TODO
+        /// This function replaces smileys in the messages with images.
+        /// NOT WORKING!
         /// </summary>
         /// <param name="text"></param>
         /// <returns></returns>
         private string _addImages(string text) {
+
+            throw new NotSupportedException();
 
             MemoryStream stream = new MemoryStream();
             Image img = Image.FromFile("Images/Face-smile200px.png");
@@ -163,7 +166,7 @@ namespace Chat.View
         //}
 
         /// <summary>
-        /// TODO
+        /// update the text on the label of the tab (the usernames of the buddies in the conversation)
         /// </summary>
         private void _updateTabText()
         {
@@ -198,7 +201,7 @@ namespace Chat.View
         }
 
         /// <summary>
-        /// TODO
+        /// update the text below the chat text window
         /// </summary>
         private void _updateParticipantsText()
         {

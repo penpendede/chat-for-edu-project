@@ -50,6 +50,7 @@ namespace Chat.Controller
 
         public DatabaseController()
         {
+            // use a SQLiteDatabase
             Database = new SQLiteDatabase();
 
             ConversationRepo = new ConversationRepository(this);
@@ -117,7 +118,7 @@ namespace Chat.Controller
                 return StatusVerifyPassword.USER_NAME_NOT_FOUND;
             }
 
-            if (UserLocalRepo.VerifyPassword(userName, password))
+            if (!UserLocalRepo.VerifyPassword(userName, password))
             {
                 out_userLocal = null;
                 return StatusVerifyPassword.WRONG_PASSWORD;
@@ -176,7 +177,5 @@ namespace Chat.Controller
             UserLocalRepo.SetNewPassword(userName, newPassword);
             return StatusChangePassword.OK;
         }
-
-
     }
 }

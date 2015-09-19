@@ -37,15 +37,15 @@ namespace Chat.Model
         /// </summary>
         /// <param name="userName">user's name</param>
         /// <param name="password">user's password</param>
-        /// <returns>TODO</returns>
+        /// <returns>true, if the password matches the password stored in the database</returns>
         public bool VerifyPassword(string userName, string password)
         {
-            // TODO: Funktioniert gerade irgendwie nicht
-            return
-                Int32.Parse(
-                    _dbController.Database.ExecuteSQLQuery(
-                        string.Format("SELECT COUNT(*) FROM user WHERE name='{0}' AND passwordsaltedhash='{1}';",
-                            userName, password))[0][0]) < 1;
+            string query = string.Format("SELECT COUNT(*) FROM user WHERE name='{0}' AND passwordsaltedhash='{1}';",
+                            userName, password);
+
+            List<string[]> result = _dbController.Database.ExecuteSQLQuery(query);
+
+            return Int32.Parse(result[0][0]) >= 1;
         }
 
         /// <summary>

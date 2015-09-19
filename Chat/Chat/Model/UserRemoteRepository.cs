@@ -203,8 +203,9 @@ namespace Chat.Model
                 Insert(obj);
             }
         }
+
         /// <summary>
-        /// TODO
+        /// This function registers all changes to the given obj and saves them to the database immediately
         /// </summary>
         /// <param name="obj"></param>
         private void _bindAutoSaveDelegates(UserRemote obj)

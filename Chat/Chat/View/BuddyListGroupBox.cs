@@ -265,7 +265,7 @@ namespace Chat.View
         private System.ComponentModel.IContainer components = null;
 
         /// <summary>
-        /// TODO
+        /// Cleaning up
         /// </summary>
         /// <param name="disposing"></param>
         protected override void Dispose(bool disposing)

@@ -33,7 +33,7 @@ namespace Chat.Controller
         /// Create a controller for the buddy list
         /// </summary>
         /// <param name="userLocal">local user</param>
-        /// <param name="messengerController">TODO</param>
+        /// <param name="messengerController">the global messenger controller</param>
         /// <param name="port">port to be used</param>
         public BuddyListController(UserLocal userLocal, MessengerController messengerController, int port)
         {

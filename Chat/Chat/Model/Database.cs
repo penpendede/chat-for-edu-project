@@ -7,9 +7,21 @@ namespace Chat.Model
 {
     public abstract class Database
     {
+        /// <summary>
+        /// Execute an sql query
+        /// </summary>
+        /// <param name="query">a sql query</param>
+        /// <returns>a list of result rows</returns>
         public abstract List<string[]> ExecuteSQLQuery(string query);
 
+        /// <summary>
+        /// Open the database connection
+        /// </summary>
         public abstract void Open();
+
+        /// <summary>
+        /// Close the database connection
+        /// </summary>
         public abstract void Close();
 
         public abstract string LastInsertedId(string tableName);
@@ -24,6 +36,11 @@ namespace Chat.Model
             return text.Replace("\\", "\\\\").Replace("'", "''");
         }
 
+        /// <summary>
+        /// Properly format a DateTime according to the conventions of the used database
+        /// </summary>
+        /// <param name="dt"></param>
+        /// <returns></returns>
         public abstract string FormatDateTime(DateTime dt);
     }
 }

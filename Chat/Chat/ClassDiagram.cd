@@ -3,39 +3,32 @@
   <Class Name="Chat.BuddyAddForm">
     <Position X="36.25" Y="6.75" Width="2.75" />
     <TypeIdentifier>
-      <HashCode>AAAAAAABACIAAAAQAECAAAAAAEAEAAAAAAAAAAACAAA=</HashCode>
+      <HashCode>AAAAAAABACIAAAAQAFCAAAAAAEAGAAAACAAAAAACAAA=</HashCode>
       <FileName>View\BuddyAddForm.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="Chat.LoginForm">
     <Position X="33.25" Y="0.5" Width="2.25" />
     <TypeIdentifier>
-      <HashCode>BAAAAAAAASAACAQAACCAAAgAQgAEAAAAAIAAAAAAAAA=</HashCode>
+      <HashCode>BAAAAAAADSAACAQAACCAAAgAQgAEAAAAAIAAAAAAAAA=</HashCode>
       <FileName>View\LoginForm.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="Chat.Controller.BuddyListController">
     <Position X="22.25" Y="7" Width="2.5" />
     <TypeIdentifier>
-      <HashCode>AAWAIAgAAAAAAAAAAABQEAAAAAAABAAAAAQAAAIECBA=</HashCode>
+      <HashCode>AACgAQAAAAEAAgAAAAAAAAAAAADQAAAgIAAAgAAAGAA=</HashCode>
       <FileName>Controller\BuddyListController.cs</FileName>
     </TypeIdentifier>
     <ShowAsAssociation>
-      <Field Name="buddyAddForm" />
       <Field Name="BuddyListGroupBox" />
-      <Field Name="messengerController" />
+      <Field Name="_buddyAddForm" />
     </ShowAsAssociation>
   </Class>
   <Class Name="Chat.Controller.ConversationController">
     <Position X="17.25" Y="8.25" Width="2.25" />
-    <AssociationLine Name="_networkConnectionControllers" Type="Chat.Controller.NetworkConnectionController" FixedFromPoint="true">
-      <Path>
-        <Point X="17.25" Y="9.146" />
-        <Point X="15.25" Y="9.146" />
-      </Path>
-    </AssociationLine>
     <TypeIdentifier>
-      <HashCode>AAAAAAAIACAgAAAAAAIAAAAAIiAAAAIAAAAAgAAAAAA=</HashCode>
+      <HashCode>AAAAAAAIACAAACAAAAIAABAAAiEAAAIAAgAAgAAAIAA=</HashCode>
       <FileName>Controller\ConversationController.cs</FileName>
     </TypeIdentifier>
     <ShowAsAssociation>
@@ -48,148 +41,43 @@
   </Class>
   <Class Name="Chat.Controller.DatabaseController">
     <Position X="15.25" Y="12.75" Width="2.25" />
-    <AssociationLine Name="ConversationRepo" Type="Chat.Model.ConversationRepository" ManuallyRouted="true" FixedFromPoint="true" FixedToPoint="true">
-      <Path>
-        <Point X="16.875" Y="13.895" />
-        <Point X="16.875" Y="17.27" />
-        <Point X="11.438" Y="17.27" />
-        <Point X="11.438" Y="17.75" />
-      </Path>
-    </AssociationLine>
-    <AssociationLine Name="MessageRepo" Type="Chat.Model.MessageRepository" ManuallyRouted="true" FixedFromPoint="true" FixedToPoint="true">
-      <Path>
-        <Point X="15.5" Y="13.895" />
-        <Point X="15.5" Y="15.638" />
-        <Point X="10.708" Y="15.638" Type="JumpStart" />
-        <Point X="10.542" Y="15.638" Type="JumpEnd" />
-        <Point X="7.583" Y="15.638" Type="JumpStart" />
-        <Point X="7.417" Y="15.638" Type="JumpEnd" />
-        <Point X="5.271" Y="15.638" Type="JumpStart" />
-        <Point X="5.104" Y="15.638" Type="JumpEnd" />
-        <Point X="2.625" Y="15.638" />
-        <Point X="2.625" Y="17.75" />
-      </Path>
-    </AssociationLine>
-    <AssociationLine Name="UserLocalRepo" Type="Chat.Model.UserLocalRepository" ManuallyRouted="true" FixedFromPoint="true" FixedToPoint="true">
-      <Path>
-        <Point X="16.438" Y="13.895" />
-        <Point X="16.438" Y="16.779" />
-        <Point X="10.708" Y="16.779" Type="JumpStart" />
-        <Point X="10.542" Y="16.779" Type="JumpEnd" />
-        <Point X="8.625" Y="16.779" />
-        <Point X="8.625" Y="17.75" />
-      </Path>
-    </AssociationLine>
-    <AssociationLine Name="UserRemoteRepo" Type="Chat.Model.UserRemoteRepository" ManuallyRouted="true" FixedFromPoint="true" FixedToPoint="true">
-      <Path>
-        <Point X="16" Y="13.895" />
-        <Point X="16" Y="16.196" />
-        <Point X="10.708" Y="16.196" Type="JumpStart" />
-        <Point X="10.542" Y="16.196" Type="JumpEnd" />
-        <Point X="7.583" Y="16.196" Type="JumpStart" />
-        <Point X="7.417" Y="16.196" Type="JumpEnd" />
-        <Point X="5.688" Y="16.196" />
-        <Point X="5.688" Y="17.75" />
-      </Path>
-    </AssociationLine>
-    <AssociationLine Name="Database" Type="Chat.Model.Database" ManuallyRouted="true" FixedFromPoint="true" FixedToPoint="true">
-      <Path>
-        <Point X="17.312" Y="13.895" />
-        <Point X="17.312" Y="15.948" />
-        <Point X="17.312" Y="15.948" />
-        <Point X="17.312" Y="18.25" />
-      </Path>
-    </AssociationLine>
     <TypeIdentifier>
-      <HashCode>AAAAAAAAAEAAAAAAAAAAAQAEBAAAAAAEAAAAAAAIAAA=</HashCode>
+      <HashCode>AAAAAAACAEAQgAAAAEAAAQAABAAAAAAEAAAAAAAIAAA=</HashCode>
       <FileName>Controller\DatabaseController.cs</FileName>
     </TypeIdentifier>
     <ShowAsAssociation>
+      <Field Name="Database" />
       <Field Name="ConversationRepo" />
-      <Field Name="MessageRepo" />
       <Field Name="UserLocalRepo" />
       <Field Name="UserRemoteRepo" />
-      <Field Name="Database" />
+      <Field Name="MessageRepo" />
     </ShowAsAssociation>
   </Class>
   <Class Name="Chat.Controller.MessengerController">
     <Position X="19.5" Y="1.75" Width="2.5" />
-    <AssociationLine Name="conversationControllers" Type="Chat.Controller.ConversationController" FixedFromPoint="true" FixedToPoint="true">
-      <Path>
-        <Point X="20.125" Y="4.756" />
-        <Point X="20.125" Y="9.146" />
-        <Point X="19.5" Y="9.146" />
-      </Path>
-    </AssociationLine>
-    <AssociationLine Name="userLocal" Type="Chat.Model.UserLocal" FixedFromPoint="true" FixedToPoint="true">
-      <Path>
-        <Point X="19.5" Y="4" />
-        <Point X="18.427" Y="4" Type="JumpStart" />
-        <Point X="18.26" Y="4" Type="JumpEnd" />
-        <Point X="14.083" Y="4" Type="JumpStart" />
-        <Point X="13.917" Y="4" Type="JumpEnd" />
-        <Point X="10.708" Y="4" Type="JumpStart" />
-        <Point X="10.542" Y="4" Type="JumpEnd" />
-        <Point X="8.125" Y="4" />
-        <Point X="8.125" Y="9.438" />
-        <Point X="7.75" Y="9.438" />
-      </Path>
-    </AssociationLine>
     <TypeIdentifier>
-      <HashCode>IAkAJAABAAAAAgAAAIgAAAAABAQAQAACAAAAAESAAAA=</HashCode>
+      <HashCode>AAiAAAQAAIAAAAJAAAABAAAUEQUAoAAAACEQoICgIAY=</HashCode>
       <FileName>Controller\MessengerController.cs</FileName>
     </TypeIdentifier>
     <ShowAsAssociation>
-      <Field Name="buddyListController" />
-      <Field Name="databaseController" />
-      <Field Name="loginForm" />
-      <Field Name="mainWindow" />
-      <Field Name="userLocal" />
+      <Field Name="_mainWindow" />
+      <Field Name="_databaseController" />
+      <Field Name="_loginForm" />
+      <Field Name="_peerManager" />
+      <Field Name="TabControl" />
+      <Field Name="_userLocal" />
+      <Field Name="_senderListController" />
     </ShowAsAssociation>
     <ShowAsCollectionAssociation>
-      <Field Name="conversationControllers" />
+      <Field Name="_conversationControllers" />
     </ShowAsCollectionAssociation>
-  </Class>
-  <Class Name="Chat.Controller.NetworkConnectionController">
-    <Position X="12.75" Y="8.5" Width="2.5" />
-    <AssociationLine Name="UserRemote" Type="Chat.Model.UserRemote" ManuallyRouted="true" FixedFromPoint="true" FixedToPoint="true">
-      <Path>
-        <Point X="14.125" Y="10.192" />
-        <Point X="14.125" Y="12.349" />
-        <Point X="10.708" Y="12.349" Type="JumpStart" />
-        <Point X="10.542" Y="12.349" Type="JumpEnd" />
-        <Point X="7.583" Y="12.349" Type="JumpStart" />
-        <Point X="7.417" Y="12.349" Type="JumpEnd" />
-        <Point X="5.271" Y="12.349" Type="JumpStart" />
-        <Point X="5.104" Y="12.349" Type="JumpEnd" />
-        <Point X="2.938" Y="12.349" />
-        <Point X="2.938" Y="10.483" />
-      </Path>
-    </AssociationLine>
-    <TypeIdentifier>
-      <HashCode>AAAAAAAAACAAAAAAAAAAAAAAAAAAAAIACAAAgAIAAAA=</HashCode>
-      <FileName>Controller\NetworkConnectionController.cs</FileName>
-    </TypeIdentifier>
-    <ShowAsAssociation>
-      <Property Name="Conversation" />
-      <Property Name="UserRemote" />
-    </ShowAsAssociation>
   </Class>
   <Class Name="Chat.Model.Conversation">
     <Position X="6" Y="0.75" Width="1.5" />
-    <AssociationLine Name="Owner" Type="Chat.Model.UserLocal" FixedToPoint="true">
-      <Path>
-        <Point X="7.25" Y="4.138" />
-        <Point X="7.25" Y="9.25" />
-      </Path>
-    </AssociationLine>
     <TypeIdentifier>
-      <HashCode>AAkCAACAAAAAAAABASAAIAAAAAgAAAAkEAAAAYAAIAA=</HashCode>
+      <HashCode>AAECAAABAAAAAAABACAAIAAAAAgAAAAkEAIAAYCAIAA=</HashCode>
       <FileName>Model\Conversation.cs</FileName>
     </TypeIdentifier>
-    <ShowAsAssociation>
-      <Field Name="Owner" />
-    </ShowAsAssociation>
     <ShowAsCollectionAssociation>
       <Field Name="_buddies" />
       <Field Name="_messages" />
@@ -211,6 +99,7 @@
     <ShowAsCollectionAssociation>
       <Field Name="_loaded" />
     </ShowAsCollectionAssociation>
+    <Lollipop Position="0.2" />
   </Class>
   <Class Name="Chat.Model.Database">
     <Position X="16.75" Y="18.25" Width="1.5" />
@@ -232,20 +121,12 @@
       <FileName>Model\Message.cs</FileName>
     </TypeIdentifier>
     <ShowAsAssociation>
-      <Field Name="Conversation" />
       <Field Name="Sender" />
+      <Field Name="Conversation" />
     </ShowAsAssociation>
   </Class>
   <Class Name="Chat.Model.MessageRepository">
     <Position X="1.75" Y="17.75" Width="1.75" />
-    <InheritanceLine Type="Chat.Model.IRepository&lt;T&gt;" ManuallyRouted="true">
-      <Path>
-        <Point X="6" Y="22.75" />
-        <Point X="6" Y="22.372" />
-        <Point X="2.625" Y="22.372" />
-        <Point X="2.625" Y="20.384" />
-      </Path>
-    </InheritanceLine>
     <TypeIdentifier>
       <HashCode>AAQAAEAQAAAAAgAAAAAABAkAAAAAAAAAAAAAAAAQAIA=</HashCode>
       <FileName>Model\MessageRepository.cs</FileName>
@@ -253,6 +134,7 @@
     <ShowAsCollectionAssociation>
       <Field Name="_loaded" />
     </ShowAsCollectionAssociation>
+    <Lollipop Position="0.2" />
   </Class>
   <Class Name="Chat.Model.SQLiteDatabase">
     <Position X="16.75" Y="21" Width="1.5" />
@@ -271,7 +153,7 @@
       </Path>
     </AssociationLine>
     <TypeIdentifier>
-      <HashCode>AAACAAAAAAIAAAAAAAAAABQAAAAQAABAAAAAAAAAAAA=</HashCode>
+      <HashCode>AAACAAAAAAIAAAAAAAAAABQAKAAQAABAAAAAAAAAAAA=</HashCode>
       <FileName>Model\User.cs</FileName>
     </TypeIdentifier>
     <ShowAsCollectionAssociation>
@@ -280,14 +162,6 @@
   </Class>
   <Class Name="Chat.Model.UserLocal">
     <Position X="6.25" Y="9.25" Width="1.5" />
-    <InheritanceLine Type="Chat.Model.User" FixedToPoint="true">
-      <Path>
-        <Point X="4.75" Y="6.738" />
-        <Point X="4.75" Y="8.625" />
-        <Point X="6.75" Y="8.625" />
-        <Point X="6.75" Y="9.25" />
-      </Path>
-    </InheritanceLine>
     <TypeIdentifier>
       <HashCode>AAgAAAAAAAAAAAABASAAIAAAAAAAAAAAAAAAAAAAIAA=</HashCode>
       <FileName>Model\UserLocal.cs</FileName>
@@ -298,26 +172,19 @@
   </Class>
   <Class Name="Chat.Model.UserLocalRepository">
     <Position X="7.25" Y="17.75" Width="2" />
-    <InheritanceLine Type="Chat.Model.IRepository&lt;T&gt;" ManuallyRouted="true">
-      <Path>
-        <Point X="6" Y="22.75" />
-        <Point X="6" Y="22.36" />
-        <Point X="8.25" Y="22.36" />
-        <Point X="8.25" Y="21.37" />
-      </Path>
-    </InheritanceLine>
     <TypeIdentifier>
-      <HashCode>ACQACEAQAAAAAgABAAACBAkAABAAAAAAAAAAAAAQAIg=</HashCode>
+      <HashCode>AGQACEAQAAAAAgABAAACBAkAABAAAAAAAAAAAAAQAIg=</HashCode>
       <FileName>Model\UserLocalRepository.cs</FileName>
     </TypeIdentifier>
     <ShowAsCollectionAssociation>
       <Field Name="_loaded" />
     </ShowAsCollectionAssociation>
+    <Lollipop Position="0.2" />
   </Class>
   <Class Name="Chat.Model.UserRemote">
     <Position X="2.25" Y="9" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAIAAAAAAAAAAAAABAAAA=</HashCode>
+      <HashCode>AAAAAAAAAAAAAAAAIAAAEEAAAAEAAAAAAACAAABAAAA=</HashCode>
       <FileName>Model\UserRemote.cs</FileName>
     </TypeIdentifier>
     <ShowAsAssociation>
@@ -326,14 +193,6 @@
   </Class>
   <Class Name="Chat.Model.UserRemoteRepository">
     <Position X="4.5" Y="17.75" Width="2" />
-    <InheritanceLine Type="Chat.Model.IRepository&lt;T&gt;" ManuallyRouted="true">
-      <Path>
-        <Point X="6" Y="22.75" />
-        <Point X="6" Y="22.372" />
-        <Point X="5.5" Y="22.372" />
-        <Point X="5.5" Y="20.384" />
-      </Path>
-    </InheritanceLine>
     <AssociationLine Name="_loaded" Type="Chat.Model.UserRemote" FixedFromPoint="true" FixedToPoint="true">
       <Path>
         <Point X="5.188" Y="17.75" />
@@ -342,17 +201,18 @@
       </Path>
     </AssociationLine>
     <TypeIdentifier>
-      <HashCode>AAQAAEAQAAAAAgAAAAAABAkAAAAAAAAAAAAAAAAQAIA=</HashCode>
+      <HashCode>AAQAAEAQAAAAAgABAAAABAkAAAAAAAAAAAAAAAAQAIA=</HashCode>
       <FileName>Model\UserRemoteRepository.cs</FileName>
     </TypeIdentifier>
     <ShowAsCollectionAssociation>
       <Field Name="_loaded" />
     </ShowAsCollectionAssociation>
+    <Lollipop Position="0.2" />
   </Class>
   <Class Name="Chat.View.BuddyListGroupBox">
     <Position X="32.25" Y="9" Width="3.5" />
     <TypeIdentifier>
-      <HashCode>EgCAAAAAACAAAEAADQCAIAQAAEBAAiQAQAAgAAAAgII=</HashCode>
+      <HashCode>EgCAAACAACkAAIAECQCAICQAAEBAQAAAQAAAAAgAgIA=</HashCode>
       <FileName>View\BuddyListGroupBox.cs</FileName>
     </TypeIdentifier>
   </Class>
@@ -366,27 +226,60 @@
   <Class Name="Chat.View.ConversationTabPage">
     <Position X="28.75" Y="11.25" Width="2" />
     <TypeIdentifier>
-      <HashCode>AAEAAAABACIAAAQAAAGAAAADAAABAAAgCAQCEAAAAAA=</HashCode>
+      <HashCode>AAFAAAABACAABIAAAACAgAADAEABAAAgQAAiUAAAAAQ=</HashCode>
       <FileName>View\ConversationTabPage.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="Chat.View.MessengerMainWindowForm">
     <Position X="28.75" Y="2.75" Width="2.25" />
     <TypeIdentifier>
-      <HashCode>AACAAAAAQCAgAAAAAADAAAACBEAAAAAAAAAAAAIAAAA=</HashCode>
+      <HashCode>AAAAAAAAACAgAAAAAIjAAAACBEAAAAAAABAAAAIAAIA=</HashCode>
       <FileName>View\MessengerMainWindowForm.cs</FileName>
     </TypeIdentifier>
+  </Class>
+  <Class Name="Chat.Controller.NetworkCommunicationController">
+    <Position X="23" Y="13.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>IAAAAAAAACAAAAACAAAAAAAAAAAAAAIACAAAwAIAIAA=</HashCode>
+      <FileName>Controller\NetworkCommunicationController.cs</FileName>
+    </TypeIdentifier>
     <ShowAsAssociation>
-      <Field Name="ConversationTabControl" />
-      <Field Name="BuddyListGroupBox" />
+      <Field Name="_peer" />
+      <Field Name="_peerManager" />
     </ShowAsAssociation>
   </Class>
-  <Class Name="Chat.Model.IRepository&lt;T&gt;">
-    <Position X="5.25" Y="22.75" Width="1.5" />
+  <Class Name="Chat.Controller.TcpPeer">
+    <Position X="25.25" Y="18.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAQCAEAEhAACBAAAAAIAAAAAAEAAAAAAgAAIA=</HashCode>
+      <FileName>Controller\TcpPeer.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="Chat.Controller.TcpPeerManager" BaseTypeListCollapsed="true">
+    <Position X="27.5" Y="17.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAEAAAAAACAGAAAAAAAQAAAAIAAEAAAEAAIAQgAAAAA=</HashCode>
+      <FileName>Controller\TcpPeerManager.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsCollectionAssociation>
+      <Field Name="_peers" />
+    </ShowAsCollectionAssociation>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="Chat.Controller.NetworkMessageInterpreter">
+    <Position X="21.5" Y="19.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAgAIAAAgAAYAAAAAAAAAAIXBAAAEAAAABAAAAAAA=</HashCode>
+      <FileName>Controller\NetworkMessageInterpreter.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Interface Name="Chat.Model.IRepository&lt;T&gt;" Collapsed="true">
+    <Position X="5.5" Y="23" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAQAAEAQAAAAAgAAAAAABAAAAAAAAAAAAAAAAAAQAIA=</HashCode>
       <FileName>Model\IRepository.cs</FileName>
     </TypeIdentifier>
-  </Class>
+  </Interface>
   <Font Name="Tahoma" Size="8.25" />
 </ClassDiagram>

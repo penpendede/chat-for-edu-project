@@ -34,9 +34,10 @@ namespace Chat.Controller
         /// </summary>
         public MessengerController()
         {
+            // setting the standard port
             _standardPort = 4711;
 
-			List<string> usernames;
+            // initialization
             _conversationControllers = new List<ConversationController>();
             _databaseController = new DatabaseController();
 
@@ -48,8 +49,10 @@ namespace Chat.Controller
             TabControl.TabClose += _conversationTabOnClose;
             _mainWindow.AddConversationTabControl(TabControl);
 
-			usernames = _databaseController.UserLocalRepo.GetAllUserNames();
-            _newUserForm = new NewUserForm(usernames, _standardPort);
+            List<string> usedUsernames;
+			usedUsernames = _databaseController.UserLocalRepo.GetAllUserNames();
+
+            _newUserForm = new NewUserForm(usedUsernames, _standardPort);
             _newUserForm.NewUser += _newUserFormOnNewUser;
             _newUserForm.FormClosing += _onLoginFormClosing;
 
@@ -57,7 +60,7 @@ namespace Chat.Controller
 
             _keepMainWindow = false;
 
-			if (usernames.Count != 0)
+			if (usedUsernames.Count != 0)
             {
 	            _loginForm = new LoginForm(_databaseController.UserLocalRepo.GetAllUserNames());
 	            _loginForm.LoginSubmit += _loginFormOnSubmit;
@@ -88,18 +91,18 @@ namespace Chat.Controller
         /// <summary>
         /// Get conversation for a given (remote) sender
         /// </summary>
-        /// <param name="sender">the sender (a remote user)</param>
+        /// <param name="partner">the sender (a remote user)</param>
         /// <returns>the dialog for the sender</returns>
-        public Conversation GetDialog(UserRemote sender)
+        public Conversation GetDialog(UserRemote partner)
         {
-            // find a conversation with sender, that is not closed and not a group chat
-            Conversation conv = _userLocal.Conversations.FirstOrDefault(c => c.Buddies.Contains(sender) && !c.Closed && c.Buddies.Count == 1);
+            // find a conversation with partner, that is not closed and not a group chat
+            Conversation conv = _userLocal.Conversations.FirstOrDefault(c => c.Buddies.Contains(partner) && !c.Closed && c.Buddies.Count == 1);
             
             if (conv == null) 
             {
                 // create this conversation if it doesn't exist
                 conv = new Conversation() { UserLocal = _userLocal };
-                conv.AddBuddy(sender);
+                conv.AddBuddy(partner);
                 _userLocal.AddConversation(conv);
             }
 
@@ -328,7 +331,7 @@ namespace Chat.Controller
         /// <summary>
         /// handler for "peer manager connection occurs"
         /// </summary>
-        /// <param name="peer">TODO</param>
+        /// <param name="peer">the peer representing the connection</param>
         private void _onPeerManagerConnection(TcpPeer peer)
         {
             bool resolved = false;
@@ -370,6 +373,7 @@ namespace Chat.Controller
                 }
             };
 
+            // start listening after the delegate got registered
             peer.StartListening();
         }
 
@@ -385,7 +389,6 @@ namespace Chat.Controller
         private void _mainWindowOnClosing(object o, EventArgs e)
         {
             _peerManager.Dispose();
-            // TODO: implement
         }
 
         /// <summary>
